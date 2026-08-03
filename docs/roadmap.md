@@ -284,17 +284,10 @@ incident-response/
 
 Cada simulação deverá seguir um fluxo operacional simples:
 
-```mermaid
-flowchart LR
-    A[Recebimento do chamado]
-    B[Coleta de informações]
-    C[Investigação]
-    D[Diagnóstico]
-    E[Correção]
-    F[Validação]
-    G[Documentação]
 
-    A --> B --> C --> D --> E --> F --> G
+![LABInicial](images/LAB_Analista_Cloud_Jr19_35_16.png)
+
+
 ```
 
 ---
