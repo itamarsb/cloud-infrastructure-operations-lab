@@ -24,13 +24,13 @@ O objetivo deste repositório é proporcionar uma experiência de aprendizagem b
 
 Este laboratório foi desenvolvido para ajudar estudantes e profissionais iniciantes a desenvolver competências práticas em:
 
-- Administração de ambientes Linux
-- Serviços fundamentais da AWS
-- Infraestrutura como Código (Terraform)
-- Containers com Docker
-- Monitoramento e Observabilidade
-- Troubleshooting
-- Cloud Operations
+- Administração de ambientes Linux;
+- Serviços fundamentais da AWS;
+- Infraestrutura como Código (Terraform);
+- Containers com Docker;
+- Monitoramento e Observabilidade;
+- Troubleshooting;
+- Cloud Operations.
 
 Todo o conteúdo foi organizado em uma sequência progressiva de laboratórios, permitindo construir conhecimento passo a passo.
 
