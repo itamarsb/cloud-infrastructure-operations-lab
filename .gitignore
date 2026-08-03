@@ -77,3 +77,8 @@ Thumbs.db
 *.tfplan
 tfplan
 planout
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
