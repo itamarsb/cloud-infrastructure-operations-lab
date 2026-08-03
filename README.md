@@ -18,6 +18,13 @@ O objetivo deste repositório é proporcionar uma experiência de aprendizagem b
 ![Markdown](https://img.shields.io/badge/Markdown-000000?logo=markdown&logoColor=white)
 ![Mermaid](https://img.shields.io/badge/Mermaid-FF3670?logo=mermaid&logoColor=white)
 
+## Competências
+![Cloud Operations](https://img.shields.io/badge/Cloud%20Operations-0052CC?style=for-the-badge)
+![FinOps](https://img.shields.io/badge/FinOps-00A86B?style=for-the-badge)
+![Troubleshooting](https://img.shields.io/badge/Troubleshooting-FF6B00?style=for-the-badge)
+![Observability](https://img.shields.io/badge/Observability-6E40C9?style=for-the-badge)
+![Incident Response](https://img.shields.io/badge/Incident%20Response-E63946?style=for-the-badge)
+
 ---
 
 ## Objetivo
