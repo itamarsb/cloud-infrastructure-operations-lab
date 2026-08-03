@@ -50,7 +50,65 @@ Este repositório é indicado para:
 
 ## Roadmap
 
-> *(Inserir aqui o novo diagrama Mermaid que desenvolvemos.)*
+```mermaid
+flowchart TB
+
+    START([Início])
+
+    subgraph F1["Fundamentos"]
+        direction LR
+        M00["Preparação<br/>do ambiente"]
+        M01["Linux<br/>e Git"]
+        M02["Redes<br/>e AWS Core"]
+
+        M00 --> M01 --> M02
+    end
+
+    subgraph F2["Cloud Operations"]
+        direction LR
+        M03["Cloud<br/>Operations"]
+        M04["Terraform"]
+
+        M03 --> M04
+    end
+
+    subgraph F3["Operações"]
+        direction LR
+        M05["Monitoramento"]
+        M06["Docker"]
+        M07["Troubleshooting"]
+
+        M05 --> M06 --> M07
+    end
+
+    subgraph F4["Capstone"]
+        direction LR
+        M08["Projeto Final"]
+        DONE([Pronto para o portfólio])
+
+        M08 --> DONE
+    end
+
+    START --> M00
+    M02 --> M03
+    M04 --> M05
+    M07 --> M08
+
+    classDef start fill:#0f172a,stroke:#38bdf8,color:#fff,stroke-width:2px;
+    classDef module fill:#f8fafc,stroke:#64748b,color:#0f172a,stroke-width:1.5px;
+    classDef final fill:#ecfdf5,stroke:#10b981,color:#064e3b,stroke-width:2px;
+    classDef finish fill:#0f766e,stroke:#14b8a6,color:#fff,stroke-width:2px;
+
+    class START start;
+    class M00,M01,M02,M03,M04,M05,M06,M07 module;
+    class M08 final;
+    class DONE finish;
+
+    style F1 fill:#f8fafc,stroke:#94a3b8
+    style F2 fill:#f8fafc,stroke:#94a3b8
+    style F3 fill:#f8fafc,stroke:#94a3b8
+    style F4 fill:#f0fdfa,stroke:#14b8a6
+```
 
 ---
 
