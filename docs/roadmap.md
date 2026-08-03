@@ -82,7 +82,7 @@ flowchart TB
     C1["Marco 1<br/>Linux • Git • Redes • AWS"]
     C2["Marco 2<br/>Cloud Operations • Terraform"]
     C3["Marco 3<br/>Observabilidade • Docker"]
-    C4["Marco 4<br/>Diagnóstico + Resposta<br/>+ Recuperação"]
+    C4["Marco 4<br/>Diagnóstico -> Resposta<br/>-> Recuperação"]
 
     M02 -.-> C1
     M04 -.-> C2
