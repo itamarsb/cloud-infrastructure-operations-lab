@@ -80,7 +80,7 @@ flowchart TB
     M07 --> M08
 
     C1["Marco 1<br/>Linux / Git / Redes / AWS"]
-    C2["Marco 2<br/>Cloud Operations / Terraform"]
+    C2["Marco 2<br/>Cloud Operations /<br/>Terraform"]
     C3["Marco 3<br/>Observabilidade / Docker"]
     C4["Marco 4<br/>Diagnóstico / Resposta /<br/>Recuperação"]
 
