@@ -288,8 +288,6 @@ Cada simulação deverá seguir um fluxo operacional simples:
 ![LABInicial](images/LAB_Analista_Cloud_Jr19_35_16.png)
 
 
-```
-
 ---
 
 # Módulo 08 — FinOps básico
