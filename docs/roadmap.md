@@ -56,7 +56,7 @@ flowchart TB
 
     subgraph F3["03 · Observabilidade e Containers"]
         direction LR
-        M05["Módulo 05<br/>Monitoramento e Observabilidade"]
+        M05["Módulo 05<br/>Monitoramento e<br/>Observabilidade"]
         M06["Módulo 06<br/>Fundamentos de Docker"]
         M05 --> M06
     end
