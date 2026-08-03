@@ -184,7 +184,8 @@ cloud-infrastructure-operations-lab/
 | 05 | Monitoramento |
 | 06 | Docker |
 | 07 | Troubleshooting |
-| 08 | Projeto Final |
+| 08 | FinOps básico |
+| 09 | Projeto Final |
 
 ---
 
