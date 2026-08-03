@@ -280,13 +280,87 @@ incident-response/
 | ⬜ | **INC-007 — Container Nginx indisponível** | Status, logs, porta e restart | ➕ |
 | ⬜ | **INC-008 — Zabbix deixou de receber métricas** | Agent, serviço, porta e conectividade | ➕ |
 
+
+
 ## Fluxo esperado
 
-Cada simulação deverá seguir um fluxo operacional simples:
+Cada simulação deverá seguir um processo operacional estruturado, desde o recebimento do chamado até o encerramento e a documentação do incidente.
 
+```mermaid
 
-![LABInicial](../images/LAB_Analista_Cloud_Jr19_35_16.png)
+flowchart LR
+    START([Início<br/>Chamado ou alerta recebido])
 
+    subgraph PROCESSO["Fluxo de Troubleshooting e Atendimento a Incidentes"]
+        direction LR
+
+        S1["01 · Recebimento do chamado<br/><br/>Registro inicial<br/>Abertura do atendimento<br/>Classificação preliminar"]
+
+        S2["02 · Coleta de informações<br/><br/>Ambiente afetado<br/>Sintomas relatados<br/>Logs e métricas iniciais"]
+
+        S3["03 · Investigação<br/><br/>Análise de evidências<br/>Consulta a logs e métricas<br/>Validação de hipóteses"]
+
+        S4["04 · Diagnóstico<br/><br/>Identificação da causa raiz<br/>Confirmação por evidências<br/>Avaliação de impacto"]
+
+        S5["05 · Correção<br/><br/>Aplicação da solução<br/>Ajuste de configuração<br/>Reinício controlado"]
+
+        S6["06 · Validação<br/><br/>Teste do serviço<br/>Verificação de métricas<br/>Análise de efeitos colaterais"]
+
+        DEC{"Serviço<br/>restabelecido?"}
+
+        S7["07 · Documentação<br/><br/>Registro das ações<br/>Lições aprendidas<br/>Atualização da base de conhecimento"]
+
+        END([Encerramento<br/>Incidente resolvido])
+
+        S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> DEC
+        DEC -- Sim --> S7 --> END
+        DEC -- Não --> RETRY["Retornar à investigação<br/><br/>Revisar evidências<br/>Criar novas hipóteses<br/>Ajustar a abordagem"]
+        RETRY -.-> S3
+    end
+
+    START --> S1
+
+    C1["Objetivo<br/>Registrar e classificar o incidente"]
+    C2["Objetivo<br/>Entender o contexto e o impacto"]
+    C3["Objetivo<br/>Compreender o comportamento do ambiente"]
+    C4["Objetivo<br/>Determinar a causa raiz"]
+    C5["Objetivo<br/>Restaurar o serviço com segurança"]
+    C6["Objetivo<br/>Confirmar estabilidade e resolução"]
+    C7["Objetivo<br/>Preservar conhecimento e evitar recorrências"]
+
+    S1 -.-> C1
+    S2 -.-> C2
+    S3 -.-> C3
+    S4 -.-> C4
+    S5 -.-> C5
+    S6 -.-> C6
+    S7 -.-> C7
+
+    classDef startEnd fill:#ecfdf5,stroke:#16a34a,color:#14532d,stroke-width:2px;
+    classDef intake fill:#f5f3ff,stroke:#7c3aed,color:#312e81,stroke-width:1.5px;
+    classDef analysis fill:#eff6ff,stroke:#2563eb,color:#1e3a8a,stroke-width:1.5px;
+    classDef diagnosis fill:#fff7ed,stroke:#f97316,color:#7c2d12,stroke-width:1.5px;
+    classDef correction fill:#f0fdf4,stroke:#16a34a,color:#14532d,stroke-width:1.5px;
+    classDef validation fill:#eef2ff,stroke:#4f46e5,color:#312e81,stroke-width:1.5px;
+    classDef decision fill:#fffbeb,stroke:#eab308,color:#713f12,stroke-width:2px;
+    classDef documentation fill:#faf5ff,stroke:#9333ea,color:#581c87,stroke-width:1.5px;
+    classDef retry fill:#fef2f2,stroke:#dc2626,color:#7f1d1d,stroke-width:1.5px,stroke-dasharray:5 5;
+    classDef objective fill:#f8fafc,stroke:#94a3b8,color:#334155,stroke-width:1px;
+
+    class START,END startEnd;
+    class S1,S2 intake;
+    class S3 analysis;
+    class S4 diagnosis;
+    class S5 correction;
+    class S6 validation;
+    class DEC decision;
+    class S7 documentation;
+    class RETRY retry;
+    class C1,C2,C3,C4,C5,C6,C7 objective;
+
+    style PROCESSO fill:#ffffff,stroke:#cbd5e1,stroke-width:1px
+
+```
 
 ---
 
