@@ -69,7 +69,7 @@ flowchart TB
     subgraph F5["05 · Projeto Integrador"]
         direction LR
         M08["Projeto Final<br/>Cenário de Operações<br/>de Infraestrutura em Nuvem"]
-        DONE([Portfólio pronto])
+        DONE([Portfólio pronto<br/>para demonstração])
         M08 --> DONE
     end
 
