@@ -459,6 +459,10 @@ O Visual Studio Code deverá abrir o projeto e apresentar os diretórios do repo
 
 Caso uma mensagem de confiança seja apresentada, confirme apenas se o diretório aberto corresponde ao repositório clonado deste projeto.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_10.jpg)
+
+
 ---
 
 # Etapa 10 — Conhecer a estrutura do projeto
