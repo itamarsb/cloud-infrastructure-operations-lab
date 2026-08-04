@@ -127,6 +127,10 @@ Major  Minor  Patch
 
 A versão apresentada em seu computador pode ser diferente.
 
+
+![LAB00](labs/00-workstation-preparation/images/LAB00_Clipboard_08-03-2026_01.jpg)
+
+
 ---
 
 # Etapa 2 — Identificar o usuário e o diretório atual
