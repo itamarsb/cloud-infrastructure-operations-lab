@@ -163,6 +163,10 @@ C:\Users\seu-usuario
 
 > Os nomes e caminhos apresentados no seu computador serão diferentes dos exemplos deste laboratório.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_02.jpg)
+
+
 ---
 
 # Etapa 3 — Criar o diretório dos laboratórios
