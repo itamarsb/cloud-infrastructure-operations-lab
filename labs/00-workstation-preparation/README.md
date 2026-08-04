@@ -254,6 +254,11 @@ Após a instalação:
 git --version
 ```
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_05.jpg)
+
+
+
 ### Opção B — Instalador oficial
 
 Baixe o instalador do **Git for Windows** no site oficial do projeto e mantenha as opções recomendadas durante a instalação.
