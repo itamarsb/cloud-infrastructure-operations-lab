@@ -858,6 +858,10 @@ Cloud-Labs/
 
 A estação está preparada para continuar a trilha.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_19.jpg)
+
+
 ---
 
 ## Próximo laboratório
