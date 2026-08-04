@@ -410,6 +410,10 @@ Your branch is up to date with 'origin/main'.
 nothing to commit, working tree clean
 ```
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_08.jpg)
+
+
 ---
 
 # Etapa 8 — Verificar o repositório remoto
