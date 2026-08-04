@@ -257,6 +257,7 @@ git --version
 
 ![LAB00](images/LAB00_Clipboard_08-03-2026_05.jpg)
 
+*No caso da imagem acima, o retorno indica que o Git já se encontra instalado.*
 
 
 ### Opção B — Instalador oficial
