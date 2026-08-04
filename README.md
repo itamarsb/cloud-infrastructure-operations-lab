@@ -19,11 +19,16 @@ O objetivo deste repositório é proporcionar uma experiência de aprendizagem b
 ![Mermaid](https://img.shields.io/badge/Mermaid-FF3670?style=for-the-badge&logo=mermaid&logoColor=white)
 
 ## Competências
+
 ![Cloud Operations](https://img.shields.io/badge/Cloud%20Operations-0052CC?style=for-the-badge)
-![FinOps](https://img.shields.io/badge/FinOps-00A86B?style=for-the-badge)
+![Linux Administration](https://img.shields.io/badge/Linux%20Administration-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![Networking](https://img.shields.io/badge/Networking-0078D4?style=for-the-badge)
+![Infrastructure as Code](https://img.shields.io/badge/Infrastructure%20as%20Code-7B42BC?style=for-the-badge)
+![Monitoring](https://img.shields.io/badge/Monitoring-FF9900?style=for-the-badge)
+![Observability](https://img.shields.io/badge/Observability-6F42C1?style=for-the-badge)
 ![Troubleshooting](https://img.shields.io/badge/Troubleshooting-FF6B00?style=for-the-badge)
-![Observability](https://img.shields.io/badge/Observability-6E40C9?style=for-the-badge)
 ![Incident Response](https://img.shields.io/badge/Incident%20Response-E63946?style=for-the-badge)
+![FinOps](https://img.shields.io/badge/FinOps-00A86B?style=for-the-badge)
 
 ---
 
