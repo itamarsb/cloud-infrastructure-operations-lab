@@ -682,6 +682,10 @@ Atualize o conteúdo quando necessário:
 git pull origin main
 ```
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_16.jpg)
+
+
 ---
 
 ### Problema: falha de conexão durante a clonagem
