@@ -158,7 +158,7 @@ Exemplo:
 ```text
 Path
 ----
-C:\WINDOWS\sistem32
+C:\WINDOWS\system32
 ```
 
 > Os nomes e caminhos apresentados no seu computador serão diferentes dos exemplos deste laboratório.
