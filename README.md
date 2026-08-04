@@ -199,7 +199,7 @@ cloud-infrastructure-operations-lab/
 |------|----------|
 | 00 | Preparação do ambiente |
 | 01 | Linux e Git |
-| 02 | AWS Foundations |
+| 02 | Redes e AWS Core |
 | 03 | Cloud Operations |
 | 04 | Terraform |
 | 05 | Monitoramento |
