@@ -481,11 +481,19 @@ No painel **Explorer** do Visual Studio Code, localize os principais diretórios
 | `scripts/` | Scripts de apoio |
 | `images/` | Imagens e evidências visuais |
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_11.jpg)
+
+
 Abra o arquivo:
 
 ```text
 README.md
 ```
+
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_12.jpg)
+
 
 Em seguida, abra:
 
@@ -494,6 +502,10 @@ docs/roadmap.md
 ```
 
 Leia a visão geral da trilha e identifique os módulos que serão desenvolvidos.
+
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_13.jpg)
+
 
 ---
 
