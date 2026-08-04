@@ -288,12 +288,11 @@ O terminal deverá apresentar informações semelhantes a:
 identificador-da-versao
 x64
 ```
+A versão exata poderá ser diferente.
 
 
 ![LAB00](images/LAB00_Clipboard_08-03-2026_06.jpg)
 
-
-A versão exata poderá ser diferente.
 
 ## Caso o Visual Studio Code não esteja instalado
 
