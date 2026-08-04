@@ -702,11 +702,18 @@ Valide a conectividade:
 Test-Connection github.com -Count 4
 ```
 
+![LAB00](images/LAB00_Clipboard_08-03-2026_17.jpg)
+
+
 Depois, tente novamente:
 
 ```powershell
 git clone https://github.com/itamarsb/cloud-infrastructure-operations-lab.git
 ```
+
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_18.jpg)
+
 
 ---
 
