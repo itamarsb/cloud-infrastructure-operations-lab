@@ -711,10 +711,6 @@ Depois, tente novamente:
 git clone https://github.com/itamarsb/cloud-infrastructure-operations-lab.git
 ```
 
-
-![LAB00](images/LAB00_Clipboard_08-03-2026_18.jpg)
-
-
 ---
 
 ### Problema: o Visual Studio Code abriu outro diretório
@@ -736,6 +732,10 @@ Abra novamente:
 ```powershell
 code .
 ```
+
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_18.jpg)
+
 
 ---
 
