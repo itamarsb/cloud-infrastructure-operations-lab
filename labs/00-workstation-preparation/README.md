@@ -257,6 +257,7 @@ git --version
 
 ![LAB00](images/LAB00_Clipboard_08-03-2026_05.jpg)
 
+
 *No caso da imagem acima, o retorno indica que o Git já se encontra instalado.*
 
 
@@ -287,6 +288,10 @@ O terminal deverá apresentar informações semelhantes a:
 identificador-da-versao
 x64
 ```
+
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_06.jpg)
+
 
 A versão exata poderá ser diferente.
 
