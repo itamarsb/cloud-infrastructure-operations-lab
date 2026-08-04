@@ -541,6 +541,10 @@ git status
 
 Os mesmos comandos utilizados no PowerShell externo deverão funcionar no terminal integrado do Visual Studio Code.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_14.jpg)
+
+
 ---
 
 # Etapa 12 — Registrar as versões das ferramentas
