@@ -803,19 +803,19 @@ Remove-Item ".\cloud-infrastructure-operations-lab" -Recurse -Force
 
 ## Checklist de conclusão
 
-- [ ] Li o objetivo e compreendi o cenário.
-- [ ] Validei o PowerShell.
-- [ ] Criei o diretório dos laboratórios.
-- [ ] Validei o Git.
-- [ ] Validei o Visual Studio Code.
-- [ ] Clonei o repositório.
-- [ ] Confirmei o repositório remoto.
-- [ ] Abri o projeto no Visual Studio Code.
-- [ ] Validei o terminal integrado.
-- [ ] Conheci a estrutura inicial do projeto.
-- [ ] Registrei as evidências necessárias.
-- [ ] Revisei os problemas comuns.
-- [ ] Confirmei que nenhum recurso AWS foi criado.
+- [X] Li o objetivo e compreendi o cenário.
+- [X] Validei o PowerShell.
+- [X] Criei o diretório dos laboratórios.
+- [X] Validei o Git.
+- [X] Validei o Visual Studio Code.
+- [X] Clonei o repositório.
+- [X] Confirmei o repositório remoto.
+- [X] Abri o projeto no Visual Studio Code.
+- [X] Validei o terminal integrado.
+- [X] Conheci a estrutura inicial do projeto.
+- [X] Registrei as evidências necessárias.
+- [X] Revisei os problemas comuns.
+- [X] Confirmei que nenhum recurso AWS foi criado.
 
 ---
 
