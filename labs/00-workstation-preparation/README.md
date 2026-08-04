@@ -580,17 +580,17 @@ Não é necessário utilizar exatamente as mesmas versões dos exemplos.
 
 Confirme os resultados do laboratório:
 
-- [ ] O PowerShell foi aberto corretamente.
-- [ ] O diretório `Cloud-Labs` foi criado.
-- [ ] O comando `git --version` funcionou.
-- [ ] O comando `code --version` funcionou.
-- [ ] O repositório foi clonado.
-- [ ] O diretório clonado foi reconhecido pelo Git.
-- [ ] O comando `git status` foi executado sem erro.
-- [ ] O repositório remoto foi confirmado com `git remote -v`.
-- [ ] O projeto foi aberto no Visual Studio Code.
-- [ ] O terminal integrado foi validado.
-- [ ] A estrutura do repositório foi identificada.
+- [X] O PowerShell foi aberto corretamente.
+- [X] O diretório `Cloud-Labs` foi criado.
+- [X] O comando `git --version` funcionou.
+- [X] O comando `code --version` funcionou.
+- [X] O repositório foi clonado.
+- [X] O diretório clonado foi reconhecido pelo Git.
+- [X] O comando `git status` foi executado sem erro.
+- [X] O repositório remoto foi confirmado com `git remote -v`.
+- [X] O projeto foi aberto no Visual Studio Code.
+- [X] O terminal integrado foi validado.
+- [X] A estrutura do repositório foi identificada.
 
 ---
 
