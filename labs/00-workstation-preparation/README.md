@@ -205,6 +205,9 @@ Exemplo:
 C:\Users\seu-usuario\Cloud-Labs
 ```
 
+![LAB00](images/LAB00_Clipboard_08-03-2026_03.jpg)
+
+
 ---
 
 # Etapa 4 — Verificar a instalação do Git
