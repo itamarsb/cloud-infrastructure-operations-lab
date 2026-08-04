@@ -570,6 +570,10 @@ Visual Studio Code: 1.x
 
 Não é necessário utilizar exatamente as mesmas versões dos exemplos.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_15.jpg)
+
+
 ---
 
 ## Validação
