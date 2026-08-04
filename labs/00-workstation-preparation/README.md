@@ -228,6 +228,10 @@ git version 2.x.x.windows.x
 
 A versão exata poderá ser diferente.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_04.jpg)
+
+
 ## Caso o Git não esteja instalado
 
 Se o terminal apresentar uma mensagem informando que `git` não foi reconhecido, instale o Git utilizando uma das opções abaixo.
