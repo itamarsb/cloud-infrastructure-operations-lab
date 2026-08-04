@@ -357,6 +357,10 @@ Confirme o diretório atual:
 Get-Location
 ```
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_07.jpg)
+
+
 ---
 
 # Etapa 7 — Validar o repositório local
