@@ -128,7 +128,7 @@ Major  Minor  Patch
 A versão apresentada em seu computador pode ser diferente.
 
 
-![LAB00](00-workstation-preparation/images/LAB00_Clipboard_08-03-2026_01.jpg)
+![LAB00](images/LAB00_Clipboard_08-03-2026_01.jpg)
 
 
 ---
