@@ -437,6 +437,10 @@ origin  https://github.com/itamarsb/cloud-infrastructure-operations-lab.git (pus
 
 Neste momento, você utilizará principalmente o repositório para acompanhar e executar os laboratórios.
 
+
+![LAB00](images/LAB00_Clipboard_08-03-2026_09.jpg)
+
+
 ---
 
 # Etapa 9 — Abrir o projeto no Visual Studio Code
