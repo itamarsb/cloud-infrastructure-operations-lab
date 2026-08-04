@@ -596,7 +596,7 @@ Confirme os resultados do laboratório:
 
 ## Evidências sugeridas
 
-Para documentar a conclusão do laboratório, você pode registrar:
+Para documentar a conclusão do laboratório para uma futura postagem no Linkedin, por exemplo, você pode registrar:
 
 1. saída do comando `git --version`;
 2. saída do comando `code --version`;
