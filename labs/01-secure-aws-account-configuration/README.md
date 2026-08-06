@@ -74,9 +74,11 @@ Antes de iniciar, verifique se você possui:
 
 ---
 
-## Arquitetura
+## Visão geral do laboratório
 
-Este laboratório não cria infraestrutura em nuvem. O fluxo de proteção da conta é representado a seguir:
+Este laboratório não provisiona recursos de infraestrutura. Em vez disso, estabelece a camada inicial de segurança, recuperação de acesso e controle financeiro da conta AWS.
+
+O fluxo abaixo apresenta a sequência completa de configuração e validação:
 
 ```mermaid
 flowchart TB
