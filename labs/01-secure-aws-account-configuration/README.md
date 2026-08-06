@@ -80,27 +80,114 @@ Este laboratório não cria infraestrutura em nuvem. O fluxo de proteção da co
 
 ```mermaid
 flowchart TB
-    ROOT["Usuário root da conta AWS"]
-    MFA["Autenticação multifator"]
-    CONTACTS["Contatos principal e alternativos"]
-    BILLING["Preferências de faturamento"]
-    BUDGET["Orçamento mensal e alertas"]
-    ACCOUNT["Conta AWS preparada para os próximos laboratórios"]
+    START(["Início do Lab 01<br/>Preparação segura da conta AWS"])
 
-    ROOT --> MFA
-    ROOT --> CONTACTS
-    CONTACTS --> BILLING
-    BILLING --> BUDGET
-    MFA --> ACCOUNT
-    BUDGET --> ACCOUNT
+    subgraph ROOT["1. Proteção da identidade root"]
+        direction TB
 
-    classDef identity fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b,stroke-width:1.5px
-    classDef control fill:#f8fafc,stroke:#64748b,color:#0f172a,stroke-width:1.5px
-    classDef result fill:#ecfdf5,stroke:#10b981,color:#064e3b,stroke-width:2px
+        LOGIN["Acessar o AWS Management Console<br/>como usuário root"]
 
-    class ROOT identity
-    class MFA,CONTACTS,BILLING,BUDGET control
-    class ACCOUNT result
+        KEYS{"Existem access keys<br/>ativas para o root?"}
+
+        REVIEW_KEYS["Revisar dependências<br/>e remover chaves desnecessárias"]
+
+        NO_KEYS["Confirmar ausência de<br/>access keys do root"]
+
+        MFA["Configurar autenticação<br/>multifator — MFA"]
+
+        MFA_TEST["Validar o acesso com<br/>senha + código temporário"]
+    end
+
+    subgraph RECOVERY["2. Recuperação e comunicação"]
+        direction TB
+
+        PRIMARY["Revisar contato principal<br/>e dados da conta"]
+
+        ALTERNATIVE["Configurar contatos alternativos<br/>Billing, Operations e Security"]
+
+        RECOVERY_CHECK["Confirmar acesso ao e-mail<br/>e telefone de recuperação"]
+    end
+
+    subgraph COSTS["3. Controle financeiro"]
+        direction TB
+
+        BILLING["Abrir Billing and<br/>Cost Management"]
+
+        FREE_TIER["Habilitar alertas de uso<br/>do AWS Free Tier"]
+
+        BUDGET["Criar orçamento mensal<br/>no AWS Budgets"]
+
+        ALERTS["Configurar notificações de<br/>custo real e custo previsto"]
+
+        EMAIL["Confirmar o endereço de e-mail<br/>que receberá os alertas"]
+    end
+
+    subgraph VALIDATION["4. Validação final"]
+        direction TB
+
+        CHECKLIST["Executar checklist de validação"]
+
+        SECURITY_OK["Identidade root protegida"]
+
+        CONTACTS_OK["Contatos e recuperação revisados"]
+
+        COSTS_OK["Monitoramento inicial de custos ativo"]
+    end
+
+    READY(["Conta AWS preparada<br/>para os próximos laboratórios"])
+
+    START --> LOGIN
+    LOGIN --> KEYS
+
+    KEYS -- "Sim" --> REVIEW_KEYS
+    REVIEW_KEYS --> NO_KEYS
+    KEYS -- "Não" --> NO_KEYS
+
+    NO_KEYS --> MFA
+    MFA --> MFA_TEST
+
+    MFA_TEST --> PRIMARY
+    PRIMARY --> ALTERNATIVE
+    ALTERNATIVE --> RECOVERY_CHECK
+
+    RECOVERY_CHECK --> BILLING
+    BILLING --> FREE_TIER
+    FREE_TIER --> BUDGET
+    BUDGET --> ALERTS
+    ALERTS --> EMAIL
+
+    EMAIL --> CHECKLIST
+
+    CHECKLIST --> SECURITY_OK
+    CHECKLIST --> CONTACTS_OK
+    CHECKLIST --> COSTS_OK
+
+    SECURITY_OK --> READY
+    CONTACTS_OK --> READY
+    COSTS_OK --> READY
+
+    classDef start fill:#eef2ff,stroke:#4f46e5,color:#1e1b4b,stroke-width:2px;
+    classDef identity fill:#eff6ff,stroke:#2563eb,color:#172554,stroke-width:1.5px;
+    classDef decision fill:#fff7ed,stroke:#ea580c,color:#7c2d12,stroke-width:2px;
+    classDef recovery fill:#f5f3ff,stroke:#7c3aed,color:#3b0764,stroke-width:1.5px;
+    classDef billing fill:#fffbeb,stroke:#d97706,color:#78350f,stroke-width:1.5px;
+    classDef validation fill:#f0fdfa,stroke:#0f766e,color:#134e4a,stroke-width:1.5px;
+    classDef success fill:#ecfdf5,stroke:#059669,color:#064e3b,stroke-width:2.5px;
+
+    class START start;
+    class LOGIN,NO_KEYS,MFA,MFA_TEST identity;
+    class KEYS decision;
+    class REVIEW_KEYS identity;
+    class PRIMARY,ALTERNATIVE,RECOVERY_CHECK recovery;
+    class BILLING,FREE_TIER,BUDGET,ALERTS,EMAIL billing;
+    class CHECKLIST,SECURITY_OK,CONTACTS_OK,COSTS_OK validation;
+    class READY success;
+
+    style ROOT fill:#f8fbff,stroke:#93c5fd,stroke-width:1.5px
+    style RECOVERY fill:#faf8ff,stroke:#c4b5fd,stroke-width:1.5px
+    style COSTS fill:#fffdf5,stroke:#fcd34d,stroke-width:1.5px
+    style VALIDATION fill:#f5fffc,stroke:#5eead4,stroke-width:1.5px
+
 ```
 
 ---
