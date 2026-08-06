@@ -24,7 +24,7 @@ O conteúdo prioriza atividades práticas relacionadas a:
 ## Legenda
 
 | Símbolo | Significado |
-|---|---|
+|:---:|---|
 | ⬜ | Planejado |
 | 🚧 | Em desenvolvimento |
 | ✅ | Concluído |
@@ -124,7 +124,7 @@ flowchart TB
 > Preparar a estação de trabalho e as ferramentas utilizadas ao longo do projeto.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ✅ | **Lab 00 — Preparação da estação de trabalho** | Git, VS Code, terminal e organização local | ⭐ |
 | 🚧 | **Lab 01 — Configuração segura da conta AWS** | MFA, usuário administrativo e segurança da conta | ⭐ |
 | ⬜ | **Lab 02 — Instalação e configuração da AWS CLI** | AWS CLI, profiles e validação de credenciais | ⭐ |
@@ -141,7 +141,7 @@ Ao concluir este módulo, o estudante deverá possuir uma estação de trabalho 
 > Desenvolver os conhecimentos básicos necessários para operar servidores Linux e versionar arquivos técnicos.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 04 — Navegação e gerenciamento de arquivos no Linux** | Diretórios, arquivos, cópia, movimentação e remoção | ⭐ |
 | ⬜ | **Lab 05 — Usuários, grupos e permissões** | `useradd`, `usermod`, `chmod`, `chown` e `sudo` | ⭐ |
 | ⬜ | **Lab 06 — Processos, serviços e logs** | `ps`, `top`, `systemctl`, `journalctl` e logs | ⭐ |
@@ -158,7 +158,7 @@ Ao concluir este módulo, o estudante deverá conseguir executar tarefas básica
 > Construir a infraestrutura fundamental utilizada pelos laboratórios de Cloud Operations.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 08 — Fundamentos de redes para Cloud** | IP, CIDR, portas, protocolos e DNS | ⭐ |
 | ⬜ | **Lab 09 — IAM para acesso seguro aos serviços AWS** | Users, Groups, Roles, Policies e least privilege | ⭐ |
 | ⬜ | **Lab 10 — Criação de uma VPC básica** | VPC, subnet, route table e Internet Gateway | ⭐ |
@@ -179,7 +179,7 @@ Ao concluir este módulo, o estudante deverá compreender e operar os principais
 > Executar tarefas comuns de sustentação e manutenção de ambientes em nuvem.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 16 — Implantação e operação do Nginx** | Instalação, serviço, configuração, portas e logs | ⭐ |
 | ⬜ | **Lab 17 — Administração de usuários em um servidor EC2** | Usuários, grupos, permissões e controle de acesso | ⭐ |
 | ⬜ | **Lab 18 — Diagnóstico de conectividade** | `ping`, `curl`, `nslookup`, `ss`, DNS e Security Groups | ⭐ |
@@ -197,7 +197,7 @@ Ao concluir este módulo, o estudante deverá conseguir executar e documentar at
 > Automatizar a criação da infraestrutura já conhecida por meio dos laboratórios manuais.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 21 — Fundamentos do Terraform** | Provider, resource, `init`, `validate`, `plan` e `apply` | ⭐ |
 | ⬜ | **Lab 22 — Criação de uma instância EC2 com Terraform** | EC2, Security Group, variables e outputs | ⭐ |
 | ⬜ | **Lab 23 — Criação de VPC e rede com Terraform** | VPC, subnet, route table e dependências | ⭐ |
@@ -222,7 +222,7 @@ Essa sequência evita que a automação esconda o funcionamento dos recursos da 
 > Monitorar disponibilidade e utilização de recursos sem introduzir observabilidade avançada.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 26 — Métricas básicas com Amazon CloudWatch** | CPU, status checks, dashboards e métricas | ⭐ |
 | ⬜ | **Lab 27 — Memória e disco com CloudWatch Agent** | Agent, configuração e custom metrics | ⭐ |
 | ⬜ | **Lab 28 — Alarmes e notificações básicas** | CloudWatch Alarms e Amazon SNS | ⭐ |
@@ -250,7 +250,7 @@ O foco será somente o monitoramento necessário para atividades iniciais de Clo
 > Desenvolver os conhecimentos introdutórios de containers frequentemente indicados como diferenciais em vagas júnior.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 31 — Instalação e fundamentos do Docker** | Image, container, pull, run, stop e remove | ➕ |
 | ⬜ | **Lab 32 — Execução do Nginx em container** | Port mapping, logs e validação do serviço | ➕ |
 | ⬜ | **Lab 33 — Volumes e persistência básica** | Volumes, bind mounts e persistência | ➕ |
@@ -279,7 +279,7 @@ incident-response/
 ```
 
 | Status | Incidente | Situação investigada | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **INC-001 — Aplicação indisponível** | EC2, Nginx, porta, serviço e conectividade | ⭐ |
 | ⬜ | **INC-002 — Disco do servidor cheio** | Filesystem, logs, consumo e liberação de espaço | ⭐ |
 | ⬜ | **INC-003 — Alto consumo de CPU** | Processos, métricas e investigação da causa | ⭐ |
@@ -376,7 +376,7 @@ flowchart LR
 > Desenvolver consciência de custos e responsabilidade na utilização de recursos AWS.
 
 | Status | Laboratório | Competências principais | Classificação |
-|---|---|---|---|
+|:---:|---|---|---|
 | ⬜ | **Lab 35 — Tags e organização de recursos** | Identificação, projeto, ambiente e responsável | ➕ |
 | ⬜ | **Lab 36 — Acompanhamento básico de custos AWS** | Billing, Cost Explorer e budgets | ➕ |
 | ⬜ | **Lab 37 — Identificação e remoção de recursos ociosos** | EC2, EBS, Elastic IP, snapshots e cleanup | ➕ |
