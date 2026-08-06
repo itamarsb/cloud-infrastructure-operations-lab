@@ -196,7 +196,7 @@ cloud-infrastructure-operations-lab/
 ## Organização dos laboratórios
 
 | Fase | Conteúdo |
-|------|----------|
+|:------:|----------|
 | 00 | Preparação do ambiente |
 | 01 | Linux e Git |
 | 02 | Redes e AWS Core |
