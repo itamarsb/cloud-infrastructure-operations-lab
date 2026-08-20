@@ -893,7 +893,7 @@ Os scripts utilizarão três estados:
 Ao final, eles também retornarão um código:
 
 | Código | Significado                                        |
-| -----: | -------------------------------------------------- |
+| :-----: | -------------------------------------------------- |
 |    `0` | Todas as verificações obrigatórias foram aprovadas |
 |    `1` | Pelo menos uma verificação obrigatória falhou      |
 
