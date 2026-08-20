@@ -451,6 +451,10 @@ monthly-cloud-lab-budget
 6. Defina o método como orçamento fixo.
 7. Informe um valor compatível com o limite pessoal destinado aos laboratórios.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_08.jpg)
+
+
 Exemplo didático:
 
 ```text
