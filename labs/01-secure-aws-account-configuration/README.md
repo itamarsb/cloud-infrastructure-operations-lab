@@ -27,8 +27,6 @@ Esse tipo de preparação deve ser realizado antes do uso cotidiano da conta.
 | **Competência principal** | Segurança inicial e controle de custos da conta AWS |
 | **Cleanup obrigatório** | Não |
 
-> [!IMPORTANT]
-> O AWS Budgets permite monitorar custos e receber notificações sem cobrança. Este laboratório não configura ações automáticas de orçamento nem relatórios programados.
 
 ---
 
