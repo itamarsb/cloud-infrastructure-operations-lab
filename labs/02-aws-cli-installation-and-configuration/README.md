@@ -993,7 +993,8 @@ Ele valida:
 
 O script não instala programas, não realiza login automaticamente, não altera configurações e não cria, modifica ou exclui recursos AWS.
 
-Uma falha na consulta `ec2:DescribeRegions` gera apenas um aviso quando a identidade já foi validada pelo AWS STS. Isso pode acontecer quando o permission set não autoriza essa consulta e não significa, necessariamente, que a autenticação esteja incorreta.
+> [!IMPORTANT]
+> Uma falha na consulta `ec2:DescribeRegions` gera apenas um aviso quando a identidade já foi validada pelo AWS STS. Isso pode acontecer quando o permission set não autoriza essa consulta e não significa, > necessariamente, que a autenticação esteja incorreta.
 
 
 
