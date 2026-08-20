@@ -900,6 +900,22 @@ Ao final, eles também retornarão um código:
 Esses códigos são úteis posteriormente em automações e pipelines.
 
 
+### O que o script do Lab 00 `validate-workstation.ps1` verifica
+
+Ele valida:
+
+- se o sistema operacional é Windows;
+- se existe PowerShell compatível;
+- se o Git está instalado e acessível pelo `PATH`;
+- se o comando `code` está disponível;
+- se o diretório `Cloud-Labs` existe;
+- se o script está dentro de um repositório Git;
+- se o `origin` aponta para o repositório esperado;
+- se os principais arquivos e diretórios existem;
+- se existem alterações locais ainda não registradas.
+
+Um aviso sobre alterações no Git não causa reprovação. Isso é normal enquanto você estiver desenvolvendo o laboratório.
+
 
 
 ---
