@@ -325,6 +325,10 @@ Os dados devem estar atuais e corresponder ao responsável legítimo pela conta.
 > [!WARNING]
 > Não faça capturas de tela abertas dessa seção. Ela pode exibir dados pessoais suficientes para comprometer a privacidade ou auxiliar tentativas de recuperação indevida da conta.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_05.jpg)
+
+
 ---
 
 # Etapa 6 — Configurar os contatos alternativos
