@@ -4,7 +4,7 @@
 
 Configurar os controles básicos de segurança, recuperação de acesso e acompanhamento de custos de uma conta AWS antes da criação de recursos em nuvem.
 
-Ao final do laboratório, a conta deverá possuir autenticação multifator no usuário root, informações de contato revisadas, alertas de uso do AWS Free Tier habilitados e um orçamento mensal configurado.
+Ao final do laboratório a conta deverá possuir autenticação multifator no usuário root, informações de contato revisadas, alertas de uso do AWS Free Tier habilitados e um orçamento mensal configurado.
 
 ---
 
