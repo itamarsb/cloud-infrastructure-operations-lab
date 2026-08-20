@@ -467,6 +467,10 @@ Exemplo didático:
 8. Mantenha o orçamento abrangendo todos os serviços da conta.
 9. Prossiga para a configuração das notificações.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_09.jpg)
+
+
 ---
 
 # Etapa 11 — Configurar notificações do orçamento
