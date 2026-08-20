@@ -544,54 +544,9 @@ Confirme os seguintes controles:
 | Alertas do orçamento | Configurados |
 | Região de referência | `sa-east-1` selecionada para os próximos labs |
 
----
-
-## Validação
-
-Marque cada item depois de confirmar o resultado:
-
-- [ ] acessei a conta como usuário root;
-- [ ] confirmei que não existem access keys root ativas;
-- [ ] cadastrei e testei o MFA do usuário root;
-- [ ] revisei as informações principais da conta;
-- [ ] configurei os contatos alternativos de Billing, Operations e Security;
-- [ ] identifiquei a diferença entre configurações globais e recursos regionais;
-- [ ] habilitei os alertas do AWS Free Tier;
-- [ ] criei um orçamento mensal;
-- [ ] configurei alertas de custo real e previsto;
-- [ ] confirmei que o e-mail de notificação está acessível.
 
 ---
 
-## Evidências sugeridas
-
-Registre apenas evidências que não exponham dados sensíveis.
-
-Sugestões seguras:
-
-1. seção de MFA mostrando apenas que um dispositivo está atribuído, com identificadores ocultados;
-2. seção de access keys indicando ausência de chaves root;
-3. tela de preferências mostrando que os alertas do AWS Free Tier estão habilitados, com o e-mail ocultado;
-4. lista de budgets mostrando nome, valor e status, ocultando Account ID e informações financeiras desnecessárias;
-5. seletor de Região mostrando `South America (São Paulo)`.
-
-Não publique:
-
-- QR Code ou segredo MFA;
-- códigos temporários;
-- senha;
-- Account ID;
-- e-mail completo;
-- telefone;
-- endereço;
-- dados do cartão;
-- números de fatura;
-- chaves de acesso;
-- códigos de recuperação.
-
-Uma forma simples de anonimizar informações é cobrir completamente os dados antes de enviar a imagem ao repositório.
-
----
 
 ## Troubleshooting
 
@@ -741,17 +696,15 @@ Esses controles deverão permanecer ativos durante todo o projeto.
 
 ## Checklist de conclusão
 
-- [ ] Li o objetivo e compreendi o cenário.
-- [ ] Confirmei que não existem chaves de acesso root ativas.
-- [ ] Protegi o usuário root com MFA.
-- [ ] Testei o login utilizando MFA.
-- [ ] Revisei as informações principais da conta.
-- [ ] Configurei os contatos alternativos.
-- [ ] Habilitei alertas do AWS Free Tier.
-- [ ] Criei um orçamento mensal.
-- [ ] Configurei notificações de custo real e previsto.
-- [ ] Registrei evidências sem expor dados sensíveis.
-- [ ] Revisei as lições aprendidas.
+- [X] Li o objetivo e compreendi o cenário.
+- [X] Confirmei que não existem chaves de acesso root ativas.
+- [X] Protegi o usuário root com MFA.
+- [X] Testei o login utilizando MFA.
+- [X] Revisei as informações principais da conta.
+- [X] Configurei os contatos alternativos.
+- [X] Habilitei alertas do AWS Free Tier.
+- [X] Criei um orçamento mensal.
+- [X] Configurei notificações de custo real e previsto.
 
 ---
 
