@@ -508,6 +508,10 @@ O orçamento deverá aparecer na lista com:
 > [!WARNING]
 > Um AWS Budget não representa um teto rígido. Recursos continuam funcionando depois que o limite é atingido, a menos que outras ações tenham sido configuradas.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_10.jpg)
+
+
 ---
 
 # Etapa 12 — Confirmar o recebimento dos alertas
