@@ -107,7 +107,7 @@ flowchart TB
     subgraph CONFIG["2. Configuração"]
         SSO["Executar aws configure sso"]
         PROFILE["Criar perfil nomeado<br/>cloud-operations-lab"]
-        DEFAULTS["Definir Região sa-east-1<br/>e saída json"]
+        DEFAULTS["Definir Região us-east-1<br/>e saída json"]
     end
 
     subgraph AUTH["3. Autenticação"]
