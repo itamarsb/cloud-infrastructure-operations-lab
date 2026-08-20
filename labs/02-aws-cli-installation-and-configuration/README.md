@@ -4,7 +4,7 @@
 
 Instalar a AWS Command Line Interface versão 2 no Windows 11, configurar um perfil nomeado com autenticação temporária pelo AWS IAM Identity Center e validar, com segurança, a identidade, a Região e o funcionamento da comunicação entre a estação de trabalho e a AWS.
 
-Ao final do laboratório, a AWS CLI deverá estar disponível no PowerShell e no terminal integrado do Visual Studio Code, utilizando o perfil `cloud-operations-lab` e a Região `sa-east-1`, sem credenciais do usuário root e sem chaves de acesso de longa duração armazenadas no repositório.
+Ao final do laboratório, a AWS CLI deverá estar disponível no PowerShell e no terminal integrado do Visual Studio Code, utilizando o perfil `cloud-operations-lab` e a Região `us-east-1`, sem credenciais do usuário root e sem chaves de acesso de longa duração armazenadas no repositório.
 
 ---
 
@@ -333,7 +333,7 @@ SSO registration scopes [sso:account:access]:
 Pressione `Enter` para aceitar o valor exibido entre colchetes.
 
 > [!IMPORTANT]
-> A SSO Region não é necessariamente a Região onde os recursos do laboratório serão criados. Ela identifica onde o IAM Identity Center está configurado. A Região padrão dos recursos será definida posteriormente como `sa-east-1`.
+> A SSO Region não é necessariamente a Região onde os recursos do laboratório serão criados. Ela identifica onde o IAM Identity Center está configurado. A Região padrão dos recursos será definida posteriormente como `us-east-1`.
 
 ---
 
@@ -437,7 +437,7 @@ aws configure list --profile cloud-operations-lab
 
 ### Resultado esperado
 
-A saída deverá indicar o perfil, a Região `sa-east-1` e a origem dos valores de configuração.
+A saída deverá indicar o perfil, a Região `us-east-1` e a origem dos valores de configuração.
 
 Para confirmar apenas a Região:
 
@@ -448,7 +448,7 @@ aws configure get region --profile cloud-operations-lab
 Resultado esperado:
 
 ```text
-sa-east-1
+us-east-1
 ```
 
 > [!NOTE]
@@ -516,16 +516,16 @@ Execute um comando somente de consulta:
 
 ```powershell
 aws ec2 describe-regions `
-  --region sa-east-1 `
+  --region us-east-1 `
   --profile cloud-operations-lab `
-  --query "Regions[?RegionName=='sa-east-1'].RegionName" `
+  --query "Regions[?RegionName=='us-east-1'].RegionName" `
   --output text
 ```
 
 ### Resultado esperado
 
 ```text
-sa-east-1
+us-east-1
 ```
 
 Esse comando não cria recursos. Ele confirma que a identidade possui comunicação com a API e consegue consultar a Região de referência.
@@ -612,7 +612,7 @@ Confirme os resultados do laboratório:
 | Autenticação | AWS IAM Identity Center |
 | Identidade | Usuário individual, nunca root |
 | Perfil | `cloud-operations-lab` |
-| Região padrão | `sa-east-1` |
+| Região padrão | `us-east-1` |
 | Formato de saída | `json` |
 | Login SSO | Concluído com sucesso |
 | AWS STS | Identidade retornada e conferida |
@@ -786,7 +786,7 @@ aws configure list --profile cloud-operations-lab
 Remova somente variáveis que você reconhece e que não são necessárias. Para evitar ambiguidade, informe explicitamente:
 
 ```powershell
---profile cloud-operations-lab --region sa-east-1
+--profile cloud-operations-lab --region us-east-1
 ```
 
 Não publique a saída de variáveis de ambiente se ela contiver credenciais.
@@ -802,7 +802,7 @@ Antes de adicionar imagens ao repositório, revise cada captura.
 - o comando executado;
 - a indicação `aws-cli/2`;
 - o nome didático do perfil;
-- a Região `sa-east-1`;
+- a Região `us-east-1`;
 - a confirmação de login concluído;
 - saídas com identificadores devidamente mascarados.
 
@@ -900,7 +900,7 @@ Remove-Item $AwsCliInstaller -ErrorAction SilentlyContinue
 - [ ] Validei o caminho do executável.
 - [ ] Configurei autenticação pelo IAM Identity Center.
 - [ ] Criei o perfil `cloud-operations-lab`.
-- [ ] Configurei a Região `sa-east-1`.
+- [ ] Configurei a Região `us-east-1`.
 - [ ] Configurei o formato de saída `json`.
 - [ ] Concluí o login SSO.
 - [ ] Validei a identidade com AWS STS.
