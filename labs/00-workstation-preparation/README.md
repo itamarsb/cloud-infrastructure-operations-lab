@@ -865,7 +865,7 @@ A estação está preparada para continuar a trilha.
 
 ---
 
-## Scripts
+## Scripts dos arquivos `.ps1`
 
 Esses arquivos são scripts do PowerShell, identificados pela extensão .ps1. Eles permitem reunir vários comandos em um procedimento automatizado, repetível e documentado.
 
