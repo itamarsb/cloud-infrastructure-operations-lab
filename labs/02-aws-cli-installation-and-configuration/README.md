@@ -380,7 +380,7 @@ O terminal deverá confirmar a conta e a função selecionadas antes de solicita
 Quando solicitado, informe a Região padrão dos recursos:
 
 ```text
-CLI default client Region [None]: sa-east-1
+CLI default client Region [None]: us-east-1
 ```
 
 Defina JSON como formato de saída:
