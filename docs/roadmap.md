@@ -126,8 +126,8 @@ flowchart TB
 | Status | Laboratório | Competências principais | Classificação |
 |:---:|---|---|:---:|
 | ✅ | **Lab 00 — Preparação da estação de trabalho** | Git, VS Code, terminal e organização local | ⭐ |
-| 🚧 | **Lab 01 — Configuração segura da conta AWS** | MFA, usuário administrativo e segurança da conta | ⭐ |
-| ⬜ | **Lab 02 — Instalação e configuração da AWS CLI** | AWS CLI, profiles e validação de credenciais | ⭐ |
+| ✅ | **Lab 01 — Configuração segura da conta AWS** | MFA, usuário administrativo e segurança da conta | ⭐ |
+| 🚧 | **Lab 02 — Instalação e configuração da AWS CLI** | AWS CLI, profiles e validação de credenciais | ⭐ |
 | ⬜ | **Lab 03 — Instalação das ferramentas de infraestrutura** | Terraform, Git e Session Manager Plugin | ⭐ |
 
 ## Resultado esperado
