@@ -210,16 +210,7 @@ O usuário root é a identidade criada junto com a conta AWS. Ele possui acesso 
 
 Após o login, confirme que o menu da conta aparece no canto superior direito do console.
 
-### Evidência sugerida
 
-Registre somente uma captura parcial do console, ocultando:
-
-- nome completo;
-- e-mail;
-- Account ID;
-- telefone;
-- endereço;
-- qualquer informação financeira.
 
 ---
 
