@@ -250,6 +250,9 @@ A autenticação multifator adiciona uma segunda verificação ao login. Mesmo q
 root-mfa-primary
 ```
 
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_03.jpg)
+
+
 4. Selecione **Authenticator app**.
 5. Escolha **Next**.
 6. Abra o aplicativo autenticador no telefone.
