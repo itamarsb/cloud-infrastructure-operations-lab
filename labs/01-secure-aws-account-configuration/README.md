@@ -428,6 +428,10 @@ A preferência de alertas do AWS Free Tier deverá permanecer habilitada e assoc
 > [!IMPORTANT]
 > Alertas não interrompem recursos e não substituem a revisão periódica da página de custos.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_07.jpg)
+
+
 ---
 
 # Etapa 10 — Criar um orçamento mensal de custos
