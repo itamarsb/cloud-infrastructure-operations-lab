@@ -862,6 +862,46 @@ A estação está preparada para continuar a trilha.
 ![LAB00](images/LAB00_Clipboard_08-03-2026_19.jpg)
 
 
+
+---
+
+## Scripts
+
+Esses arquivos são scripts do PowerShell, identificados pela extensão .ps1. Eles permitem reunir vários comandos em um procedimento automatizado, repetível e documentado.
+
+No nosso caso, os scripts serão exclusivamente de validação:
+
+- não instalarão programas;
+- não modificarão configurações;
+- não criarão recursos AWS;
+- não excluirão arquivos;
+- não farão login automaticamente;
+- não exibirão Account ID, ARN ou credenciais;
+- retornarão um resumo com sucesso, aviso ou falha.
+
+
+### Como funcionam os resultados
+
+Os scripts utilizarão três estados:
+
+```text
+[OK]     Verificação concluída com sucesso
+[AVISO]  Situação que merece atenção, mas não impede necessariamente o laboratório
+[FALHA]  Requisito obrigatório ausente ou incorreto
+```
+
+Ao final, eles também retornarão um código:
+
+| Código | Significado                                        |
+| -----: | -------------------------------------------------- |
+|    `0` | Todas as verificações obrigatórias foram aprovadas |
+|    `1` | Pelo menos uma verificação obrigatória falhou      |
+
+Esses códigos são úteis posteriormente em automações e pipelines.
+
+
+
+
 ---
 
 ## Próximo laboratório
