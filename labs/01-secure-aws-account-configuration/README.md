@@ -273,6 +273,10 @@ A AWS permite cadastrar mais de um dispositivo MFA compatível. Em uma conta rea
 
 Essa configuração adicional é opcional neste laboratório.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_04.jpg)
+
+
 ---
 
 # Etapa 4 — Testar o login com MFA
