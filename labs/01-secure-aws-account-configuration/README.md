@@ -404,6 +404,10 @@ Billing and Cost Management
 > [!NOTE]
 > A primeira abertura de algumas páginas de custos pode exigir ativação ou levar algum tempo para exibir dados. Isso não impede a criação do orçamento.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_06.jpg)
+
+
 ---
 
 # Etapa 9 — Habilitar alertas de uso do AWS Free Tier
