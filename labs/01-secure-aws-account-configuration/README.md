@@ -232,6 +232,10 @@ A seção deve indicar que nenhuma access key root está ativa.
 > [!WARNING]
 > Caso exista uma chave root, não publique sua identificação. Revise se ela é realmente necessária e remova-a quando não houver dependência legítima. Os próximos laboratórios não utilizarão credenciais root.
 
+
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_02.jpg)
+
+
 ---
 
 # Etapa 3 — Habilitar MFA para o usuário root
