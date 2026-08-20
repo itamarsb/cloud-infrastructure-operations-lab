@@ -939,6 +939,66 @@ Ao concluir este laboratório, você praticou:
 
 ---
 
+## Scripts dos arquivos `.ps1`
+
+Esses arquivos são scripts do PowerShell, identificados pela extensão .ps1. Eles permitem reunir vários comandos em um procedimento automatizado, repetível e documentado.
+
+No nosso caso, os scripts serão exclusivamente de validação:
+
+- não instalarão programas;
+- não modificarão configurações;
+- não criarão recursos AWS;
+- não excluirão arquivos;
+- não farão login automaticamente;
+- não exibirão Account ID, ARN ou credenciais;
+- retornarão um resumo com sucesso, aviso ou falha.
+
+
+### Como funcionam os resultados
+
+Os scripts utilizarão três estados:
+
+```text
+[OK]     Verificação concluída com sucesso
+[AVISO]  Situação que merece atenção, mas não impede necessariamente o laboratório
+[FALHA]  Requisito obrigatório ausente ou incorreto
+```
+
+Ao final, eles também retornarão um código:
+
+| Código | Significado                                        |
+| :-----: | -------------------------------------------------- |
+|    `0` | Todas as verificações obrigatórias foram aprovadas |
+|    `1` | Pelo menos uma verificação obrigatória falhou      |
+
+Esses códigos são úteis posteriormente em automações e pipelines.
+
+
+### O que o script do Lab 02 `validate-aws-cli.ps1` verifica
+
+Ele valida:
+
+- se o comando `aws` está instalado e acessível pelo `PATH`;
+- se a instalação encontrada corresponde à AWS CLI versão 2;
+- qual executável da AWS CLI está sendo utilizado;
+- se o perfil `cloud-operations-lab` está configurado;
+- se a Região padrão do perfil corresponde a `us-east-1`;
+- se a configuração efetiva do perfil pode ser consultada;
+- se existe uma sessão AWS válida;
+- se a identidade pode ser confirmada pelo AWS STS;
+- se a identidade autenticada não corresponde ao usuário root;
+- se o acesso utiliza uma sessão temporária de uma `assumed-role`;
+- se uma consulta somente leitura pode ser executada na Região `us-east-1`;
+- se os dados sensíveis da identidade permanecem ocultos no relatório.
+
+O script não instala programas, não realiza login automaticamente, não altera configurações e não cria, modifica ou exclui recursos AWS.
+
+Uma falha na consulta `ec2:DescribeRegions` gera apenas um aviso quando a identidade já foi validada pelo AWS STS. Isso pode acontecer quando o permission set não autoriza essa consulta e não significa, necessariamente, que a autenticação esteja incorreta.
+
+
+
+---
+
 ## Próximo laboratório
 
 Continue para:
