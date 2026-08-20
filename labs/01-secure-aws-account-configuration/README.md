@@ -211,7 +211,7 @@ O usuário root é a identidade criada junto com a conta AWS. Ele possui acesso 
 Após o login, confirme que o menu da conta aparece no canto superior direito do console.
 
 
-![LAB01_DevOps_Operations](01-secure-aws-account-configuration/images/LAB01_DevOps_Operations_Clipboard_08-20-2026_01.jpg)
+![LAB01_DevOps_Operations](images/LAB01_DevOps_Operations_Clipboard_08-20-2026_01.jpg)
 
 
 ---
