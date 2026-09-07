@@ -63,7 +63,7 @@ Antes de iniciar, verifique se você possui:
 ## Ferramentas utilizadas
 
 | Ferramenta | Finalidade |
-|---|---|
+|:---:|---|
 | **PowerShell** | Execução de comandos e gerenciamento dos arquivos locais |
 | **Git** | Clonagem e versionamento do repositório |
 | **Visual Studio Code** | Edição e visualização dos arquivos do projeto |
