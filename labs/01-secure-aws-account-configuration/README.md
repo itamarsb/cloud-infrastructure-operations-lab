@@ -19,7 +19,7 @@ Esse tipo de preparação deve ser realizado antes do uso cotidiano da conta.
 ## Informações rápidas
 
 | Informação | Descrição |
-|---|---|
+|:---:|---|
 | **Nível** | Básico |
 | **Tempo estimado** | 30–45 minutos |
 | **Custo estimado** | Sem custo esperado para as configurações realizadas neste laboratório |
