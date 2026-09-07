@@ -64,7 +64,7 @@ Antes de iniciar, verifique se você possui:
 ## Ferramentas utilizadas
 
 | Ferramenta | Finalidade |
-|---|---|
+|:---:|---|
 | **AWS Management Console** | Gerenciar as configurações da conta |
 | **Aplicativo autenticador** | Gerar os códigos temporários de MFA |
 | **AWS Billing and Cost Management** | Configurar alertas e acompanhar custos |
