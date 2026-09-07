@@ -792,3 +792,232 @@ Remova somente variáveis que você reconhece e que não são necessárias. Para
 Não publique a saída de variáveis de ambiente se ela contiver credenciais.
 
 ---
+
+## Segurança das evidências
+
+Antes de adicionar imagens ao repositório, revise cada captura.
+
+### Pode aparecer
+
+- o comando executado;
+- a indicação `aws-cli/2`;
+- o nome didático do perfil;
+- a Região `us-east-1`;
+- a confirmação de login concluído;
+- saídas com identificadores devidamente mascarados.
+
+### Deve ser ocultado
+
+- nome de usuário local do Windows, quando desnecessário;
+- caminhos que revelem dados pessoais;
+- SSO Start URL e Issuer URL;
+- Account ID;
+- UserId e ARN completos;
+- códigos de autorização;
+- tokens e credenciais temporárias;
+- access key e secret access key;
+- e-mail, telefone e QR Codes de MFA.
+
+> [!CAUTION]
+> Se uma credencial for publicada, apagar apenas a imagem ou o commit não é suficiente. Revogue ou invalide imediatamente a credencial e revise o histórico do repositório.
+
+---
+
+## Evidências recomendadas
+
+Utilize nomes consistentes na pasta `images/`:
+
+| Evidência | Conteúdo sugerido | Nome sugerido |
+|---|---|---|
+| 01 | Verificação antes da instalação | `LAB02_Cloud_Operations_Clipboard_01.jpg` |
+| 02 | Instalador concluído | `LAB02_Cloud_Operations_Clipboard_02.jpg` |
+| 03 Tray | `aws --version` e localização do executável | `LAB02_Cloud_Operations_Clipboard_03.jpg` |
+| 04 | Início do assistente SSO, com URL ocultada | `LAB02_Cloud_Operations_Clipboard_04.jpg` |
+| 05 | Autorização concluída no navegador, sem código | `LAB02_Cloud_Operations_Clipboard_05.jpg` |
+| 06 | Perfil criado | `LAB02_Cloud_Operations_Clipboard_06.jpg` |
+| 07 | Lista de perfis | `LAB02_Cloud_Operations_Clipboard_07.jpg` |
+| 08 | Região e configuração efetiva | `LAB02_Cloud_Operations_Clipboard_08.jpg` |
+| 09 | `get-caller-identity` com identificadores ocultados | `LAB02_Cloud_Operationszuela_Clipboard_09.jpg` |
+| 10 | Validação final no terminal do VS Code | `LAB02_Cloud_Operations_Clipboard_10.png` |
+
+### Evidência da validação final
+
+A execução do script de validação confirmou a instalação da AWS CLI v2, o perfil nomeado, a Região padrão, a autenticação temporária pelo AWS IAM Identity Center e o acesso somente leitura aos serviços AWS.
+
+![Validação final da AWS CLI](images/LAB02_Cloud_Operations_Clipboard_10.png)
+
+**Resultado registrado:**
+
+- 9 aprovações;
+- 0 avisos;
+- 0 falhas;
+- identidade confirmada pelo AWS STS;
+- sessão temporária de role confirmada;
+- consulta somente leitura executada em `us-east-1`;
+- detalhes de credenciais omitidos pelo script.
+
+As imagens somente deverão ser referenciadas neste README depois de produzidas, revisadas e adicionadas à pasta.
+
+---
+
+## Situação prática de trabalho
+
+> Em uma equipe de Cloud Operations, perfis nomeados permitem separar contas, funções e ambientes. Antes de uma mudança operacional, o analista pode executar `aws sts get-caller-identity` e confirmar a Região para evitar ações no contexto errado. A autenticação por IAM Identity Center também reduz a dependência de credenciais estáticas e centraliza a atribuição de acesso.
+
+Esse procedimento aparece em atividades como:
+
+- preparação de notebooks corporativos;
+- onboarding de profissionais de infraestrutura;
+- acesso a contas de desenvolvimento, homologação e produção;
+- validação de permissões;
+- execução de runbooks;
+- automação com scripts;
+- troubleshooting de falhas de autenticação e autorização;
+- preparação do ambiente para Terraform.
+
+### Pergunta de entrevista relacionada
+
+**Como você confirma qual identidade a AWS CLI está utilizando antes de executar uma mudança?**
+
+Resposta esperada:
+
+> Eu utilizo um perfil nomeado e executo `aws sts get-caller-identity --profile <perfil>`. Confiro o Account ID e o ARN retornados e também valido a Região efetiva. Para acesso humano, prefiro sessões temporárias pelo IAM Identity Center em vez de chaves permanentes.
+
+---
+
+## Cleanup
+
+Este laboratório não cria recursos AWS e não gera custos. Nenhuma ação de cleanup é obrigatória.
+
+Ao encerrar uma sessão em computador compartilhado ou quando houver necessidade de invalidar o cache SSO local, execute:
+
+```powershell
+aws sso logout
+```
+
+O logout encerra as sessões SSO armazenadas em cache para os perfis configurados na estação. Em um computador pessoal protegido, também é possível permitir que a sessão expire normalmente.
+
+O instalador temporário pode ser removido:
+
+```powershell
+Remove-Item $AwsCliInstaller -ErrorAction SilentlyContinue
+```
+
+> [!WARNING]
+> Não exclua a pasta `%UserProfile%\.aws` como cleanup rotineiro. Ela pode conter configurações compartilhadas pela AWS CLI, SDKs e outras ferramentas.
+
+---
+
+## Checklist de conclusão
+
+- [x] Li o objetivo e compreendi o cenário.
+- [x] Confirmei que não estou utilizando credenciais root.
+- [x] Instalei a AWS CLI versão 2.
+- [x] Validei o caminho do executável.
+- [x] Configurei autenticação pelo IAM Identity Center.
+- [x] Criei o perfil `cloud-operations-lab`.
+- [x] Configurei a Região `us-east-1`.
+- [x] Configurei o formato de saída `json`.
+- [x] Concluí o login SSO.
+- [x] Validei a identidade com AWS STS.
+- [x] Testei um comando de consulta.
+- [x] Repeti a validação no terminal do VS Code.
+- [x] Revisei as capturas e ocultei identificadores sensíveis.
+- [x] Confirmei que nenhum segredo foi incluído no repositório.
+- [x] Revisei as lições aprendidas.
+
+---
+
+## Lições aprendidas
+
+Ao concluir este laboratório, você praticou:
+
+- instalação e verificação da AWS CLI v2;
+- autenticação federada com sessões temporárias;
+- configuração de sessão SSO e perfil nomeado;
+- distinção entre Região do IAM Identity Center e Região dos recursos;
+- validação de identidade com AWS STS;
+- diagnóstico inicial de autenticação, autorização e `PATH`;
+- seleção explícita de conta, perfil e Região;
+- proteção de dados sensíveis em documentação pública;
+- preparação da estação para automação e infraestrutura como código.
+
+---
+
+## Referências oficiais
+
+- [Instalar ou atualizar a AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+- [Configurar a AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html)
+- [Configurar autenticação com IAM Identity Center](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html)
+- [Arquivos de configuração e credenciais](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html)
+- [AWS STS `get-caller-identity`](https://docs.aws.amazon.com/cli/latest/reference/sts/get-caller-identity.html)
+- [Migração da AWS CLI v1 para v2](https://docs.aws.amazon.com/cli/latest/userguide/cliv2-migration.html)
+
+---
+
+## Scripts dos arquivos `.ps1`
+
+Esses arquivos são scripts do PowerShell, identificados pela extensão `.ps1`. Eles permitem reunir vários comandos em um procedimento automatizado, repetível e documentado.
+
+No nosso caso, os scripts serão exclusivamente de validação:
+
+- não instalarão programas;
+- não modificarão configurações;
+- não criarão recursos AWS;
+- não excluirão arquivos;
+- não farão login automaticamente;
+- não exibirão Account ID, ARN ou credenciais;
+- retornarão um resumo com sucesso, aviso ou falha.
+
+### Como funcionam os resultados
+
+Os scripts utilizarão três estados:
+
+```text
+[OK]     Verificação concluída com sucesso
+[AVISO]  Situação que merece atenção, mas não impede necessariamente o laboratório
+[FALHA]  Requisito obrigatório ausente ou incorreto
+```
+
+Ao final, eles também retornarão um código:
+
+| Código | Significado |
+|:---:|---|
+| `0` | Todas as verificações obrigatórias foram aprovadas |
+| `1` | Pelo menos uma verificação obrigatória falhou |
+
+Esses códigos são úteis posteriormente em automações e pipelines.
+
+### O que o script do Lab 02 `validate-aws-cli.ps1` verifica
+
+Ele valida:
+
+- se o comando `aws` está instalado e acessível pelo `PATH`;
+- se a instalação encontrada corresponde à AWS CLI versão 2;
+- qual executável da AWS CLI está sendo utilizado;
+- se o perfil `cloud-operations-lab` está configurado;
+- se a Região padrão do perfil corresponde a `us-east-1`;
+- se a configuração efetiva do perfil pode ser consultada;
+- se existe uma sessão AWS válida;
+- se a identidade pode ser confirmada pelo AWS STS;
+- se a identidade autenticada não corresponde ao usuário root;
+- se o acesso utiliza uma sessão temporária de uma `assumed-role`;
+- se uma consulta somente leitura pode ser executada na Região `us-east-1`;
+- se os dados sensíveis da identidade permanecem ocultos no relatório.
+
+O script não instala programas, não realiza login automaticamente, não altera configurações e não cria, modifica ou exclui recursos AWS.
+
+> [!IMPORTANT]
+> Uma falha na consulta `ec2:DescribeRegions` gera apenas um aviso quando a identidade já foi validada pelo AWS STS. Isso pode acontecer quando o permission set não autoriza essa consulta e não significa, necessariamente, que a autenticação esteja incorreta.
+
+---
+
+## Próximo laboratório
+
+Continue para:
+
+```text
+Lab 03 — Instalação das ferramentas de infraestrutura
+```
+
+No próximo laboratório serão instalados e validados Terraform, Git e AWS Systems Manager Session Manager Plugin.
