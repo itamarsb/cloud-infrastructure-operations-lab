@@ -470,7 +470,7 @@ Caso uma mensagem de confiança seja apresentada, confirme apenas se o diretóri
 No painel **Explorer** do Visual Studio Code, localize os principais diretórios:
 
 | Diretório | Finalidade |
-|---|---|
+|:---:|---|
 | `docs/` | Documentação geral e roadmap |
 | `labs/` | Laboratórios práticos |
 | `terraform/` | Infraestrutura como Código |
