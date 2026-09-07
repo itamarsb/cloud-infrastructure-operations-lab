@@ -19,7 +19,7 @@ Antes de trabalhar com recursos da AWS, é necessário garantir que o ambiente l
 ## Informações rápidas
 
 | Informação | Descrição |
-|---|---|
+|:---:|---|
 | **Nível** | Básico |
 | **Tempo estimado** | 20–30 minutos |
 | **Sistema operacional** | Windows 10 ou Windows 11 |
