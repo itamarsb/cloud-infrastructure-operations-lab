@@ -19,7 +19,7 @@ Em ambientes profissionais, essa preparação reduz erros de contexto, evita o u
 ## Informações rápidas
 
 | Informação | Descrição |
-|---|---|
+|:---:|---|
 | **Nível** | Básico |
 | **Tempo estimado** | 35–50 minutos |
 | **Custo estimado** | Sem custo esperado |
