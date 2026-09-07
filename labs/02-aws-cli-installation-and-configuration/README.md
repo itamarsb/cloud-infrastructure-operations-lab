@@ -606,7 +606,7 @@ Durante os laboratórios iniciais, prefira informar `--profile` explicitamente. 
 Confirme os resultados do laboratório:
 
 | Controle | Estado esperado |
-|---|---|
+|:---:|:---:|
 | AWS CLI | Versão principal 2 instalada |
 | Executável | Localizado no diretório oficial da AWS CLI v2 |
 | Autenticação | AWS IAM Identity Center |
