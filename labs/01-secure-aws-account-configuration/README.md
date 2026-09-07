@@ -480,7 +480,7 @@ Configure alertas que permitam agir antes de uma cobrança maior.
 Uma configuração inicial recomendada é:
 
 | Alerta | Tipo | Limite |
-|---|---|---:|
+|:---:|:---:|:---:|
 | **Primeiro aviso** | Custo real | 50% do orçamento |
 | **Segundo aviso** | Custo real | 80% do orçamento |
 | **Previsão de excesso** | Custo previsto | 100% do orçamento |
