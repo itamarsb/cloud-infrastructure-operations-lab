@@ -793,53 +793,6 @@ Não publique a saída de variáveis de ambiente se ela contiver credenciais.
 
 ---
 
-## Segurança das evidências
-
-Antes de adicionar imagens ao repositório, revise cada captura.
-
-### Pode aparecer
-
-- o comando executado;
-- a indicação `aws-cli/2`;
-- o nome didático do perfil;
-- a Região `us-east-1`;
-- a confirmação de login concluído;
-- saídas com identificadores devidamente mascarados.
-
-### Deve ser ocultado
-
-- nome de usuário local do Windows, quando desnecessário;
-- caminhos que revelem dados pessoais;
-- SSO Start URL e Issuer URL;
-- Account ID;
-- UserId e ARN completos;
-- códigos de autorização;
-- tokens e credenciais temporárias;
-- access key e secret access key;
-- e-mail, telefone e QR Codes de MFA.
-
-> [!CAUTION]
-> Se uma credencial for publicada, apagar apenas a imagem ou o commit não é suficiente. Revogue ou invalide imediatamente a credencial e revise o histórico do repositório.
-
----
-
-## Evidências recomendadas
-
-Utilize nomes consistentes na pasta `images/`:
-
-| Evidência | Conteúdo sugerido | Nome sugerido |
-|:---:|---|---|
-| 01 | Verificação antes da instalação | `LAB02_Cloud_Operations_Clipboard_01.jpg` |
-| 02 | Instalador concluído | `LAB02_Cloud_Operations_Clipboard_02.jpg` |
-| 03 Tray | `aws --version` e localização do executável | `LAB02_Cloud_Operations_Clipboard_03.jpg` |
-| 04 | Início do assistente SSO, com URL ocultada | `LAB02_Cloud_Operations_Clipboard_04.jpg` |
-| 05 | Autorização concluída no navegador, sem código | `LAB02_Cloud_Operations_Clipboard_05.jpg` |
-| 06 | Perfil criado | `LAB02_Cloud_Operations_Clipboard_06.jpg` |
-| 07 | Lista de perfis | `LAB02_Cloud_Operations_Clipboard_07.jpg` |
-| 08 | Região e configuração efetiva | `LAB02_Cloud_Operations_Clipboard_08.jpg` |
-| 09 | `get-caller-identity` com identificadores ocultados | `LAB02_Cloud_Operationszuela_Clipboard_09.jpg` |
-| 10 | Validação final no terminal do VS Code | `LAB02_Cloud_Operations_Clipboard_10.png` |
-
 ### Evidência da validação final
 
 A execução do script de validação confirmou a instalação da AWS CLI v2, o perfil nomeado, a Região padrão, a autenticação temporária pelo AWS IAM Identity Center e o acesso somente leitura aos serviços AWS.
@@ -857,31 +810,6 @@ A execução do script de validação confirmou a instalação da AWS CLI v2, o 
 - detalhes de credenciais omitidos pelo script.
 
 As imagens somente deverão ser referenciadas neste README depois de produzidas, revisadas e adicionadas à pasta.
-
----
-
-## Situação prática de trabalho
-
-> Em uma equipe de Cloud Operations, perfis nomeados permitem separar contas, funções e ambientes. Antes de uma mudança operacional, o analista pode executar `aws sts get-caller-identity` e confirmar a Região para evitar ações no contexto errado. A autenticação por IAM Identity Center também reduz a dependência de credenciais estáticas e centraliza a atribuição de acesso.
-
-Esse procedimento aparece em atividades como:
-
-- preparação de notebooks corporativos;
-- onboarding de profissionais de infraestrutura;
-- acesso a contas de desenvolvimento, homologação e produção;
-- validação de permissões;
-- execução de runbooks;
-- automação com scripts;
-- troubleshooting de falhas de autenticação e autorização;
-- preparação do ambiente para Terraform.
-
-### Pergunta de entrevista relacionada
-
-**Como você confirma qual identidade a AWS CLI está utilizando antes de executar uma mudança?**
-
-Resposta esperada:
-
-> Eu utilizo um perfil nomeado e executo `aws sts get-caller-identity --profile <perfil>`. Confiro o Account ID e o ARN retornados e também valido a Região efetiva. Para acesso humano, prefiro sessões temporárias pelo IAM Identity Center em vez de chaves permanentes.
 
 ---
 
@@ -922,9 +850,7 @@ Remove-Item $AwsCliInstaller -ErrorAction SilentlyContinue
 - [x] Validei a identidade com AWS STS.
 - [x] Testei um comando de consulta.
 - [x] Repeti a validação no terminal do VS Code.
-- [x] Revisei as capturas e ocultei identificadores sensíveis.
 - [x] Confirmei que nenhum segredo foi incluído no repositório.
-- [x] Revisei as lições aprendidas.
 
 ---
 
