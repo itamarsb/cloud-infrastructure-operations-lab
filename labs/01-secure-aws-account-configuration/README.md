@@ -339,7 +339,7 @@ A AWS permite registrar contatos específicos para assuntos de cobrança, opera�
 2. Revise ou configure os seguintes contatos:
 
 | Contato | Finalidade |
-|---|---|
+|:---:|---|
 | **Billing** | Comunicações relacionadas a faturamento e pagamentos |
 | **Operations** | Avisos operacionais e comunicações sobre serviços |
 | **Security** | Alertas e comunicações relacionadas à segurança |
