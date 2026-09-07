@@ -374,3 +374,421 @@ O terminal deverá confirmar a conta e a função selecionadas antes de solicita
 > Sempre confira a conta selecionada. Em um ambiente corporativo, executar um comando no ambiente errado pode causar indisponibilidade, exposição de dados ou custos inesperados.
 
 ---
+
+# Etapa 9 — Definir a Região, o formato de saída e o nome do perfil
+
+Quando solicitado, informe a Região padrão dos recursos:
+
+```text
+CLI default client Region [None]: us-east-1
+```
+
+Defina JSON como formato de saída:
+
+```text
+CLI default output format [None]: json
+```
+
+Informe o nome do perfil:
+
+```text
+CLI profile name [<nome-sugerido>]: cloud-operations-lab
+```
+
+### Resultado esperado
+
+Ao final, a AWS CLI deverá apresentar um exemplo de comando contendo:
+
+```text
+--profile cloud-operations-lab
+```
+
+O uso de um perfil nomeado torna explícito o contexto utilizado e reduz a possibilidade de executar comandos acidentalmente com outra identidade.
+
+---
+
+# Etapa 10 — Listar os perfis configurados
+
+Execute:
+
+```powershell
+aws configure list-profiles
+```
+
+### Resultado esperado
+
+A lista deverá conter:
+
+```text
+cloud-operations-lab
+```
+
+Perfis adicionais podem aparecer caso a estação já tenha sido utilizada com outras contas ou ambientes.
+
+---
+
+# Etapa 11 — Inspecionar a configuração efetiva do perfil
+
+Execute:
+
+```powershell
+aws configure list --profile cloud-operations-lab
+```
+
+### Resultado esperado
+
+A saída deverá indicar o perfil, a Região `us-east-1` e a origem dos valores de configuração.
+
+Para confirmar apenas a Região:
+
+```powershell
+aws configure get region --profile cloud-operations-lab
+```
+
+Resultado esperado:
+
+```text
+us-east-1
+```
+
+> [!NOTE]
+> O perfil SSO é gravado no arquivo `%UserProfile%\.aws\config`. As credenciais temporárias são obtidas após o login e armazenadas em cache local. O arquivo não deve ser copiado para o repositório.
+
+---
+
+# Etapa 12 — Efetuar login com o perfil nomeado
+
+Execute:
+
+```powershell
+aws sso login --profile cloud-operations-lab
+```
+
+Conclua a autenticação no navegador, se solicitada.
+
+### Resultado esperado
+
+O terminal deverá informar que o login foi concluído com sucesso.
+
+> [!IMPORTANT]
+> A sessão possui duração limitada. Quando expirar, execute novamente o mesmo comando. Não tente resolver a expiração criando access keys permanentes.
+
+---
+
+# Etapa 13 — Validar a identidade com AWS STS
+
+Execute:
+
+```powershell
+aws sts get-caller-identity --profile cloud-operations-lab
+```
+
+### Resultado esperado
+
+O comando deverá retornar um documento JSON com a estrutura:
+
+```json
+{
+  "UserId": "VALOR_OCULTADO",
+  "Account": "000000000000",
+  "Arn": "arn:aws:sts::000000000000:assumed-role/ROLE/SESSION"
+}
+```
+
+Valide localmente:
+
+- se `Account` corresponde à conta de laboratório;
+- se `Arn` representa a role associada ao permission set esperado;
+- se a identidade não é o usuário root.
+
+> [!WARNING]
+> O retorno não contém secret access key, mas expõe Account ID, ARN e identificadores internos. Oculte esses valores antes de publicar a captura no GitHub.
+
+### Evidência sugerida
+
+Publique uma captura do comando bem-sucedido com `UserId`, `Account` e partes identificadoras do `Arn` mascarados.
+
+---
+
+# Etapa 14 — Validar o endpoint e a Região configurada
+
+Execute um comando somente de consulta:
+
+```powershell
+aws ec2 describe-regions `
+  --region us-east-1 `
+  --profile cloud-operations-lab `
+  --query "Regions[?RegionName=='us-east-1'].RegionName" `
+  --output text
+```
+
+### Resultado esperado
+
+```text
+us-east-1
+```
+
+Esse comando não cria recursos. Ele confirma que a identidade possui comunicação com a API e consegue consultar a Região de referência.
+
+> [!NOTE]
+> Se o permission set não permitir `ec2:DescribeRegions`, o acesso negado pode estar coerente com a política atribuída. Nesse caso, o sucesso de `sts get-caller-identity` continua validando a autenticação; registre a limitação de permissão em vez de ampliar acesso sem justificativa.
+
+---
+
+# Etapa 15 — Repetir a validação no terminal do Visual Studio Code
+
+1. Abra o Visual Studio Code.
+2. Abra **Terminal > New Terminal**.
+3. Confirme que o perfil do terminal é PowerShell.
+4. Execute:
+
+```powershell
+aws --version
+```
+
+5. Execute:
+
+```powershell
+aws sts get-caller-identity --profile cloud-operations-lab
+```
+
+### Resultado esperado
+
+Os comandos deverão funcionar da mesma forma que na janela externa do PowerShell.
+
+Se o VS Code já estava aberto durante a instalação, feche todas as janelas do editor e abra-o novamente para recarregar o `PATH`.
+
+---
+
+# Etapa 16 — Compreender a seleção explícita do perfil
+
+Neste repositório, os comandos AWS utilizarão preferencialmente:
+
+```powershell
+--profile cloud-operations-lab
+```
+
+Exemplo:
+
+```powershell
+aws sts get-caller-identity --profile cloud-operations-lab
+```
+
+Também é possível definir temporariamente o perfil na sessão atual do PowerShell:
+
+```powershell
+$env:AWS_PROFILE = "cloud-operations-lab"
+```
+
+Depois disso:
+
+```powershell
+aws sts get-caller-identity
+```
+
+Para remover a variável da sessão:
+
+```powershell
+Remove-Item Env:AWS_PROFILE
+```
+
+### Boa prática adotada
+
+Durante os laboratórios iniciais, prefira informar `--profile` explicitamente. Essa prática facilita a leitura das evidências e torna o contexto do comando visível.
+
+> [!IMPORTANT]
+> Parâmetros informados diretamente no comando, como `--profile` e `--region`, podem alterar o contexto utilizado. Antes de executar comandos de criação, alteração ou exclusão, valide identidade e Região.
+
+---
+
+## Validação final
+
+Confirme os resultados do laboratório:
+
+| Controle | Estado esperado |
+|---|---|
+| AWS CLI | Versão principal 2 instalada |
+| Executável | Localizado no diretório oficial da AWS CLI v2 |
+| Autenticação | AWS IAM Identity Center |
+| Identidade | Usuário individual, nunca root |
+| Perfil | `cloud-operations-lab` |
+| Região padrão | `us-east-1` |
+| Formato de saída | `json` |
+| Login SSO | Concluído com sucesso |
+| AWS STS | Identidade retornada e conferida |
+| PowerShell | Comandos validados |
+| Terminal do VS Code | Comandos validados |
+| Credenciais no GitHub | Nenhuma credencial publicada |
+
+---
+
+## Troubleshooting
+
+### Problema: `aws` não é reconhecido após a instalação
+
+**Possível causa:**
+
+O terminal estava aberto antes da instalação ou o diretório da AWS CLI ainda não foi carregado no `PATH`.
+
+**Solução:**
+
+1. feche todas as janelas do PowerShell e do VS Code;
+2. abra um novo PowerShell;
+3. execute `aws --version`;
+4. se necessário, reinicie o Windows;
+5. confirme se existe `C:\Program Files\Amazon\AWSCLIV2\aws.exe`.
+
+---
+
+### Problema: `aws --version` apresenta `aws-cli/1`
+
+**Possível causa:**
+
+A AWS CLI v1 também está instalada e aparece antes da v2 no `PATH`.
+
+**Solução:**
+
+Execute:
+
+```powershell
+Get-Command aws -All
+```
+
+Identifique todas as instalações. Remova ou migre a versão antiga somente depois de verificar se scripts existentes dependem dela. Feche e reabra o terminal após a correção.
+
+---
+
+### Problema: o navegador não abre durante `aws configure sso`
+
+**Possível causa:**
+
+O navegador padrão pode estar bloqueado, o terminal pode não conseguir iniciá-lo ou uma política local pode impedir a abertura automática.
+
+**Solução:**
+
+Copie somente para seu navegador a URL temporária exibida pelo terminal e siga o processo de autorização. Não publique essa URL ou o código apresentado.
+
+---
+
+### Problema: `InvalidRequestException` ou erro relacionado à SSO Start URL
+
+**Possível causa:**
+
+A URL, a Issuer URL ou a Região do IAM Identity Center foi informada incorretamente.
+
+**Solução:**
+
+1. retorne ao AWS Access Portal;
+2. abra as instruções de acesso programático;
+3. confirme a URL e a SSO Region;
+4. execute novamente `aws configure sso`.
+
+---
+
+### Problema: nenhuma conta ou permission set é apresentado
+
+**Possível causa:**
+
+O usuário autenticado não recebeu atribuição para a conta, a atribuição foi removida ou foi utilizado outro usuário no navegador.
+
+**Solução:**
+
+- confirme a identidade utilizada;
+- verifique no portal se a conta aparece para esse usuário;
+- solicite ao administrador a atribuição correta;
+- não crie uma permissão mais ampla apenas para contornar o erro.
+
+---
+
+### Problema: `The SSO session associated with this profile has expired`
+
+**Possível causa:**
+
+A sessão temporária expirou.
+
+**Solução:**
+
+Execute:
+
+```powershell
+aws sso login --profile cloud-operations-lab
+```
+
+Depois, repita o comando original.
+
+---
+
+### Problema: `Unable to locate credentials`
+
+**Possível causa:**
+
+O comando foi executado sem o perfil correto, a configuração SSO está incompleta ou ainda não foi realizado login.
+
+**Solução:**
+
+```powershell
+aws configure list-profiles
+aws sso login --profile cloud-operations-lab
+aws sts get-caller-identity --profile cloud-operations-lab
+```
+
+---
+
+### Problema: `AccessDenied` ao executar um comando
+
+**Possível causa:**
+
+A autenticação funcionou, mas o permission set não autoriza a operação solicitada.
+
+**Solução:**
+
+1. execute `aws sts get-caller-identity --profile cloud-operations-lab`;
+2. confirme a conta e a role;
+3. identifique a ação negada na mensagem;
+4. compare a ação com a necessidade real do laboratório;
+5. solicite a menor permissão necessária, quando justificável.
+
+> [!NOTE]
+> `AccessDenied` é diferente de falha de autenticação. A primeira situação indica que a identidade foi reconhecida, mas não possui autorização suficiente.
+
+---
+
+### Problema: o comando funciona no PowerShell, mas não no VS Code
+
+**Possível causa:**
+
+O VS Code foi iniciado antes da alteração do `PATH` ou está usando outro shell.
+
+**Solução:**
+
+- feche todas as janelas do VS Code;
+- abra novamente o editor;
+- crie um terminal PowerShell;
+- execute `Get-Command aws` e `aws --version`.
+
+---
+
+### Problema: o comando está usando outro perfil ou outra Região
+
+**Possível causa:**
+
+Existem variáveis de ambiente, parâmetros explícitos ou configurações de outro perfil influenciando a execução.
+
+**Solução:**
+
+Inspecione:
+
+```powershell
+Get-ChildItem Env:AWS*
+aws configure list --profile cloud-operations-lab
+```
+
+Remova somente variáveis que você reconhece e que não são necessárias. Para evitar ambiguidade, informe explicitamente:
+
+```powershell
+--profile cloud-operations-lab --region us-east-1
+```
+
+Não publique a saída de variáveis de ambiente se ela contiver credenciais.
+
+---
