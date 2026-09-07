@@ -828,7 +828,7 @@ Antes de adicionar imagens ao repositório, revise cada captura.
 Utilize nomes consistentes na pasta `images/`:
 
 | Evidência | Conteúdo sugerido | Nome sugerido |
-|---|---|---|
+|:---:|---|---|
 | 01 | Verificação antes da instalação | `LAB02_Cloud_Operations_Clipboard_01.jpg` |
 | 02 | Instalador concluído | `LAB02_Cloud_Operations_Clipboard_02.jpg` |
 | 03 Tray | `aws --version` e localização do executável | `LAB02_Cloud_Operations_Clipboard_03.jpg` |
