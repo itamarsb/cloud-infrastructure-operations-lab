@@ -532,7 +532,7 @@ O endereço de e-mail deverá estar apto a receber os alertas configurados.
 Confirme os seguintes controles:
 
 | Controle | Estado esperado |
-|---|---|
+|:---:|:---:|
 | Login root | Protegido por MFA |
 | Access keys root | Nenhuma chave ativa |
 | Contato principal | Atualizado |
