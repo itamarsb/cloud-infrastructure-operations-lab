@@ -80,7 +80,7 @@ Tenha disponíveis, sem publicá-los:
 ## Ferramentas utilizadas
 
 | Ferramenta | Finalidade |
-|---|---|
+|:---:|---|
 | **PowerShell** | Instalar e validar a AWS CLI |
 | **AWS CLI v2** | Executar comandos e acessar serviços AWS |
 | **AWS IAM Identity Center** | Fornecer autenticação individual e temporária |
