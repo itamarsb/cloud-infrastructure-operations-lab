@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Valida a instalação e a configuração da AWS CLI.
 
@@ -179,14 +179,12 @@ catch {
 Write-Section "4. Configuração efetiva"
 
 try {
-    $ConfigurationOutput = aws configure list --profile $ProfileName 2>&1
+    aws configure list --profile $ProfileName *> $null
 
     if ($LASTEXITCODE -eq 0) {
         Write-Success "A configuração efetiva do perfil pôde ser consultada."
-        Write-Host ""
-        $ConfigurationOutput | ForEach-Object {
-            Write-Host "        $_" -ForegroundColor DarkGray
-        }
+        Write-Host "        Detalhes de credenciais omitidos por segurança." `
+             -ForegroundColor DarkGray
     }
     else {
         Write-Failure "Não foi possível consultar a configuração efetiva do perfil."
