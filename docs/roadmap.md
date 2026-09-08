@@ -426,7 +426,7 @@ Como diferencial, o projeto poderá incluir:
 # Relação com as competências profissionais
 
 | Competência encontrada em vagas júnior | Módulos relacionados |
-|---|---|
+|---|:---:|
 | Operação de ambientes AWS | 02, 03 e 09 |
 | Máquinas virtuais | 02 e 03 |
 | Redes | 02 |
@@ -475,7 +475,7 @@ O conteúdo deverá ser direto, evitando textos teóricos extensos que não cont
 No início de cada laboratório deverá existir uma tabela semelhante a esta:
 
 | Informação | Descrição |
-|---|---|
+|:---:|:---:|
 | **Nível** | Básico |
 | **Tempo estimado** | 30–60 minutos |
 | **Custo estimado** | Informado no laboratório |
