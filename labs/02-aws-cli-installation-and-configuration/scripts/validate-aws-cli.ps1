@@ -114,12 +114,12 @@ if (-not (Test-CommandAvailable -CommandName "aws")) {
 }
 
 try {
-    $AwsCommand = Get-Command aws
     $AwsVersion = aws --version 2>&1 | Out-String
     $AwsVersion = $AwsVersion.Trim()
 
     Write-Success "Comando aws localizado."
-    Write-Host "        Executável: $($AwsCommand.Source)" -ForegroundColor DarkGray
+    Write-Host "        Caminho do executável: confirmado e ocultado" `
+        -ForegroundColor DarkGray
     Write-Host "        Versão: $AwsVersion" -ForegroundColor DarkGray
 
     if ($AwsVersion -match "^aws-cli/2\.") {
