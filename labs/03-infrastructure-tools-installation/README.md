@@ -9,7 +9,7 @@ Instalar, atualizar e validar as ferramentas de infraestrutura utilizadas nos pr
 ## Informações rápidas
 
 | Item | Informação |
-|---|---|
+|:---:|:---:|
 | Sistema operacional | Windows 11 |
 | Shell | Windows PowerShell 5.1 |
 | Nível | Básico |
