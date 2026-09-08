@@ -142,7 +142,7 @@ Ao concluir este módulo, o estudante deverá possuir uma estação de trabalho 
 
 | Status | Laboratório | Competências principais | Classificação |
 |:---:|---|---|:---:|
-| ⬜ | **Lab 04 — Navegação e gerenciamento de arquivos no Linux** | Diretórios, arquivos, cópia, movimentação e remoção | ⭐ |
+| 🚧 | **Lab 04 — Navegação e gerenciamento de arquivos no Linux** | Diretórios, arquivos, cópia, movimentação e remoção | ⭐ |
 | ⬜ | **Lab 05 — Usuários, grupos e permissões** | `useradd`, `usermod`, `chmod`, `chown` e `sudo` | ⭐ |
 | ⬜ | **Lab 06 — Processos, serviços e logs** | `ps`, `top`, `systemctl`, `journalctl` e logs | ⭐ |
 | ⬜ | **Lab 07 — Git aplicado à documentação de infraestrutura** | Clone, branch, commit, push, pull e histórico | ⭐ |
