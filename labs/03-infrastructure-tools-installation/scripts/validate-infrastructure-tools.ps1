@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 Valida as ferramentas de infraestrutura utilizadas no Lab 03.
 
