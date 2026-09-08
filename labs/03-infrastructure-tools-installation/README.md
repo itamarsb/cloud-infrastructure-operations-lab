@@ -23,7 +23,7 @@ Instalar, atualizar e validar as ferramentas de infraestrutura utilizadas nos pr
 ## Ferramentas utilizadas
 
 | Ferramenta | Versão validada | Finalidade |
-|---|---:|---|
+|:---:|:---:|---|
 | Git | 2.55.0 | Versionamento do projeto |
 | Visual Studio Code | 1.136.0 | Edição e terminal integrado |
 | Terraform | 1.16.1 | Infraestrutura como código |
