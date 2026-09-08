@@ -130,11 +130,11 @@ else {
     Write-Failure "Este laboratório foi projetado para Windows 10 ou Windows 11."
 }
 
-$PowerShellVersion = $PSVersionTable.PSVersion.ToString()
-
 if ($PSVersionTable.PSVersion.Major -ge 5) {
     Write-Success "PowerShell compatível."
-    Write-Host "        Versão: $PowerShellVersion" -ForegroundColor DarkGray
+    Write-Host (
+        "        Versão: {0}" -f $PSVersionTable.PSVersion.ToString()
+    ) -ForegroundColor DarkGray
 }
 else {
     Write-Failure "A versão do PowerShell é inferior à versão 5."
