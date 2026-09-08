@@ -11,7 +11,7 @@ O laboratório também implementa uma validação automatizada em Bash para veri
 ## Ambiente utilizado
 
 | Componente | Configuração |
-|---|---|
+|:---:|---|
 | Sistema hospedeiro | Windows 11 Pro |
 | Ambiente Linux | Windows Subsystem for Linux 2 |
 | Distribuição | Ubuntu 24.04.4 LTS |
