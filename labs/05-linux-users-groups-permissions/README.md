@@ -323,7 +323,7 @@ sudo chmod 0770 /srv/cloudops-lab05/shared
 O modo `770` representa:
 
 | Classe | Permissões |
-|---|---|
+|:---:|:---:|
 | Proprietário | leitura, escrita e execução |
 | Grupo | leitura, escrita e execução |
 | Outros | nenhuma permissão |
