@@ -144,7 +144,7 @@ uid=0(root) gid=0(root) groups=0(root)
 
 Depois da operação, `id` confirmou que o terminal continuava no contexto da conta original.
 
-![Validação da identidade e do sudo](./images/LAB05_Cloud_Operations_Identity_Sudo_01.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_Identity_Sudo_01.png)
 
 ---
 
@@ -181,7 +181,7 @@ Nesse registro:
 - `1001` é o GID atribuído;
 - o campo final vazio indica ausência de membros suplementares naquele momento.
 
-![Criação do grupo](./images/LAB05_Cloud_Operations_Group_Creation_02.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_Group_Creation_02.png)
 
 ---
 
@@ -249,7 +249,7 @@ drwxr-x---
 
 Isso restringiu o acesso aos respectivos proprietários e grupos.
 
-![Criação das contas temporárias](./images/LAB05_Cloud_Operations_User_Creation_03.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_User_Creation_03.png)
 
 ---
 
@@ -294,7 +294,7 @@ sudo --user=lab05user1 -- id
 sudo --user=lab05user2 -- id
 ```
 
-![Associação das contas ao grupo](./images/LAB05_Cloud_Operations_Group_Assignment_04.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_Group_Assignment_04.png)
 
 ---
 
@@ -355,7 +355,7 @@ user2-baseline.txt → lab05user2:lab05user2
 
 Esse resultado estabeleceu uma referência para comparação com a etapa seguinte.
 
-![Criação do diretório compartilhado](./images/LAB05_Cloud_Operations_Shared_Directory_05.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_Shared_Directory_05.png)
 
 ---
 
@@ -432,7 +432,7 @@ Isso demonstrou a diferença entre:
 - acesso comum baseado nas permissões da conta;
 - acesso administrativo explicitamente elevado.
 
-![Herança de grupo e colaboração com SGID](./images/LAB05_Cloud_Operations_SGID_Collaboration_06.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_SGID_Collaboration_06.png)
 
 ---
 
@@ -503,7 +503,7 @@ Código de saída:
 0
 ```
 
-![Validação automatizada do laboratório](./images/LAB05_Cloud_Operations_Final_Validation_07.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_Final_Validation_07.png)
 
 > O validador verifica o estado operacional anterior ao cleanup. Para executá-lo novamente depois da conclusão do laboratório, as contas, o grupo, os diretórios e os arquivos demonstrativos deverão ser recriados.
 
@@ -562,7 +562,7 @@ As verificações posteriores confirmaram a remoção de:
 
 A conta administrativa `itamarsbt` e seus grupos originais permaneceram preservados.
 
-![Cleanup controlado](./images/LAB05_Cloud_Operations_Controlled_Cleanup_08.png)
+![LAB05_linux_groups](./images/LAB05_Cloud_Operations_Controlled_Cleanup_08.png)
 
 ---
 
