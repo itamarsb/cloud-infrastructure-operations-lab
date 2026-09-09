@@ -85,7 +85,7 @@ labs/
 As contas e os grupos utilizados foram criados exclusivamente para este laboratório:
 
 | Objeto | Finalidade |
-|---|---|
+|:---:|:---:|
 | `cloudops-lab05` | Grupo suplementar para colaboração |
 | `lab05user1` | Primeira conta temporária |
 | `lab05user2` | Segunda conta temporária |
