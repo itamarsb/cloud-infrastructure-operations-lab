@@ -569,7 +569,7 @@ A conta administrativa `itamarsbt` e seus grupos originais permaneceram preserva
 ## Comparação dos arquivos antes e depois do SGID
 
 | Arquivo | Momento da criação | Proprietário | Grupo | Modo |
-|---|---|---|---|---|
+|:---:|:---:|:---:|:---:|:---:|
 | `user1-baseline.txt` | Antes do SGID | `lab05user1` | `lab05user1` | `664` |
 | `user2-baseline.txt` | Antes do SGID | `lab05user2` | `lab05user2` | `664` |
 | `user1-shared.txt` | Depois do SGID | `lab05user1` | `cloudops-lab05` | `664` |
@@ -582,7 +582,7 @@ A comparação demonstra que o SGID altera a herança de grupo dos novos objetos
 ## Comandos principais utilizados
 
 | Comando | Finalidade |
-|---|---|
+|:---:|---|
 | `whoami` | Identificar o usuário efetivo |
 | `id` | Consultar UID, GID e grupos |
 | `groups` | Listar grupos associados |
