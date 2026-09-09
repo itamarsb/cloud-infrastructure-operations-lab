@@ -684,7 +684,7 @@ O cenário comprovou:
 ## Evidências
 
 | Nº | Evidência | Resultado |
-|---:|---|---|
+|:---:|---|:---:|
 | 01 | Identidade Linux e acesso ao `sudo` | Validado |
 | 02 | Criação do grupo exclusivo | Validado |
 | 03 | Criação das contas temporárias | Validado |
