@@ -45,7 +45,7 @@ Ao concluir o laboratório, o estudante deverá conseguir:
 ## Ambiente utilizado
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Sistema operacional hospedeiro | Windows 11 Pro |
 | Ambiente Linux | WSL 2 |
 | Distribuição | Ubuntu 24.04.4 LTS |
