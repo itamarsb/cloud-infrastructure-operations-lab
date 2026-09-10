@@ -27,7 +27,7 @@ As atividades incluem:
 ## Tecnologias
 
 | Categoria | Tecnologias |
-|---|---|
+|:---:|:---:|
 | Cloud | AWS |
 | Sistemas | Linux, WSL |
 | Infraestrutura como código | Terraform |
@@ -76,7 +76,7 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 ## Estrutura
 
 | Diretório | Finalidade |
-|---|---|
+|:---:|---|
 | `labs/` | Laboratórios e arquivos associados |
 | `docs/` | Documentação geral e roadmap |
 | `terraform/` | Infraestrutura como código |
