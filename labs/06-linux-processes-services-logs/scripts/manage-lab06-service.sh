@@ -44,6 +44,8 @@ expected_account() {
 
 validate() {
     local response
+    local attempt
+    local http_ready="false"
 
     section "Validação"
 
@@ -53,10 +55,23 @@ validate() {
         return 1
     }
 
-    response="$(
-        curl --fail --silent --show-error --max-time 5 \
-            "http://127.0.0.1:$PORT/"
-    )" || return 1
+    for attempt in 1 2 3 4 5; do
+        if response="$(
+            curl --fail --silent --max-time 2 \
+                "http://127.0.0.1:$PORT/" 2>/dev/null
+        )"; then
+            http_ready="true"
+            break
+        fi
+
+        sleep 1
+    done
+
+    if [ "$http_ready" != "true" ]; then
+        systemctl status "$SERVICE" --no-pager --lines=8 || true
+        fail "O endpoint HTTP não respondeu no tempo esperado."
+        return 1
+    fi
 
     [[ "$response" == *"CloudOps Lab 06"* ]] || {
         fail "A resposta HTTP não corresponde ao laboratório."
