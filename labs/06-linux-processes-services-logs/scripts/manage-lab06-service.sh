@@ -182,6 +182,10 @@ inspect() {
 }
 
 simulate_failure() {
+    local attempt
+    local exec_status=""
+    local failure_confirmed="false"
+
     check_environment || return 1
     expected_unit ||
         fail "A unidade do Lab 06 não foi localizada." ||
@@ -202,13 +206,35 @@ simulate_failure() {
     systemctl daemon-reload || return 1
     systemctl restart "$SERVICE" >/dev/null 2>&1 || true
 
-    if systemctl is-active --quiet "$SERVICE"; then
-        fail "A falha esperada não foi reproduzida."
+    for attempt in 1 2 3 4 5; do
+        exec_status="$(
+            systemctl show "$SERVICE" \
+                --property=ExecMainStatus \
+                --value
+        )"
+
+        if [ "$exec_status" = "200" ]; then
+            failure_confirmed="true"
+            break
+        fi
+
+        sleep 1
+    done
+
+    if [ "$failure_confirmed" != "true" ]; then
+        systemctl status "$SERVICE" --no-pager --lines=10 || true
+        fail "A falha esperada no diretório de trabalho não foi confirmada."
+        return 1
+    fi
+
+    if curl --fail --silent --max-time 2 \
+        "http://127.0.0.1:$PORT/" >/dev/null 2>&1; then
+        fail "O endpoint HTTP continuou disponível."
         return 1
     fi
 
     systemctl status "$SERVICE" --no-pager --lines=10 || true
-    ok "Falha controlada reproduzida."
+    ok "Falha controlada reproduzida: status 200/CHDIR."
 }
 
 recover() {
