@@ -9,7 +9,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Status
 
 | Símbolo | Situação |
-|---|---|
+|:---:|---|
 | ✅ | Concluído |
 | 🔄 | Em desenvolvimento |
 | ⬜ | Planejado |
@@ -19,7 +19,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 00 — Preparação e acesso
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ✅ | **Lab 00 — Preparação da estação de trabalho** | Git, VS Code, PowerShell e organização local |
 | ✅ | **Lab 01 — Configuração segura da conta AWS** | Proteção da conta e acesso administrativo |
 | ✅ | **Lab 02 — AWS CLI e autenticação por SSO** | Perfis, sessões temporárias e validação de identidade |
@@ -30,7 +30,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 01 — Operações Linux
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ✅ | **Lab 04 — Arquivos e diretórios** | Navegação, busca, cópia, movimentação e remoção |
 | ✅ | **Lab 05 — Usuários, grupos e permissões** | Identidades, permissões e acesso compartilhado |
 | 🔄 | **Lab 06 — Serviços e logs** | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
@@ -40,7 +40,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 02 — Infraestrutura AWS
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ⬜ | **Lab 07 — Baseline da conta AWS** | Identidade, Região, tags e controle de custos |
 | ⬜ | **Lab 08 — Rede da aplicação** | VPC, subnet, rotas e security groups |
 | ⬜ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role e Session Manager |
@@ -53,7 +53,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 03 — Operação e troubleshooting
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ⬜ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração e logs |
 | ⬜ | **Lab 14 — Utilização de disco** | Capacidade, crescimento de logs e mitigação |
 | ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, security groups e portas |
@@ -66,7 +66,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 04 — Terraform
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ⬜ | **Lab 19 — Fluxo essencial do Terraform** | `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` |
 | ⬜ | **Lab 20 — Infraestrutura AWS como código** | Rede, IAM, segurança e EC2 |
 | ⬜ | **Lab 21 — Estado remoto** | Armazenamento e proteção do estado |
@@ -79,7 +79,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 05 — Monitoramento e logs
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ⬜ | **Lab 25 — Métricas no CloudWatch** | Métricas, consultas e dashboard |
 | ⬜ | **Lab 26 — CloudWatch Agent** | Memória, disco e coleta de logs |
 | ⬜ | **Lab 27 — Alarmes e notificações** | Thresholds, alarmes e Amazon SNS |
@@ -92,7 +92,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 06 — Docker
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ⬜ | **Lab 31 — Containerização da aplicação** | Imagem, container e publicação |
 | ⬜ | **Lab 32 — Configuração e persistência** | Variáveis, volumes e health checks |
 | ⬜ | **Lab 33 — Docker Compose** | Administração de serviços relacionados |
@@ -103,7 +103,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Módulo 07 — Segurança, custos e confiabilidade
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | ⬜ | **Lab 35 — Revisão de segurança** | IAM, credenciais, portas e acesso administrativo |
 | ⬜ | **Lab 36 — Custos e recursos ociosos** | Tags, dimensionamento e oportunidades de redução |
 | ⬜ | **Lab 37 — Melhoria de confiabilidade** | Análise de falhas e implementação de melhorias |
