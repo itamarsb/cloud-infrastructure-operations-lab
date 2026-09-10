@@ -9,7 +9,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 ## Status
 
 | Símbolo | Situação |
-|:---:|---|
+|:---:|:---:|
 | ✅ | Concluído |
 | 🔄 | Em desenvolvimento |
 | ⬜ | Planejado |
@@ -129,7 +129,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|---|---|
+|:---:|:---:|
 | Preparação e acesso | Concluído |
 | Operações Linux | Em desenvolvimento |
 | Infraestrutura AWS | Planejado |
