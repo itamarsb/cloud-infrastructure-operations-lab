@@ -4,7 +4,8 @@ param(
     [string]$Region = "us-east-1"
 )
 
-Set-StrictMode -Version Latest
+# AWS JSON responses may omit optional properties.
+# Explicit validation is used instead of PowerShell StrictMode.
 $ErrorActionPreference = "Stop"
 
 $script:ApprovalCount = 0
