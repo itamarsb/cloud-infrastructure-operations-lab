@@ -45,7 +45,7 @@ O trabalho inclui:
 O script [`manage-lab06-service.sh`](scripts/manage-lab06-service.sh) concentra as operações do laboratório.
 
 | Ação | Finalidade |
-|---|---|
+|:---:|:---:|
 | `setup` | Instala, habilita e inicia o serviço |
 | `inspect` | Exibe estado, porta, logs e resposta HTTP |
 | `simulate-failure` | Aplica uma configuração inválida controlada |
