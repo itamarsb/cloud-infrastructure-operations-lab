@@ -83,7 +83,7 @@ Consulte o [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-ba
 ## Estrutura do repositório
 
 | Diretório | Finalidade |
-|---|---|
+|:---:|---|
 | `labs/` | Laboratórios, scripts e evidências de execução |
 | `docs/` | Roadmap e documentação geral |
 | `terraform/` | Infraestrutura como código |
