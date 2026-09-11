@@ -49,7 +49,7 @@ function Invoke-AwsJson {
 
     $Output = & aws @Arguments --output json --no-cli-pager 2>&1
     $ExitCode = $LASTEXITCODE
-    $Text = ($Output | ForEach-Object { { { "$_" }) -join [Environment]::NewLine
+    $Text = ($Output | ForEach-Object { "$_" }) -join [Environment]::NewLine
 
     if ($ExitCode -ne 0) {
         return [pscustomobject]@{
