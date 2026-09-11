@@ -412,11 +412,19 @@ if ($BucketResult.Success) {
 
         if ($AclResult.Success) {
             $PublicAclGrant = @(
-                $AclResult.Data.Grants |
-                    Where-Object {
-                        $_.Grantee.URI -match "AllUsers|AuthenticatedUsers"
-                    }
-            ).Count -gt 0
+    $AclResult.Data.Grants |
+        Where-Object {
+            $Grantee = $_.Grantee
+            $UriProperty = $null
+
+            if ($null -ne $Grantee) {
+                $UriProperty = $Grantee.PSObject.Properties["URI"]
+            }
+
+            $null -ne $UriProperty -and
+                [string]$UriProperty.Value -match "AllUsers|AuthenticatedUsers"
+        }
+    ).Count -gt 0
 
             Write-Host "ACL com concessão pública: $PublicAclGrant"
             Write-Host "Concessões existentes na ACL: $(@($AclResult.Data.Grants).Count)"
