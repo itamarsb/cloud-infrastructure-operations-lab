@@ -51,15 +51,12 @@ As atividades incluem:
 | [Lab 03 — Ferramentas de infraestrutura](labs/03-infrastructure-tools-installation/) | Terraform e Session Manager Plugin |
 | [Lab 04 — Arquivos e diretórios Linux](labs/04-linux-file-management/) | Navegação, busca e operações com arquivos |
 | [Lab 05 — Usuários, grupos e permissões](labs/05-linux-users-groups-permissions/) | Identidades, permissões e acesso compartilhado |
-
-### Em desenvolvimento
-
-| Laboratório | Conteúdo |
-|---|---|
 | [Lab 06 — Serviços e logs no Linux](labs/06-linux-processes-services-logs/) | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
+
 
 ### Planejado
 
+- baseline da conta AWS, identificação do ambiente, tags e controle inicial de custos;
 - infraestrutura AWS para uma aplicação web;
 - operação e troubleshooting;
 - automação com Terraform;
