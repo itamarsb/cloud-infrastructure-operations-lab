@@ -33,7 +33,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 |:---:|---|---|
 | ✅ | **Lab 04 — Arquivos e diretórios** | Navegação, busca, cópia, movimentação e remoção |
 | ✅ | **Lab 05 — Usuários, grupos e permissões** | Identidades, permissões e acesso compartilhado |
-| 🔄 | **Lab 06 — Serviços e logs** | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
+| ✅ | **Lab 06 — Serviços e logs** | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
 
 ---
 
@@ -131,7 +131,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Módulo | Situação |
 |:---:|:---:|
 | Preparação e acesso | Concluído |
-| Operações Linux | Em desenvolvimento |
+| Operações Linux | Concluído |
 | Infraestrutura AWS | Planejado |
 | Operação e troubleshooting | Planejado |
 | Terraform | Planejado |
@@ -142,4 +142,4 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 ## Próxima etapa
 
-**Lab 06 — Serviços e logs no Linux**
+**Lab 07 — Baseline da conta AWS**
