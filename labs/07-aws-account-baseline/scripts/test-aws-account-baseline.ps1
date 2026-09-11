@@ -4,8 +4,8 @@ param(
     [string]$Region = "us-east-1"
 )
 
-# AWS JSON responses may omit optional properties.
-# Explicit validation is used instead of PowerShell StrictMode.
+# AWS JSON responses may omit optional properties or return empty output.
+Set-StrictMode -Off
 $ErrorActionPreference = "Stop"
 
 $script:ApprovalCount = 0
@@ -68,6 +68,14 @@ function Invoke-AwsJson {
             Success = $false
             Data    = $null
             Error   = $Text
+        }
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Text)) {
+        return [pscustomobject]@{
+            Success = $true
+            Data    = [pscustomobject]@{}
+            Error   = $null
         }
     }
 
