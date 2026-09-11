@@ -1,261 +1,155 @@
-# Lab 07 — Baseline operacional da conta AWS
+# Cloud Infrastructure Operations Lab
+
+Laboratório progressivo de infraestrutura e operações em nuvem, com atividades práticas em **AWS, Linux, Terraform, Docker, CloudWatch, Zabbix, Bash e PowerShell**.
+
+O projeto documenta a construção e a operação de um ambiente de aplicação ao longo de uma trilha evolutiva: preparação da estação de trabalho, acesso seguro à nuvem, administração Linux, infraestrutura AWS, automação, observabilidade, troubleshooting, segurança, custos e confiabilidade.
+
+Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
+
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence.
+
+---
 
 ## Objetivo
 
-Executar uma avaliação somente leitura de uma conta AWS antes de novas implantações.
+Demonstrar competências práticas relacionadas às atividades de **Cloud Operations, Infrastructure Operations, DevOps e SRE**, por meio de cenários progressivos e reproduzíveis.
 
-O baseline reúne informações de identidade, rede, computação, armazenamento, segurança, tags, observabilidade e orçamento. A finalidade é entender o estado atual da conta, identificar pontos de atenção e evitar alterações em recursos cuja origem ou finalidade ainda precise ser confirmada.
+O repositório prioriza:
 
----
-
-## Ambiente validado
-
-| Componente | Configuração |
-|:---:|:---:|
-| Sistema operacional | Windows 11 |
-| Terminal | Windows PowerShell 5.1 |
-| AWS CLI | AWS CLI 2.36.14 |
-| Autenticação | AWS IAM Identity Center |
-| Perfil | `cloud-operations-lab` |
-| Região | `us-east-1` |
-| Modo de execução | Somente leitura |
-| Codificação do script | UTF-8 com BOM |
-
-O uso de UTF-8 com BOM mantém a compatibilidade dos caracteres em português com o Windows PowerShell 5.1.
+- execução prática e evidências verificáveis;
+- segurança de acesso e proteção de informações sensíveis;
+- diagnóstico antes de alterações;
+- automação com escopo controlado;
+- infraestrutura reproduzível;
+- monitoramento, logs e resposta a falhas;
+- controle de custos e remoção de recursos temporários;
+- documentação técnica clara e rastreável.
 
 ---
 
-## O que é verificado
+## Tecnologias
 
-O script `scripts/test-aws-account-baseline.ps1` consulta:
-
-- identidade e sessão AWS;
-- Região operacional;
-- VPCs, sub-redes e Security Groups;
-- Elastic IPs e NAT Gateways;
-- instâncias EC2 e volumes EBS;
-- configurações de segurança do Amazon S3;
-- cobertura de tags;
-- integração com AWS Systems Manager;
-- grupos de logs e alarmes do CloudWatch;
-- orçamentos configurados no AWS Budgets.
-
-O script trata respostas vazias ou incompletas da AWS CLI e apresenta um resumo com aprovações, avisos e falhas.
+| Categoria | Tecnologias e práticas |
+|---|---|
+| Cloud | AWS |
+| Sistemas | Linux, Windows 11 e WSL |
+| Infraestrutura como código | Terraform |
+| Containers | Docker e Docker Compose |
+| Observabilidade | Amazon CloudWatch e Zabbix |
+| Automação | Bash e PowerShell |
+| Acesso e identidade | AWS IAM Identity Center e AWS Systems Manager |
+| Versionamento | Git e GitHub |
+| Documentação | Markdown e Mermaid |
 
 ---
 
-## Proteções adotadas
+## Progresso atual
 
-O baseline não:
+| Status | Laboratório | Conteúdo principal |
+|:---:|---|---|
+| ✅ | [Lab 00 — Preparação da estação de trabalho](labs/00-workstation-preparation/) | Git, VS Code, PowerShell e organização local |
+| ✅ | [Lab 01 — Configuração segura da conta AWS](labs/01-secure-aws-account-configuration/) | Proteção da conta e acesso administrativo |
+| ✅ | [Lab 02 — AWS CLI e autenticação por SSO](labs/02-aws-cli-installation-and-configuration/) | Perfis, sessões temporárias e validação de identidade |
+| ✅ | [Lab 03 — Ferramentas de infraestrutura](labs/03-infrastructure-tools-installation/) | Terraform e Session Manager Plugin |
+| ✅ | [Lab 04 — Arquivos e diretórios Linux](labs/04-linux-file-management/) | Navegação, busca e operações com arquivos |
+| ✅ | [Lab 05 — Usuários, grupos e permissões](labs/05-linux-users-groups-permissions/) | Identidades, permissões e acesso compartilhado |
+| ✅ | [Lab 06 — Serviços e logs no Linux](labs/06-linux-processes-services-logs/) | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
+| ✅ | [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) | Inventário somente leitura, segurança, tags, observabilidade e custos |
+| ⬜ | **Lab 08 — Rede da aplicação** | VPC, sub-rede, rotas e Security Groups |
 
-- cria recursos;
-- altera configurações;
-- remove componentes;
-- aplica correções automaticamente;
-- exibe nomes de buckets;
-- exibe Account ID, ARN ou UserId completos;
-- exibe credenciais, tokens ou informações de sessão.
-
-As correções identificadas devem ser avaliadas e executadas separadamente.
-
----
-
-## Pré-requisitos
-
-Antes da execução, é necessário possuir:
-
-- AWS CLI versão 2;
-- perfil `cloud-operations-lab` configurado;
-- acesso pelo AWS IAM Identity Center;
-- permissões de leitura para os serviços consultados;
-- repositório sincronizado localmente.
-
-Para renovar a sessão:
-
-    aws sso login --profile cloud-operations-lab
+O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
-## Validação de sintaxe
+## Resultado mais recente
 
-A sintaxe pode ser validada sem executar o script:
+O **Lab 07** implementou um baseline operacional somente leitura da conta AWS. O script em PowerShell consulta identidade, Região, rede, EC2, EBS, Amazon S3, tags, Systems Manager, CloudWatch e AWS Budgets sem criar, alterar ou remover recursos.
 
-    Set-Location C:\GitHub\cloud-infrastructure-operations-lab
-
-    $ScriptPath = ".\labs\07-aws-account-baseline\scripts\test-aws-account-baseline.ps1"
-
-    $Tokens = $null
-    $ParseErrors = $null
-
-    [System.Management.Automation.Language.Parser]::ParseFile(
-        (Resolve-Path -LiteralPath $ScriptPath).Path,
-        [ref]$Tokens,
-        [ref]$ParseErrors
-    ) | Out-Null
-
-    Write-Host "Erros de sintaxe: $($ParseErrors.Count)"
-
-Resultado obtido:
-
-    Erros de sintaxe: 0
-
----
-
-## Execução
-
-    Set-Location C:\GitHub\cloud-infrastructure-operations-lab
-
-    $ScriptPath = ".\labs\07-aws-account-baseline\scripts\test-aws-account-baseline.ps1"
-
-    & $ScriptPath `
-        -ProfileName "cloud-operations-lab" `
-        -Region "us-east-1"
-
-    $ScriptExitCode = $LASTEXITCODE
-
-    Write-Host ""
-    Write-Host "Código de saída do baseline: $ScriptExitCode"
-
----
-
-## Resultado
-
-A execução completa apresentou:
+Na execução documentada, o baseline apresentou:
 
 | Resultado | Quantidade |
 |:---:|:---:|
-| Aprovações | 17 |
-| Avisos | 8 |
+| Verificações aprovadas | 17 |
+| Pontos de atenção | 8 |
 | Falhas | 0 |
 | Código de saída | 0 |
 
-Resultado final:
+Os resultados foram registrados de forma anonimizada, sem exposição de Account ID, ARN, UserId, nomes de buckets, credenciais ou tokens.
 
-    BASELINE CONCLUÍDA COM PONTOS DE ATENÇÃO
-
-O script também confirmou que nenhum identificador completo foi exibido e nenhum recurso AWS foi criado, alterado ou removido.
+Consulte o [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) para ver o procedimento, o inventário e a evidência de execução.
 
 ---
 
-## Evidência da execução
+## Estrutura do repositório
 
-A captura abaixo registra as verificações finais de segurança, tags, observabilidade e orçamento, além do resumo consolidado.
-
-![Resultado consolidado do baseline operacional da conta AWS](images/lab-07-baseline-summary.png)
-
-A evidência confirma:
-
-- 17 verificações aprovadas;
-- 8 pontos de atenção;
-- nenhuma falha;
-- código de saída `0`;
-- ausência de identificadores completos;
-- ausência de criação, alteração ou remoção de recursos AWS.
+| Diretório | Finalidade |
+|---|---|
+| `labs/` | Laboratórios, scripts e evidências de execução |
+| `docs/` | Roadmap e documentação geral |
+| `terraform/` | Infraestrutura como código |
+| `scripts/` | Scripts compartilhados entre laboratórios |
+| `templates/` | Modelos de laboratório, checklist, incidente e runbook |
+| `incident-response/` | Registros de troubleshooting e recuperação |
+| `resources/` | Comandos, referências e materiais de apoio |
 
 ---
 
-## Inventário anonimizado
+## Como utilizar
 
-### Rede
+1. Consulte o [`roadmap`](docs/roadmap.md) para conhecer a sequência da trilha.
+2. Acesse o diretório do laboratório desejado.
+3. Leia o objetivo, os pré-requisitos e as proteções antes da execução.
+4. Execute o procedimento no ambiente indicado.
+5. Confirme as validações e compare os resultados com as evidências documentadas.
+6. Remova os recursos temporários quando houver procedimento de cleanup.
 
-| Recurso | Resultado |
-|:---:|:---:|
-| VPCs acessíveis | 1 |
-| VPCs padrão | 1 |
-| Sub-redes | 6 |
-| Security Groups | 2 |
-| Elastic IPs | 0 |
-| NAT Gateways ativos ou pendentes | 0 |
-
-### Computação e armazenamento
-
-| Recurso | Resultado |
-|:---:|:---:|
-| Instâncias EC2 não terminadas | 1 |
-| Instâncias EC2 paradas | 1 |
-| Volumes EBS | 1 |
-| Capacidade EBS provisionada | 8 GiB |
-
-### Amazon S3
-
-| Verificação | Resultado |
-|:---:|:---:|
-| Buckets acessíveis | 1 |
-| Bloqueio público integral no bucket | Não |
-| Política do bucket | Não configurada ou não acessível |
-| ACL com concessão pública | Não |
-| Hospedagem de site | Não configurada |
-| Propriedade dos objetos | `BucketOwnerPreferred` |
-| Criptografia padrão | `AES256` |
-| Versionamento | Desabilitado |
-| Conteúdo do bucket | Vazio |
-| Bloqueio público no nível da conta | Não localizado |
-
-O nome do bucket foi intencionalmente ocultado.
-
-### Tags e operação
-
-| Verificação | Resultado |
-|:---:|:---:|
-| Recursos retornados pela API de tags | 4 |
-| Recursos com tag `Name` | 1 de 4 |
-| Recursos com tag `Environment` | 0 de 4 |
-| Recursos com tag `Project` | 0 de 4 |
-| Recursos com tag `Owner` | 0 de 4 |
-| Recursos com tag `ManagedBy` | 0 de 4 |
-| Nós registrados no Systems Manager | 0 |
-| Grupos de logs do CloudWatch | 0 |
-| Alarmes métricos do CloudWatch | 0 |
-| Orçamentos configurados | 1 |
+> Recursos AWS que possam gerar cobrança devem permanecer ativos somente durante a execução dos respectivos laboratórios.
 
 ---
 
-## Pontos de atenção
+## Princípios operacionais
 
-A execução encontrou oito avisos:
-
-1. uma instância EC2 está parada;
-2. o monitoramento detalhado está desabilitado nessa instância;
-3. existe um volume EBS sem criptografia;
-4. o bucket S3 não possui bloqueio integral de acesso público;
-5. o bloqueio público do S3 no nível da conta não foi localizado;
-6. quatro recursos não possuem a cobertura completa das tags definidas;
-7. nenhum nó está registrado no Systems Manager;
-8. nenhum alarme métrico foi localizado no CloudWatch.
-
-Os avisos não representam erros do script. Eles registram condições reais que devem ser avaliadas antes de novas implantações.
+- autenticação temporária por AWS IAM Identity Center;
+- preferência por acesso administrativo pelo AWS Systems Manager;
+- princípio do menor privilégio conforme a evolução da trilha;
+- identificação explícita de perfil, Região, ambiente e recursos;
+- validações antes e depois das alterações;
+- scripts limitados ao escopo declarado;
+- proteção de credenciais e identificadores sensíveis;
+- tratamento de respostas vazias e falhas esperadas;
+- infraestrutura reproduzível e mudanças rastreáveis;
+- controle de custos e cleanup documentado.
 
 ---
 
-## Próximas decisões
+## Evolução planejada
 
-A partir do baseline, as próximas decisões são:
+A trilha está dividida em nove etapas:
 
-1. confirmar a finalidade da instância EC2 e do volume EBS;
-2. revisar o bloqueio de acesso público do Amazon S3;
-3. decidir se o bucket vazio ainda precisa ser mantido;
-4. avaliar a criptografia do armazenamento existente;
-5. definir uma política mínima de tags;
-6. avaliar a necessidade de Systems Manager e alarmes do CloudWatch;
-7. executar novamente o baseline depois das correções aprovadas.
+1. preparação e acesso;
+2. operações Linux;
+3. infraestrutura AWS;
+4. operação e troubleshooting;
+5. Terraform;
+6. monitoramento e logs;
+7. Docker;
+8. segurança, custos e confiabilidade;
+9. projeto integrado de uma aplicação web.
 
-Nenhuma alteração será realizada sem análise prévia.
-
----
-
-## Conclusão
-
-O Lab 07 produziu um inventário operacional reproduzível e anonimizado da conta AWS.
-
-A execução foi concluída sem falhas e sem alterações na infraestrutura. Os oito avisos encontrados formam uma lista objetiva de decisões para as próximas etapas operacionais.
+A próxima implementação prevista é o **Lab 08 — Rede da aplicação**, que introduzirá VPC, sub-rede, rotas e Security Groups como base para os recursos dos laboratórios seguintes.
 
 ---
 
-## Status
+## Licença
 
-✅ Script implementado e validado  
-✅ Compatibilidade com Windows PowerShell 5.1 confirmada  
-✅ Auditoria somente leitura executada  
-✅ Evidência anonimizada registrada  
-✅ Resultado documentado  
-⚠️ Pontos de atenção aguardando avaliação
+Este projeto está distribuído sob a [licença MIT](LICENSE).
+
+---
+
+## 📈 Repository Metrics
+
+<p align="center">
+
+<a href="https://info.flagcounter.com/g0hL"><img src="https://s01.flagcounter.com/count/g0hL/bg_FFFFFF/txt_000000/border_CCCCCC/columns_8/maxflags_100/viewers_0/labels_1/pageviews_1/flags_0/percent_0/" alt="Flag Counter" border="0"></a>
+
+</p>
