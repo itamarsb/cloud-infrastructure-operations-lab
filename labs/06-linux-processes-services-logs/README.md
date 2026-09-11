@@ -1,120 +1,141 @@
-# Lab 06 — Processos, serviços e logs no Linux
-
-## Visão geral
-
-Este laboratório apresenta operações fundamentais de monitoramento e administração de processos, serviços e logs em um sistema Linux.
-
-A atividade será executada no Ubuntu 24.04 LTS sobre WSL 2, utilizando processos e serviços exclusivos do laboratório.
-
----
+# Lab 06 — Serviços e logs no Linux
 
 ## Objetivo
 
-Desenvolver competências práticas para observar processos, controlar uma carga de trabalho, administrar um serviço com `systemd` e investigar eventos registrados no journal do sistema.
+Implantar e administrar um serviço Linux com `systemd`, verificar sua disponibilidade, diagnosticar uma falha de configuração pelos logs e restaurar a operação.
 
-Ao concluir o laboratório, o estudante deverá conseguir:
-
-- identificar o sistema de inicialização;
-- consultar processos com `ps`;
-- observar consumo de recursos com `top`;
-- interpretar PID, PPID, usuário, estado e prioridade;
-- iniciar um processo controlado em segundo plano;
-- ajustar a prioridade de um processo;
-- enviar sinais e finalizar processos;
-- criar uma unidade de serviço exclusiva;
-- administrar serviços com `systemctl`;
-- consultar logs com `journalctl`;
-- filtrar eventos por serviço, prioridade e período;
-- automatizar verificações com Bash;
-- interpretar códigos de saída;
-- realizar cleanup controlado.
+O laboratório utiliza um servidor HTTP local executado por uma conta de serviço dedicada.
 
 ---
 
-## Ambiente previsto
+## Ambiente
 
 | Componente | Configuração |
-|:---:|:---:|
-| Sistema hospedeiro | Windows 11 Pro |
-| Ambiente Linux | WSL 2 |
-| Distribuição | Ubuntu 24.04 LTS |
-| Sistema de inicialização | `systemd` |
-| Shell | Bash |
-| Ferramentas principais | `ps`, `top`, `systemctl`, `journalctl`, `logger` |
-| Serviço do laboratório | `cloudops-lab06.service` |
-| Diretório de trabalho | `/opt/cloudops-lab06` |
+|---|---|
+| Sistema | Ubuntu 24.04 LTS no WSL 2 |
+| Gerenciador de serviços | systemd |
+| Serviço | cloudops-lab06.service |
+| Aplicação | Python HTTP Server |
+| Endpoint | http://127.0.0.1:8060 |
+| Diretório | /srv/cloudops-lab06 |
+| Conta de serviço | cloudops-lab06 |
 
 ---
 
-## Escopo de segurança
+## Cenário
 
-Todos os processos, arquivos e serviços manipulados serão criados exclusivamente para este laboratório.
+Uma aplicação HTTP precisa ser instalada como serviço do sistema e permanecer disponível após sua inicialização.
 
-Não serão interrompidos ou alterados:
+O trabalho inclui:
 
-- processos do Windows ou do WSL;
-- serviços essenciais do sistema;
-- serviços pertencentes a outros projetos;
-- unidades preexistentes do `systemd`;
-- registros originais do sistema.
-
-Os comandos de encerramento utilizarão PIDs previamente identificados e vinculados à carga controlada do Lab 06.
-
-A unidade `cloudops-lab06.service` e o diretório `/opt/cloudops-lab06` serão removidos durante o cleanup final.
-
----
-
-## Estrutura do laboratório
-
-```text
-labs/
-└── 06-linux-processes-services-logs/
-    ├── README.md
-    ├── images/
-    └── scripts/
-```
+- instalação e inicialização do serviço;
+- execução com usuário sem acesso interativo;
+- inspeção de processo, porta e estado;
+- consulta de registros com `journalctl`;
+- simulação de uma configuração inválida;
+- identificação da falha `200/CHDIR`;
+- restauração do serviço;
+- validação do endpoint;
+- remoção segura dos recursos.
 
 ---
 
-## Plano de execução
+## Implementação
 
-1. Validar o ambiente Linux e o `systemd`.
-2. Observar processos e recursos do sistema.
-3. Criar uma carga de trabalho controlada.
-4. Inspecionar PID, PPID, estado e prioridade.
-5. Ajustar a prioridade com `nice` e `renice`.
-6. Encerrar o processo utilizando sinais.
-7. Preparar o diretório do serviço.
-8. Criar a unidade `cloudops-lab06.service`.
-9. Administrar o serviço com `systemctl`.
-10. Consultar eventos com `journalctl`.
-11. Simular e investigar uma falha controlada.
-12. Executar o script de validação.
-13. Registrar as evidências técnicas.
-14. Realizar o cleanup do laboratório.
-15. Concluir a documentação.
+O script [`manage-lab06-service.sh`](scripts/manage-lab06-service.sh) concentra as operações do laboratório.
+
+| Ação | Finalidade |
+|---|---|
+| `setup` | Instala, habilita e inicia o serviço |
+| `inspect` | Exibe estado, porta, logs e resposta HTTP |
+| `simulate-failure` | Aplica uma configuração inválida controlada |
+| `recover` | Remove a configuração inválida e restaura o serviço |
+| `validate` | Confirma o processo e a disponibilidade HTTP |
+| `cleanup` | Remove os recursos criados pelo laboratório |
+
+A unidade utiliza opções básicas de proteção do `systemd`, incluindo:
+
+- `NoNewPrivileges=true`;
+- `PrivateTmp=true`;
+- `ProtectSystem=strict`;
+- `ProtectHome=true`;
+- execução por uma conta com shell `nologin`;
+- acesso HTTP restrito ao endereço local.
+
+---
+
+## Execução
+
+A partir da raiz do repositório:
+
+    cd labs/06-linux-processes-services-logs
+
+Validar a sintaxe:
+
+    bash -n scripts/manage-lab06-service.sh
+
+Instalar o serviço:
+
+    sudo bash scripts/manage-lab06-service.sh setup
+
+Inspecionar a operação:
+
+    sudo bash scripts/manage-lab06-service.sh inspect
+
+Simular a falha:
+
+    sudo bash scripts/manage-lab06-service.sh simulate-failure
+
+Recuperar o serviço:
+
+    sudo bash scripts/manage-lab06-service.sh recover
+
+Validar o resultado:
+
+    sudo bash scripts/manage-lab06-service.sh validate
+
+Remover os recursos:
+
+    sudo bash scripts/manage-lab06-service.sh cleanup
+
+---
+
+## Diagnóstico realizado
+
+A falha controlada substitui o diretório de trabalho da unidade por um caminho inexistente.
+
+O `systemd` registra:
+
+    status=200/CHDIR
+
+Esse resultado indica que o processo não conseguiu acessar o diretório configurado em `WorkingDirectory`.
+
+Durante a falha, o serviço entra em tentativa automática de reinicialização e o endpoint deixa de responder. A recuperação remove o override inválido, recarrega as unidades e reinicia o serviço.
+
+---
+
+## Resultados
+
+O ciclo foi validado com sucesso:
+
+- serviço instalado e habilitado;
+- processo executado pela conta `cloudops-lab06`;
+- endpoint HTTP respondendo;
+- falha de configuração identificada nos logs;
+- serviço recuperado;
+- recursos removidos ao final;
+- repositório preservado sem alterações locais.
+
+### Ambiente e inventário inicial
+
+![Inventário inicial do ambiente Linux e systemd](images/LAB06_Cloud_Operations_Systemd_Process_Inventory_01.png)
+
+### Falha e recuperação do serviço
+
+![Diagnóstico da falha e recuperação do serviço](images/LAB06_Cloud_Operations_Service_Failure_Recovery_02.png)
 
 ---
 
 ## Status
 
-🚧 Laboratório em desenvolvimento.
-
----
-
-## Progresso atual
-
-- [ ] Validação do Linux, WSL e `systemd`.
-- [ ] Inventário inicial de processos.
-- [ ] Criação da carga controlada.
-- [ ] Inspeção detalhada do processo.
-- [ ] Ajuste de prioridade.
-- [ ] Encerramento por sinal.
-- [ ] Criação do serviço do laboratório.
-- [ ] Administração com `systemctl`.
-- [ ] Consulta de logs com `journalctl`.
-- [ ] Investigação de falha controlada.
-- [ ] Execução do script de validação.
-- [ ] Seleção e registro das evidências.
-- [ ] Cleanup dos recursos.
-- [ ] Documentação final.
+✅ Laboratório concluído.
