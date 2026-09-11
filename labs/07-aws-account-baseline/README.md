@@ -30,7 +30,7 @@ O repositório prioriza:
 ## Tecnologias
 
 | Categoria | Tecnologias e práticas |
-|---|---|
+|:---:|:---:|
 | Cloud | AWS |
 | Sistemas | Linux, Windows 11 e WSL |
 | Infraestrutura como código | Terraform |
