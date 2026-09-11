@@ -11,7 +11,7 @@ O laboratório utiliza um servidor HTTP local executado por uma conta de serviç
 ## Ambiente
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Sistema | Ubuntu 24.04 LTS no WSL 2 |
 | Gerenciador de serviços | systemd |
 | Serviço | cloudops-lab06.service |
