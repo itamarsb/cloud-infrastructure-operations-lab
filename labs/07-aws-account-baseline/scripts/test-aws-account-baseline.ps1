@@ -51,22 +51,22 @@ function Invoke-AwsJson {
     $Output = $null
     $ExitCode = 0
 
-try {
-    $ErrorActionPreference = "Continue"
-    $Output = & aws @Arguments --output json --no-cli-pager 2>&1
-    $ExitCode = $LASTEXITCODE
-}
-finally {
-    $ErrorActionPreference = $PreviousErrorActionPreference
-}
+    try {
+        $ErrorActionPreference = "Continue"
+        $Output = & aws @Arguments --output json --no-cli-pager 2>&1
+        $ExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
 
-$Text = ($Output | ForEach-Object { "$_" }) -join [Environment]::NewLine
+    $Text = ($Output | ForEach-Object { "$_" }) -join [Environment]::NewLine
 
     if ($ExitCode -ne 0) {
         return [pscustomobject]@{
             Success = $false
-            Data = $null
-            Error = $Text
+            Data    = $null
+            Error   = $Text
         }
     }
 
@@ -75,15 +75,15 @@ $Text = ($Output | ForEach-Object { "$_" }) -join [Environment]::NewLine
 
         return [pscustomobject]@{
             Success = $true
-            Data = $Data
-            Error = $null
+            Data    = $Data
+            Error   = $null
         }
     }
     catch {
         return [pscustomobject]@{
             Success = $false
-            Data = $null
-            Error = "A resposta da AWS CLI não contém JSON válido."
+            Data    = $null
+            Error   = "A resposta da AWS CLI não contém JSON válido."
         }
     }
 }
@@ -412,19 +412,19 @@ if ($BucketResult.Success) {
 
         if ($AclResult.Success) {
             $PublicAclGrant = @(
-    $AclResult.Data.Grants |
-        Where-Object {
-            $Grantee = $_.Grantee
-            $UriProperty = $null
+                $AclResult.Data.Grants |
+                    Where-Object {
+                        $Grantee = $_.Grantee
+                        $UriProperty = $null
 
-            if ($null -ne $Grantee) {
-                $UriProperty = $Grantee.PSObject.Properties["URI"]
-            }
+                        if ($null -ne $Grantee) {
+                            $UriProperty = $Grantee.PSObject.Properties["URI"]
+                        }
 
-            $null -ne $UriProperty -and
-                [string]$UriProperty.Value -match "AllUsers|AuthenticatedUsers"
-        }
-    ).Count -gt 0
+                        $null -ne $UriProperty -and
+                            [string]$UriProperty.Value -match "AllUsers|AuthenticatedUsers"
+                    }
+            ).Count -gt 0
 
             Write-Host "ACL com concessão pública: $PublicAclGrant"
             Write-Host "Concessões existentes na ACL: $(@($AclResult.Data.Grants).Count)"
@@ -485,7 +485,12 @@ if ($BucketResult.Success) {
         )
 
         if ($VersioningResult.Success) {
-            $VersioningStatus = $VersioningResult.Data.Status
+            $VersioningStatus = $null
+            $StatusProperty = $VersioningResult.Data.PSObject.Properties["Status"]
+
+            if ($null -ne $StatusProperty) {
+                $VersioningStatus = [string]$StatusProperty.Value
+            }
 
             if ([string]::IsNullOrWhiteSpace([string]$VersioningStatus)) {
                 Write-Host "Versionamento: desabilitado"
@@ -507,9 +512,10 @@ if ($BucketResult.Success) {
 
         if ($ObjectResult.Success) {
             $ObjectCount = 0
+            $KeyCountProperty = $ObjectResult.Data.PSObject.Properties["KeyCount"]
 
-            if ($null -ne $ObjectResult.Data.KeyCount) {
-                $ObjectCount = [int]$ObjectResult.Data.KeyCount
+            if ($null -ne $KeyCountProperty) {
+                $ObjectCount = [int]$KeyCountProperty.Value
             }
 
             if ($ObjectCount -gt 0) {
@@ -639,7 +645,10 @@ if ($LogGroupResult.Success) {
     $WithoutRetention = @(
         $LogGroups |
             Where-Object {
-                $null -eq $_.retentionInDays
+                $RetentionProperty = $_.PSObject.Properties["retentionInDays"]
+
+                $null -eq $RetentionProperty -or
+                    $null -eq $RetentionProperty.Value
             }
     ).Count
 
