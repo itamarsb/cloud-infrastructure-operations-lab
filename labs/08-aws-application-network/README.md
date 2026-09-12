@@ -230,17 +230,15 @@ A validação foi concluída com código de saída `0`, sem criação, alteraç�
 
 ---
 
-## Status
-
 - [x] Estrutura do laboratório criada
 - [x] Inspeção inicial concluída
 - [x] CIDR da VPC verificado
 - [x] Zonas de disponibilidade identificadas
 - [x] Script de implantação implementado
-- [ ] Script de validação implementado
+- [x] Script de validação implementado
 - [ ] Script de cleanup implementado
 - [x] Rede implantada na AWS
-- [ ] Validação concluída
+- [x] Validação concluída
 - [x] Evidência da implantação registrada
-- [ ] Evidência da validação registrada
+- [x] Evidência da validação registrada
 - [ ] Cleanup validado
