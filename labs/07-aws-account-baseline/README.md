@@ -159,7 +159,7 @@ A evidência confirma:
 ### Rede
 
 | Recurso | Resultado |
-|---|---:|
+|---|:---:|
 | VPCs acessíveis | 1 |
 | VPCs padrão | 1 |
 | Sub-redes | 6 |
@@ -170,7 +170,7 @@ A evidência confirma:
 ### Computação e armazenamento
 
 | Recurso | Resultado |
-|---|---:|
+|---|:---:|
 | Instâncias EC2 não terminadas | 1 |
 | Instâncias EC2 paradas | 1 |
 | Volumes EBS | 1 |
@@ -179,7 +179,7 @@ A evidência confirma:
 ### Amazon S3
 
 | Verificação | Resultado |
-|---|---|
+|---|:---:|
 | Buckets acessíveis | 1 |
 | Bloqueio público integral no bucket | Não |
 | Política do bucket | Não configurada ou não acessível |
@@ -196,7 +196,7 @@ O nome do bucket foi intencionalmente ocultado.
 ### Tags e operação
 
 | Verificação | Resultado |
-|---|---:|
+|---|:---:|
 | Recursos retornados pela API de tags | 4 |
 | Recursos com tag `Name` | 1 de 4 |
 | Recursos com tag `Environment` | 0 de 4 |
