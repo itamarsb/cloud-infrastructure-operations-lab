@@ -198,11 +198,14 @@ Capturas com Account ID, ARN, credenciais, URLs de autenticação ou identificad
 
 ## Status
 
-🔄 Estrutura do laboratório criada  
-✅ Inspeção inicial concluída  
-✅ CIDR da VPC verificado  
-✅ Zonas de disponibilidade identificadas  
-⬜ Script de implantação pendente  
-⬜ Script de validação pendente  
-⬜ Script de cleanup pendente  
-⬜ Implantação e evidências pendentes  
+- [x] Estrutura do laboratório criada
+- [x] Inspeção inicial concluída
+- [x] CIDR da VPC verificado
+- [x] Zonas de disponibilidade identificadas
+- [ ] Script de implantação implementado
+- [ ] Script de validação implementado
+- [ ] Script de cleanup implementado
+- [ ] Rede implantada na AWS
+- [ ] Validação concluída
+- [ ] Evidências registradas
+- [ ] Cleanup validado
