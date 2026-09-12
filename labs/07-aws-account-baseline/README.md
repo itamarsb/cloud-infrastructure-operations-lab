@@ -123,7 +123,7 @@ Resultado obtido:
 A execução completa apresentou:
 
 | Resultado | Quantidade |
-|---|---:|
+|:---:|:---:|
 | Aprovações | 17 |
 | Avisos | 8 |
 | Falhas | 0 |
