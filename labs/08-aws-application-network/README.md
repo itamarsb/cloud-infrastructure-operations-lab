@@ -208,7 +208,25 @@ A captura abaixo registra a execução completa do script de implantação e con
 
 A evidência foi registrada sem exposição de Account ID, ARN, credenciais, URLs de autenticação ou identificadores completos dos recursos.
 
-Uma segunda evidência será adicionada após a execução do script de validação independente.
+### Validação independente
+
+A validação independente confirmou:
+
+- disponibilidade da VPC e correspondência do CIDR;
+- habilitação do suporte a DNS e dos nomes DNS;
+- disponibilidade das duas sub-redes públicas;
+- distribuição das sub-redes entre duas zonas de disponibilidade;
+- atribuição automática de endereços IPv4 públicos;
+- associação do Internet Gateway à VPC;
+- existência da rota pública ativa;
+- associação explícita da tabela de rotas às duas sub-redes;
+- ausência de regras de entrada no Security Group;
+- aplicação das tags operacionais obrigatórias;
+- execução exclusivamente em modo de leitura.
+
+![Validação independente da rede da aplicação](images/LAB08_Cloud_Operations_Network_Validation_02.png)
+
+A validação foi concluída com código de saída `0`, sem criação, alteração ou remoção de recursos AWS.
 
 ---
 
