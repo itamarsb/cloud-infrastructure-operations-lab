@@ -34,7 +34,7 @@ O laboratório não inclui instâncias EC2, balanceadores, NAT Gateway, endereç
 ## Ambiente validado
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Sistema operacional | Windows 11 |
 | Terminal | Windows PowerShell 5.1 |
 | AWS CLI | AWS CLI v2 |
