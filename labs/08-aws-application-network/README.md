@@ -149,7 +149,7 @@ Como o laboratório cria somente componentes básicos de rede e não mantém tr�
 ## Scripts
 
 | Script | Finalidade |
-|---|---|
+|:---:|---|
 | `deploy-aws-application-network.ps1` | Criar e configurar os componentes da rede |
 | `test-aws-application-network.ps1` | Validar recursos, associações, rotas, tags e proteções |
 | `remove-aws-application-network.ps1` | Remover os recursos na ordem correta e confirmar o cleanup |
