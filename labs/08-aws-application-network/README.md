@@ -190,9 +190,25 @@ O script de validação deverá apresentar código de saída `0` somente quando 
 
 ## Evidências
 
-As evidências serão adicionadas após a implantação e a validação.
+### Implantação da rede
 
-Capturas com Account ID, ARN, credenciais, URLs de autenticação ou identificadores completos deverão ser anonimizadas antes da publicação.
+A captura abaixo registra a execução completa do script de implantação e confirma:
+
+- criação da VPC `10.20.0.0/16`;
+- habilitação de DNS;
+- criação das duas sub-redes públicas;
+- distribuição entre `us-east-1a` e `us-east-1b`;
+- associação do Internet Gateway;
+- configuração da rota pública;
+- associação da tabela de rotas às duas sub-redes;
+- criação do Security Group sem regras de entrada;
+- ausência de instâncias EC2, NAT Gateway, Elastic IP e balanceador.
+
+![Implantação da rede da aplicação na AWS](images/LAB08_Cloud_Operations_Network_Deployment_01.png)
+
+A evidência foi registrada sem exposição de Account ID, ARN, credenciais, URLs de autenticação ou identificadores completos dos recursos.
+
+Uma segunda evidência será adicionada após a execução do script de validação independente.
 
 ---
 
