@@ -218,10 +218,11 @@ Uma segunda evidência será adicionada após a execução do script de validaç
 - [x] Inspeção inicial concluída
 - [x] CIDR da VPC verificado
 - [x] Zonas de disponibilidade identificadas
-- [ ] Script de implantação implementado
+- [x] Script de implantação implementado
 - [ ] Script de validação implementado
 - [ ] Script de cleanup implementado
-- [ ] Rede implantada na AWS
+- [x] Rede implantada na AWS
 - [ ] Validação concluída
-- [ ] Evidências registradas
+- [x] Evidência da implantação registrada
+- [ ] Evidência da validação registrada
 - [ ] Cleanup validado
