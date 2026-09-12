@@ -50,7 +50,7 @@ O laboratório não inclui instâncias EC2, balanceadores, NAT Gateway, endereç
 A inspeção somente leitura confirmou:
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Perfil autenticado | Confirmado |
 | Região configurada | `us-east-1` |
 | Zonas disponíveis | 6 |
@@ -65,7 +65,7 @@ Os identificadores da conta, da sessão e dos recursos não serão publicados na
 ## Arquitetura
 
 | Componente | Configuração planejada |
-|---|---|
+|:---:|:---:|
 | VPC | `10.20.0.0/16` |
 | Sub-rede pública A | `10.20.10.0/24` |
 | Sub-rede pública B | `10.20.20.0/24` |
