@@ -96,7 +96,7 @@ As zonas `us-east-1a` e `us-east-1b` correspondem, nesta conta, aos identificado
 Os recursos criados pelo laboratório receberão, quando suportado, as seguintes tags:
 
 | Tag | Valor |
-|---|---|
+|:---:|:---:|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `08` |
