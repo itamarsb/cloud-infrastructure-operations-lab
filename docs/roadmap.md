@@ -41,8 +41,8 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 
 | Status | Laboratório | Conteúdo |
 |:---:|---|---|
-| ⬜ | **Lab 07 — Baseline da conta AWS** | Identidade, Região, tags e controle de custos |
-| ⬜ | **Lab 08 — Rede da aplicação** | VPC, subnet, rotas e security groups |
+| ✅ | **Lab 07 — Baseline operacional da conta AWS** | Inventário somente leitura de identidade, rede, recursos, segurança, tags, observabilidade e custos |
+| ⬜ | **Lab 08 — Rede da aplicação** | VPC, sub-rede, rotas e Security Groups |
 | ⬜ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role e Session Manager |
 | ⬜ | **Lab 10 — Serviço web em Linux** | Nginx, systemd e validação HTTP |
 | ⬜ | **Lab 11 — Armazenamento e recuperação** | EBS, S3, cópia e restauração |
@@ -56,7 +56,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 |:---:|---|---|
 | ⬜ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração e logs |
 | ⬜ | **Lab 14 — Utilização de disco** | Capacidade, crescimento de logs e mitigação |
-| ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, security groups e portas |
+| ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, Security Groups e portas |
 | ⬜ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente e conectividade |
 | ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação e rollback |
 | ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados e configurações |
@@ -132,7 +132,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 |:---:|:---:|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
-| Infraestrutura AWS | Planejado |
+| Infraestrutura AWS | Em desenvolvimento |
 | Operação e troubleshooting | Planejado |
 | Terraform | Planejado |
 | Monitoramento e logs | Planejado |
@@ -142,4 +142,6 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 ## Próxima etapa
 
-**Lab 07 — Baseline da conta AWS**
+**Lab 08 — Rede da aplicação**
+
+Construção da base de rede que será utilizada pela aplicação nos laboratórios seguintes, incluindo VPC, sub-rede, tabela de rotas, Internet Gateway e Security Groups, com validação e cleanup documentados.
