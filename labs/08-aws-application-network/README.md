@@ -81,7 +81,7 @@ Os identificadores da conta, da sessão e dos recursos não serão publicados na
 ### Fluxo de rede planejado
 
 | Origem | Destino | Caminho |
-|---|---|---|
+|:---:|:---:|---|
 | Sub-rede pública A | Internet | Tabela pública → Internet Gateway |
 | Sub-rede pública B | Internet | Tabela pública → Internet Gateway |
 | Internet | Recursos futuros | Somente quando uma regra de entrada for aprovada |
