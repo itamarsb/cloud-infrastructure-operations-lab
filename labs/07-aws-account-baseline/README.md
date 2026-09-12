@@ -11,7 +11,7 @@ O baseline reúne informações de identidade, rede, computação, armazenamento
 ## Ambiente validado
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Sistema operacional | Windows 11 |
 | Terminal | Windows PowerShell 5.1 |
 | AWS CLI | AWS CLI 2.36.14 |
