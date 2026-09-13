@@ -499,8 +499,8 @@ O laboratório será considerado concluído quando:
 ## Status
 
 - [x] Estrutura do laboratório criada
-- [ ] Arquitetura e proteções documentadas
-- [ ] Política de confiança implementada
+- [X] Arquitetura e proteções documentadas
+- [X] Política de confiança implementada
 - [ ] Script de implantação implementado
 - [ ] Script de validação implementado
 - [ ] Script de cleanup implementado
