@@ -67,7 +67,7 @@ O acesso administrativo ocorrerá exclusivamente pelo Systems Manager Session Ma
 A instância não aceitará conexões iniciadas diretamente pela Internet.
 
 | Componente | Definição |
-|---|---|
+|:---:|:---:|
 | Região | `us-east-1` |
 | VPC | `lab08-application-vpc` |
 | CIDR da VPC | `10.20.0.0/16` |
