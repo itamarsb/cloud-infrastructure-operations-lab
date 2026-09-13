@@ -55,7 +55,7 @@ O repositório prioriza:
 | ✅ | [Lab 05 — Usuários, grupos e permissões](labs/05-linux-users-groups-permissions/) | Identidades, permissões e acesso compartilhado |
 | ✅ | [Lab 06 — Serviços e logs no Linux](labs/06-linux-processes-services-logs/) | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
 | ✅ | [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) | Inventário somente leitura, segurança, tags, observabilidade e custos |
-| ⬜ | **Lab 08 — Rede da aplicação** | VPC, sub-rede, rotas e Security Groups |
+| ✅ | [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) | VPC, sub-redes, rotas, Internet Gateway, Security Group e cleanup |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -63,20 +63,33 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 07** implementou um baseline operacional somente leitura da conta AWS. O script em PowerShell consulta identidade, Região, rede, EC2, EBS, Amazon S3, tags, Systems Manager, CloudWatch e AWS Budgets sem criar, alterar ou remover recursos.
+O **Lab 08** implementou o ciclo operacional completo de uma rede de aplicação na AWS.
 
-Na execução documentada, o baseline apresentou:
+A infraestrutura foi composta por:
 
-| Resultado | Quantidade |
-|:---:|:---:|
-| Verificações aprovadas | 17 |
-| Pontos de atenção | 8 |
-| Falhas | 0 |
-| Código de saída | 0 |
+- uma VPC dedicada com o CIDR `10.20.0.0/16`;
+- duas sub-redes públicas distribuídas entre `us-east-1a` e `us-east-1b`;
+- suporte a DNS e nomes DNS habilitados;
+- um Internet Gateway;
+- uma tabela de rotas pública;
+- rota externa `0.0.0.0/0`;
+- associações explícitas entre a tabela de rotas e as sub-redes;
+- um Security Group sem regras de entrada;
+- tags operacionais aplicadas aos recursos.
 
-Os resultados foram registrados de forma anonimizada, sem exposição de Account ID, ARN, UserId, nomes de buckets, credenciais ou tokens.
+Três scripts em PowerShell foram implementados:
 
-Consulte o [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) para ver o procedimento, o inventário e a evidência de execução.
+| Script | Operação |
+|:---:|---|
+| `deploy-aws-application-network.ps1` | Implantação controlada da infraestrutura |
+| `test-aws-application-network.ps1` | Validação independente e somente leitura |
+| `remove-aws-application-network.ps1` | Remoção protegida e ordenada dos recursos |
+
+A validação confirmou todos os componentes obrigatórios e encerrou com código de saída `0`.
+
+O cleanup exigiu autorização explícita, removeu os recursos na ordem correta de dependências e confirmou que a VPC não estava mais presente. Nenhum recurso externo ao escopo do laboratório foi atingido.
+
+Consulte o [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) para acessar a documentação, os scripts e as evidências.
 
 ---
 
@@ -136,7 +149,7 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-A próxima implementação prevista é o **Lab 08 — Rede da aplicação**, que introduzirá VPC, sub-rede, rotas e Security Groups como base para os recursos dos laboratórios seguintes.
+A próxima implementação prevista é o **Lab 09 — Instância EC2 administrada pelo Systems Manager**, que utilizará a arquitetura de rede desenvolvida no Lab 08 como base para uma instância Linux sem acesso SSH público.
 
 ---
 
