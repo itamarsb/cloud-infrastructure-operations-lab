@@ -203,7 +203,7 @@ Consulte antes da execução:
             └── remove-aws-managed-instance.ps1
 
 | Arquivo | Finalidade |
-|---|---|
+|:---:|---|
 | `README.md` | Documentar arquitetura, controles, execução, validação, evidências e cleanup |
 | `ec2-ssm-trust-policy.json` | Definir a relação de confiança que permite ao serviço EC2 assumir a função IAM |
 | `deploy-aws-managed-instance.ps1` | Criar os recursos IAM, o Security Group e a instância EC2 |
