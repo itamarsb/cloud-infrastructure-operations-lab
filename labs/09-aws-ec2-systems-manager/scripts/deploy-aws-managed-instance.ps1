@@ -90,8 +90,16 @@ function Invoke-AwsJson {
         "--no-cli-pager"
     )
 
-    $CommandOutput = @(& aws @CommandArguments 2>&1)
-    $CommandExitCode = $LASTEXITCODE
+    $PreviousErrorActionPreference = $ErrorActionPreference
+
+    try {
+        $ErrorActionPreference = "Continue"
+        $CommandOutput = @(& aws @CommandArguments 2>&1)
+        $CommandExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
 
     if ($CommandExitCode -ne 0) {
         $ErrorText = ($CommandOutput | ForEach-Object { "$_" }) -join [Environment]::NewLine
@@ -121,8 +129,16 @@ function Invoke-AwsCommand {
         "--no-cli-pager"
     )
 
-    $CommandOutput = @(& aws @CommandArguments 2>&1)
-    $CommandExitCode = $LASTEXITCODE
+    $PreviousErrorActionPreference = $ErrorActionPreference
+
+    try {
+        $ErrorActionPreference = "Continue"
+        $CommandOutput = @(& aws @CommandArguments 2>&1)
+        $CommandExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
 
     if ($CommandExitCode -ne 0) {
         $ErrorText = ($CommandOutput | ForEach-Object { "$_" }) -join [Environment]::NewLine
@@ -148,8 +164,18 @@ function Test-AwsResourceExists {
         "--no-cli-pager"
     )
 
-    $null = @(& aws @CommandArguments 2>&1)
-    return ($LASTEXITCODE -eq 0)
+    $PreviousErrorActionPreference = $ErrorActionPreference
+
+    try {
+        $ErrorActionPreference = "Continue"
+        $null = @(& aws @CommandArguments 2>&1)
+        $CommandExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
+
+    return ($CommandExitCode -eq 0)
 }
 
 function Get-TagValue {
