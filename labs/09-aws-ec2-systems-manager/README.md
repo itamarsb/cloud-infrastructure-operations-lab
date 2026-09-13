@@ -504,7 +504,7 @@ O laboratório será considerado concluído quando:
 - [X] Script de implantação implementado
 - [ ] Script de validação implementado
 - [ ] Script de cleanup implementado
-- [ ] Rede do Lab 08 recriada
+- [X] Rede do Lab 08 recriada
 - [ ] Instância implantada
 - [ ] Validação concluída
 - [ ] Evidência da implantação registrada
