@@ -591,8 +591,8 @@ try {
     Write-Host ""
     Write-Host "=== IAM role creation ===" -ForegroundColor Cyan
 
-    $ResolvedTrustPolicyPath = (Resolve-Path -LiteralPath $TrustPolicyPath).Path
-    $TrustPolicyUri = ([System.Uri]$ResolvedTrustPolicyPath).AbsoluteUri
+    $TrustPolicyDocument = $TrustPolicy |
+        ConvertTo-Json -Depth 10 -Compress
 
     $null = Invoke-AwsJson -Arguments @(
         "iam",
@@ -600,7 +600,7 @@ try {
         "--role-name",
         $RoleName,
         "--assume-role-policy-document",
-        $TrustPolicyUri,
+        $TrustPolicyDocument,
         "--description",
         "Lab 09 EC2 role for AWS Systems Manager",
         "--tags",
