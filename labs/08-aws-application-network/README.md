@@ -2,9 +2,9 @@
 
 ## Objetivo
 
-Construir uma base de rede própria e identificável para os próximos laboratórios do projeto.
+Construir uma base de rede própria, segura e identificável para os próximos laboratórios do projeto.
 
-O laboratório utilizará uma VPC dedicada, duas sub-redes públicas em zonas de disponibilidade diferentes, um Internet Gateway, uma tabela de rotas pública e um Security Group inicial. A topologia será criada com AWS CLI, validada por um script independente e removida por um procedimento de cleanup controlado.
+O laboratório utiliza uma VPC dedicada, duas sub-redes públicas em zonas de disponibilidade diferentes, um Internet Gateway, uma tabela de rotas pública e um Security Group inicial. A topologia foi criada com AWS CLI, validada por um script independente e removida por um procedimento de cleanup controlado.
 
 > **English summary:** Deployment and validation of a low-cost AWS application network across two Availability Zones, using a dedicated VPC, public subnets, an Internet Gateway, route tables, security controls and automated cleanup.
 
@@ -25,7 +25,9 @@ O laboratório inclui:
 - criação de um Security Group sem regras de entrada;
 - aplicação de tags operacionais;
 - validação automatizada da topologia;
-- remoção controlada dos recursos.
+- registro de evidências anonimizadas;
+- remoção controlada dos recursos;
+- confirmação automatizada do cleanup.
 
 O laboratório não inclui instâncias EC2, balanceadores, NAT Gateway, endereços Elastic IP ou regras de acesso SSH.
 
@@ -58,13 +60,13 @@ A inspeção somente leitura confirmou:
 | CIDR proposto | `10.20.0.0/16` disponível |
 | Recursos alterados durante a inspeção | Nenhum |
 
-Os identificadores da conta, da sessão e dos recursos não serão publicados nas evidências.
+Os identificadores da conta, da sessão e dos recursos não foram publicados nas evidências.
 
 ---
 
 ## Arquitetura
 
-| Componente | Configuração planejada |
+| Componente | Configuração |
 |:---:|:---:|
 | VPC | `10.20.0.0/16` |
 | Sub-rede pública A | `10.20.10.0/24` |
@@ -78,7 +80,7 @@ Os identificadores da conta, da sessão e dos recursos não serão publicados na
 | NAT Gateway | Não utilizado |
 | Acesso administrativo futuro | AWS Systems Manager |
 
-### Fluxo de rede planejado
+### Fluxo de rede implementado
 
 | Origem | Destino | Caminho |
 |:---:|:---:|---|
@@ -93,7 +95,7 @@ As zonas `us-east-1a` e `us-east-1b` correspondem, nesta conta, aos identificado
 
 ## Tags
 
-Os recursos criados pelo laboratório receberão, quando suportado, as seguintes tags:
+Os recursos criados pelo laboratório receberam, quando suportado, as seguintes tags:
 
 | Tag | Valor |
 |:---:|:---:|
@@ -104,32 +106,36 @@ Os recursos criados pelo laboratório receberão, quando suportado, as seguintes
 | `Owner` | `itamarsb` |
 | `Name` | Nome específico do recurso |
 
-As tags permitem identificar a finalidade, a origem e a responsabilidade pelos recursos criados.
+As tags permitiram identificar a finalidade, a origem e a responsabilidade pelos recursos criados. Também foram utilizadas como proteção adicional durante o processo de cleanup.
 
 ---
 
 ## Segurança
 
-As seguintes proteções serão adotadas:
+As seguintes proteções foram adotadas:
 
-- nenhum endereço IP, ARN ou identificador de conta será gravado no repositório;
-- o script localizará recursos por tags e parâmetros controlados;
-- o Security Group será criado sem regras de entrada;
-- nenhuma porta SSH será aberta;
-- nenhuma instância será criada neste laboratório;
-- o CIDR será verificado antes da implantação;
-- a remoção será limitada aos recursos identificados como pertencentes ao Lab 08;
-- o script interromperá a execução quando uma operação obrigatória falhar.
+- nenhum endereço IP sensível, ARN ou identificador de conta foi gravado no repositório;
+- os scripts localizaram os recursos por tags e parâmetros controlados;
+- o Security Group foi criado sem regras de entrada;
+- nenhuma porta SSH foi aberta;
+- nenhuma instância foi criada;
+- o CIDR foi verificado antes da implantação;
+- a validação foi executada exclusivamente em modo de leitura;
+- a remoção foi limitada aos recursos identificados como pertencentes ao Lab 08;
+- o cleanup exigiu autorização explícita por meio do parâmetro `-ConfirmRemoval`;
+- os scripts interromperam a execução quando uma operação obrigatória falhou.
 
 ---
 
 ## Controle de custos
 
-O laboratório não utilizará NAT Gateway, Elastic IP, instância EC2 ou balanceador.
+O laboratório não utilizou NAT Gateway, Elastic IP, instância EC2 ou balanceador.
 
-A VPC, as sub-redes, o Internet Gateway, a tabela de rotas e o Security Group não possuem cobrança horária própria. Custos de transferência de dados poderão existir apenas quando recursos futuros utilizarem essa rede.
+A VPC, as sub-redes, o Internet Gateway, a tabela de rotas e o Security Group não possuem cobrança horária própria. Custos de transferência de dados poderiam existir somente se recursos futuros utilizassem essa rede.
 
-Como o laboratório cria somente componentes básicos de rede e não mantém tráfego, o custo esperado desta etapa é zero.
+Como o laboratório criou apenas componentes básicos de rede e não manteve tráfego, o custo esperado desta etapa foi zero.
+
+Todos os recursos criados pelo laboratório foram removidos ao final da execução.
 
 ---
 
@@ -138,7 +144,9 @@ Como o laboratório cria somente componentes básicos de rede e não mantém tr�
     08-aws-application-network/
     ├── README.md
     ├── images/
-    │   └── .gitkeep
+    │   ├── LAB08_Cloud_Operations_Network_Deployment_01.png
+    │   ├── LAB08_Cloud_Operations_Network_Validation_02.png
+    │   └── LAB08_Cloud_Operations_Network_Cleanup_03.png
     └── scripts/
         ├── deploy-aws-application-network.ps1
         ├── remove-aws-application-network.ps1
@@ -154,37 +162,45 @@ Como o laboratório cria somente componentes básicos de rede e não mantém tr�
 | `test-aws-application-network.ps1` | Validar recursos, associações, rotas, tags e proteções |
 | `remove-aws-application-network.ps1` | Remover os recursos na ordem correta e confirmar o cleanup |
 
-Os scripts serão executados separadamente. O script de implantação não realizará o cleanup automaticamente.
+Os scripts foram executados separadamente. O script de implantação não realiza o cleanup automaticamente.
+
+O script de validação opera somente em modo de leitura. O script de cleanup exige o parâmetro `-ConfirmRemoval` para autorizar qualquer exclusão.
 
 ---
 
-## Sequência de execução
+## Sequência executada
 
-1. renovar a sessão do AWS IAM Identity Center;
-2. executar a inspeção prévia;
-3. validar a sintaxe do script de implantação;
-4. criar a rede;
-5. executar o script de validação;
-6. registrar evidências sem informações sensíveis;
-7. utilizar a rede nos próximos laboratórios ou executar o cleanup;
-8. confirmar a remoção dos recursos.
+1. renovação da sessão do AWS IAM Identity Center;
+2. inspeção prévia da conta, da Região e do CIDR;
+3. validação local da sintaxe do script de implantação;
+4. implantação da rede;
+5. execução do script independente de validação;
+6. registro das evidências de implantação e validação;
+7. validação local da sintaxe do script de cleanup;
+8. execução do cleanup sem autorização para testar a trava de segurança;
+9. execução do cleanup com autorização explícita;
+10. confirmação da remoção da VPC;
+11. registro da evidência final.
 
 ---
 
-## Resultado esperado
+## Resultado obtido
 
-Ao final da implantação, a conta deverá possuir:
+A implantação criou:
 
-- uma VPC dedicada disponível;
-- DNS habilitado na VPC;
+- uma VPC dedicada com o CIDR `10.20.0.0/16`;
+- suporte a DNS e nomes DNS habilitados;
 - duas sub-redes públicas em zonas diferentes;
+- atribuição automática de endereços IPv4 públicos nas sub-redes;
 - um Internet Gateway associado;
 - uma tabela pública com rota externa;
-- associações explícitas entre a tabela e as sub-redes;
+- associações explícitas entre a tabela de rotas e as duas sub-redes;
 - um Security Group sem regras de entrada;
 - tags operacionais aplicadas aos recursos.
 
-O script de validação deverá apresentar código de saída `0` somente quando todos os componentes obrigatórios estiverem corretos.
+O script de validação confirmou todos os componentes obrigatórios e encerrou com código de saída `0`.
+
+Após o registro das evidências, o script de cleanup removeu todos os recursos do laboratório e confirmou que a VPC não estava mais presente.
 
 ---
 
@@ -228,7 +244,29 @@ A validação independente confirmou:
 
 A validação foi concluída com código de saída `0`, sem criação, alteração ou remoção de recursos AWS.
 
+### Cleanup controlado
+
+O cleanup foi executado somente após a validação da propriedade dos recursos e a autorização explícita por meio do parâmetro `-ConfirmRemoval`.
+
+A remoção ocorreu na seguinte ordem:
+
+1. Security Group;
+2. associações da tabela de rotas;
+3. tabela de rotas pública;
+4. sub-redes públicas;
+5. associação do Internet Gateway;
+6. Internet Gateway;
+7. VPC.
+
+Após a remoção, uma consulta automatizada confirmou que a VPC do Lab 08 não estava mais presente.
+
+![Cleanup controlado da rede da aplicação](images/LAB08_Cloud_Operations_Network_Cleanup_03.png)
+
+O cleanup foi concluído com código de saída `0`, sem atingir recursos externos ao escopo do laboratório.
+
 ---
+
+## Status
 
 - [x] Estrutura do laboratório criada
 - [x] Inspeção inicial concluída
@@ -236,9 +274,22 @@ A validação foi concluída com código de saída `0`, sem criação, alteraç�
 - [x] Zonas de disponibilidade identificadas
 - [x] Script de implantação implementado
 - [x] Script de validação implementado
-- [ ] Script de cleanup implementado
+- [x] Script de cleanup implementado
 - [x] Rede implantada na AWS
 - [x] Validação concluída
 - [x] Evidência da implantação registrada
 - [x] Evidência da validação registrada
-- [ ] Cleanup validado
+- [x] Evidência do cleanup registrada
+- [x] Cleanup validado
+
+---
+
+## Conclusão
+
+O Lab 08 implementou o ciclo operacional completo de uma rede de aplicação na AWS: inspeção, implantação, validação independente, registro de evidências e cleanup controlado.
+
+A infraestrutura foi construída com uma VPC dedicada, duas sub-redes públicas distribuídas entre zonas de disponibilidade diferentes, Internet Gateway, tabela de rotas pública e Security Group sem regras de entrada.
+
+Os scripts utilizaram validações de sessão, CIDR, dependências e tags operacionais. A remoção exigiu autorização explícita e confirmou a ausência da VPC ao final do processo.
+
+Nenhuma instância EC2, NAT Gateway, Elastic IP ou balanceador de carga foi criado durante o laboratório. Nenhum recurso do Lab 08 permaneceu ativo na conta AWS após o cleanup.
