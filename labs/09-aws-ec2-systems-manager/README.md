@@ -242,7 +242,7 @@ O script não deverá criar:
 Todos os recursos compatíveis deverão receber as tags:
 
 | Chave | Valor |
-|---|---|
+|:---:|:---:|
 | `Name` | Nome específico do recurso |
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
