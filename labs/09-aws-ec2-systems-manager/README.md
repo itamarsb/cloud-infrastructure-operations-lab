@@ -501,7 +501,7 @@ O laboratório será considerado concluído quando:
 - [x] Estrutura do laboratório criada
 - [X] Arquitetura e proteções documentadas
 - [X] Política de confiança implementada
-- [ ] Script de implantação implementado
+- [X] Script de implantação implementado
 - [ ] Script de validação implementado
 - [ ] Script de cleanup implementado
 - [ ] Rede do Lab 08 recriada
