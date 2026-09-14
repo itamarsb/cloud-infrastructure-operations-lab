@@ -57,7 +57,8 @@ O repositório prioriza:
 | ✅ | [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) | Inventário somente leitura, segurança, tags, observabilidade e custos |
 | ✅ | [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) | VPC, sub-redes, rotas, Internet Gateway, Security Group e cleanup |
 | ✅ | [Lab 09 — EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) | EC2, IAM Role, Session Manager, validação e cleanup |
-| 🔄 | **Lab 10 — Serviço web em Linux** | Nginx, systemd e validação HTTP |
+| ✅ | [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
+| 🔄 | **Lab 11 — Armazenamento e recuperação** | EBS, Amazon S3, integridade, cópia e restauração |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -65,49 +66,78 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 09** implementou o ciclo operacional completo de uma instância Amazon EC2 administrada pelo AWS Systems Manager.
+O **Lab 10** implementou o ciclo operacional completo de um serviço web Nginx executado em uma instância Amazon Linux 2023.
 
 A solução utilizou:
 
+- instância EC2 `t3.micro`;
+- rede compartilhada criada no Lab 08;
 - Amazon Linux 2023;
-- instância `t3.micro`;
-- rede criada no Lab 08;
+- Nginx gerenciado pelo `systemd`;
 - IAM Role dedicada;
 - Instance Profile associado à EC2;
 - política gerenciada `AmazonSSMManagedInstanceCore`;
-- Security Group sem regras de entrada;
+- administração pelo AWS Systems Manager;
+- Security Group com somente uma regra de entrada;
+- acesso HTTP limitado ao IPv4 público autorizado com máscara `/32`;
 - ausência de Key Pair;
+- ausência de regra para a porta TCP `22`;
 - IMDSv2 obrigatório;
-- volume EBS `gp3` criptografado;
-- administração remota pelo Session Manager.
+- volume EBS `gp3` criptografado.
 
 Três scripts em PowerShell foram implementados:
 
 | Script | Operação |
 |:---:|---|
-| `deploy-aws-managed-instance.ps1` | Implantação controlada da IAM Role, do Security Group e da EC2 |
-| `test-aws-managed-instance.ps1` | Validação independente e somente leitura |
-| `remove-aws-managed-instance.ps1` | Remoção protegida e ordenada dos recursos |
+| `deploy-linux-web-service.ps1` | Implantação da IAM Role, do Security Group, da EC2 e do Nginx |
+| `test-linux-web-service.ps1` | Validação independente da infraestrutura, segurança, `systemd` e HTTP |
+| `remove-linux-web-service.ps1` | Remoção protegida e ordenada dos recursos |
 
-A implantação foi concluída com código de saída `0`, e a instância passou nas verificações de integridade da EC2 antes de ficar online no Systems Manager.
+A implantação foi concluída com código de saída `0`. A instância passou nos status checks da EC2, ficou online no Systems Manager e respondeu com HTTP `200`.
 
-O validador confirmou:
+O validador independente confirmou:
 
-- instância em execução;
+- existência de exatamente uma instância ativa;
+- presença das tags esperadas;
 - ausência de chave SSH;
 - exigência do IMDSv2;
 - Instance Profile correto;
 - somente um Security Group associado;
-- ausência de regras de entrada;
+- somente uma regra de entrada;
+- liberação exclusiva da porta TCP `80`;
+- restrição HTTP ao endereço IPv4 `/32`;
+- ausência de acesso pela porta TCP `22`;
 - volume raiz criptografado e do tipo `gp3`;
 - política `AmazonSSMManagedInstanceCore` associada;
-- registro online no Systems Manager.
+- registro online no Systems Manager;
+- sistema operacional Amazon Linux 2023;
+- Nginx ativo e habilitado no `systemd`;
+- validação HTTP local e externa;
+- conteúdo correspondente ao Lab 10.
 
-Uma sessão administrativa foi realizada como `ssm-user`, sem abertura da porta TCP `22` e sem exposição de um serviço administrativo à Internet.
+Uma sessão administrativa foi realizada como `ssm-user` pelo Session Manager, sem utilização de SSH.
 
-O cleanup removeu a instância, o Security Group e os componentes IAM do Lab 09. A verificação final confirmou que nenhum recurso ativo do laboratório permaneceu na conta e que a VPC e a sub-rede do Lab 08 foram preservadas.
+Durante a execução, também foram diagnosticados e corrigidos:
 
-Consulte o [Lab 09 — Instância EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) para acessar a documentação, os scripts e as evidências.
+- serialização do comando remoto enviado ao Systems Manager;
+- interpretação de caracteres acentuados no conteúdo HTML.
+
+O cleanup removeu a instância, o Security Group, o Instance Profile e a IAM Role do Lab 10.
+
+A verificação final confirmou:
+
+| Recurso | Quantidade final |
+|:---|:---:|
+| Instâncias ativas do Lab 10 | `0` |
+| Security Groups do Lab 10 | `0` |
+| IAM Roles do Lab 10 | `0` |
+| Instance Profiles do Lab 10 | `0` |
+| VPC do Lab 08 | `1` |
+| Sub-rede do Lab 08 | `1` |
+
+Nenhum recurso ativo específico do Lab 10 permaneceu na conta, enquanto a VPC e a sub-rede compartilhadas do Lab 08 foram preservadas.
+
+Consulte o [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) para acessar a documentação, os scripts e as evidências.
 
 ---
 
@@ -167,7 +197,9 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-A próxima implementação prevista é o **Lab 10 — Serviço web em Linux**, que utilizará uma instância Amazon Linux administrada pelo Systems Manager para implantar e operar um serviço Nginx com `systemd` e validação HTTP.
+A próxima implementação é o **Lab 11 — Armazenamento e recuperação**.
+
+O laboratório implementará um fluxo controlado de armazenamento utilizando EBS e Amazon S3, incluindo criação de dados de teste, cópia, verificação de integridade, restauração, validação independente e cleanup dos recursos específicos do laboratório.
 
 ---
 
