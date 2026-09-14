@@ -52,6 +52,28 @@ function Invoke-AwsJson {
     return $Text | ConvertFrom-Json
 }
 
+function Get-OptionalPropertyValue {
+    param(
+        [AllowNull()]
+        [object]$InputObject,
+
+        [Parameter(Mandatory = $true)]
+        [string]$PropertyName
+    )
+
+    if ($null -eq $InputObject) {
+        return $null
+    }
+
+    $Property = $InputObject.PSObject.Properties[$PropertyName]
+
+    if ($null -eq $Property) {
+        return $null
+    }
+
+    return $Property.Value
+}
+
 function Assert-Check {
     param(
         [bool]$Condition,
@@ -104,36 +126,65 @@ try {
         -Condition ($Instance.State.Name -eq "running") `
         -Message "EC2 instance is running."
 
+    $KeyName = Get-OptionalPropertyValue `
+        -InputObject $Instance `
+        -PropertyName "KeyName"
+
     Assert-Check `
-        -Condition ([string]::IsNullOrWhiteSpace([string]$Instance.KeyName)) `
+        -Condition ([string]::IsNullOrWhiteSpace([string]$KeyName)) `
         -Message "No SSH Key Pair is associated."
 
+    $MetadataOptions = Get-OptionalPropertyValue `
+        -InputObject $Instance `
+        -PropertyName "MetadataOptions"
+
+    $HttpTokens = Get-OptionalPropertyValue `
+        -InputObject $MetadataOptions `
+        -PropertyName "HttpTokens"
+
     Assert-Check `
-        -Condition ($Instance.MetadataOptions.HttpTokens -eq "required") `
+        -Condition ($HttpTokens -eq "required") `
         -Message "IMDSv2 tokens are mandatory."
 
+    $IamInstanceProfile = Get-OptionalPropertyValue `
+        -InputObject $Instance `
+        -PropertyName "IamInstanceProfile"
+
+    $IamInstanceProfileArn = Get-OptionalPropertyValue `
+        -InputObject $IamInstanceProfile `
+        -PropertyName "Arn"
+
     Assert-Check `
-        -Condition ($Instance.IamInstanceProfile.Arn -match "/$([regex]::Escape($InstanceProfileName))$") `
+        -Condition (
+            [string]$IamInstanceProfileArn -match
+            "/$([regex]::Escape($InstanceProfileName))$"
+        ) `
         -Message "Expected Instance Profile is associated."
 
+    $SecurityGroups = @($Instance.SecurityGroups)
+
     Assert-Check `
-        -Condition (@($Instance.SecurityGroups).Count -eq 1) `
+        -Condition ($SecurityGroups.Count -eq 1) `
         -Message "Exactly one Security Group is associated."
 
-    Assert-Check `
-        -Condition ($Instance.SecurityGroups[0].GroupName -eq $SecurityGroupName) `
-        -Message "Expected Security Group is associated."
+    if ($SecurityGroups.Count -eq 1) {
+        Assert-Check `
+            -Condition ($SecurityGroups[0].GroupName -eq $SecurityGroupName) `
+            -Message "Expected Security Group is associated."
 
-    $SecurityGroupResult = Invoke-AwsJson -Arguments @(
-        "ec2",
-        "describe-security-groups",
-        "--group-ids",
-        $Instance.SecurityGroups[0].GroupId
-    )
+        $SecurityGroupResult = Invoke-AwsJson -Arguments @(
+            "ec2",
+            "describe-security-groups",
+            "--group-ids",
+            $SecurityGroups[0].GroupId
+        )
 
-    Assert-Check `
-        -Condition (@($SecurityGroupResult.SecurityGroups[0].IpPermissions).Count -eq 0) `
-        -Message "Security Group has no ingress rules."
+        Assert-Check `
+            -Condition (
+                @($SecurityGroupResult.SecurityGroups[0].IpPermissions).Count -eq 0
+            ) `
+            -Message "Security Group has no ingress rules."
+    }
 
     $RootDevice = [string]$Instance.RootDeviceName
 
@@ -186,7 +237,9 @@ try {
     )
 
     Assert-Check `
-        -Condition (@($PolicyResult.AttachedPolicies.PolicyArn) -contains $PolicyArn) `
+        -Condition (
+            @($PolicyResult.AttachedPolicies.PolicyArn) -contains $PolicyArn
+        ) `
         -Message "AmazonSSMManagedInstanceCore is attached."
 
     $ProfileResult = Invoke-AwsJson -Arguments @(
@@ -197,7 +250,9 @@ try {
     )
 
     Assert-Check `
-        -Condition (@($ProfileResult.InstanceProfile.Roles.RoleName) -contains $RoleName) `
+        -Condition (
+            @($ProfileResult.InstanceProfile.Roles.RoleName) -contains $RoleName
+        ) `
         -Message "IAM role belongs to the Instance Profile."
 
     $SsmResult = Invoke-AwsJson -Arguments @(
@@ -222,7 +277,9 @@ try {
     Write-Host ""
 
     if ($Failures -gt 0) {
-        Write-Host "VALIDATION FAILED: $Failures check(s) failed." -ForegroundColor Red
+        Write-Host "VALIDATION FAILED: $Failures check(s) failed." `
+            -ForegroundColor Red
+
         exit 1
     }
 
