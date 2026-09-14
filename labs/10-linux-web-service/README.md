@@ -383,7 +383,7 @@ O cleanup foi concluído com código de saída `0`.
 Após o cleanup, uma nova consulta independente confirmou:
 
 | Recurso | Quantidade final |
-|:---|:---:|
+|:---:|:---:|
 | Instâncias ativas do Lab 10 | `0` |
 | Security Groups do Lab 10 | `0` |
 | IAM Roles do Lab 10 | `0` |
