@@ -127,7 +127,7 @@ O cleanup removeu a instância, o Security Group, o Instance Profile e a IAM Rol
 A verificação final confirmou:
 
 | Recurso | Quantidade final |
-|:---|:---:|
+|:---:|:---:|
 | Instâncias ativas do Lab 10 | `0` |
 | Security Groups do Lab 10 | `0` |
 | IAM Roles do Lab 10 | `0` |
