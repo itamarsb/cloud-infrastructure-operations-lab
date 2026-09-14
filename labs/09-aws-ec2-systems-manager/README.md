@@ -23,7 +23,7 @@ O Lab 09 reutiliza temporariamente a VPC e a sub-rede pública criadas no Lab 08
         EC2 Amazon Linux 2023 + IAM Role
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Região | `us-east-1` |
 | Zona de disponibilidade | `us-east-1a` |
 | VPC | `lab08-application-vpc` |
