@@ -78,7 +78,6 @@ Não são criados:
     │   ├── lab09-deployment-success.png
     │   ├── lab09-read-only-validation.png
     │   ├── lab09-session-manager.png
-    │   ├── lab09-cleanup-success.png
     │   └── lab09-post-cleanup-validation.png
     ├── policies/
     │   └── ec2-ssm-trust-policy.json
@@ -243,18 +242,23 @@ Os recursos são conferidos pelas tags `Lab=09` e `Owner=itamarsb`. A VPC e a su
 
 ### Evidência do cleanup
 
-![Cleanup controlado concluído](images/lab09-cleanup-success.png)
+![Cleanup controlado do Lab 09](images/lab09-post-cleanup-validation.png)
 
-O cleanup terminou com código de saída `0` e informou explicitamente que os recursos de rede do Lab 08 não foram modificados.
+O cleanup terminou com código de saída `0` e confirmou:
+
+- término da instância EC2;
+- exclusão do Security Group;
+- remoção dos recursos IAM;
+- preservação dos recursos de rede do Lab 08.
 
 ---
 
-## 5. Verificação pós-cleanup
+## 5. Estado final
 
 Depois da remoção, consultas independentes confirmaram o estado final da conta.
 
 | Verificação | Resultado |
-|:---:|:---:|
+|---|:---:|
 | Instâncias ativas do Lab 09 | `0` |
 | Security Groups do Lab 09 | `0` |
 | IAM Roles do Lab 09 | `0` |
@@ -262,11 +266,7 @@ Depois da remoção, consultas independentes confirmaram o estado final da conta
 | VPC `lab08-application-vpc` | `1` |
 | Sub-rede `lab08-public-subnet-a` | `1` |
 
-### Evidência do estado final
-
-![Cleanup](images/lab09-post-cleanup-validation.png)
-
-A verificação confirmou a ausência de recursos ativos do Lab 09 e a preservação da rede utilizada pelo Lab 08.
+Os resultados confirmam que nenhum recurso ativo do Lab 09 permaneceu na conta e que a infraestrutura do Lab 08 foi preservada.
 
 ---
 
@@ -279,7 +279,7 @@ O ciclo operacional do Lab 09 foi concluído:
 - acesso administrativo pelo Systems Manager;
 - ausência de SSH e regras de entrada;
 - remoção controlada dos recursos;
-- verificação pós-cleanup;
+- verificação do estado final;
 - preservação da infraestrutura do Lab 08.
 
 O laboratório demonstrou uma forma segura de administrar uma instância EC2 sem expor uma porta administrativa à Internet e sem manter credenciais permanentes dentro do sistema operacional.
