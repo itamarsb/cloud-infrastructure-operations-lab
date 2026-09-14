@@ -43,7 +43,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 |:---:|---|---|
 | ✅ | **Lab 07 — Baseline operacional da conta AWS** | Inventário somente leitura de identidade, rede, recursos, segurança, tags, observabilidade e custos |
 | ✅ | **Lab 08 — Rede da aplicação** | VPC, sub-redes, rotas, Internet Gateway, Security Group, validação e cleanup |
-| ⬜ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role e Session Manager |
+| 🔄 | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role e Session Manager |
 | ⬜ | **Lab 10 — Serviço web em Linux** | Nginx, systemd e validação HTTP |
 | ⬜ | **Lab 11 — Armazenamento e recuperação** | EBS, S3, cópia e restauração |
 | ⬜ | **Lab 12 — Disponibilidade da aplicação** | Health checks e distribuição de tráfego |
