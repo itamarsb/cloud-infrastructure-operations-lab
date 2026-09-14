@@ -254,7 +254,7 @@ O cleanup terminou com código de saída `0` e informou explicitamente que os re
 Depois da remoção, consultas independentes confirmaram o estado final da conta.
 
 | Verificação | Resultado |
-|---|:---:|
+|:---:|:---:|
 | Instâncias ativas do Lab 09 | `0` |
 | Security Groups do Lab 09 | `0` |
 | IAM Roles do Lab 09 | `0` |
