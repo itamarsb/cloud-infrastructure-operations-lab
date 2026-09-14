@@ -264,7 +264,7 @@ Depois da remoção, consultas independentes confirmaram o estado final da conta
 
 ### Evidência do estado final
 
-![post_cleanup](images/lab09-post-cleanup-validation.png)
+![Cleanup](images/lab09-post-cleanup-validation.png)
 
 A verificação confirmou a ausência de recursos ativos do Lab 09 e a preservação da rede utilizada pelo Lab 08.
 
