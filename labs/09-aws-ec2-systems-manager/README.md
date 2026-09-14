@@ -55,7 +55,8 @@ O IPv4 público é utilizado apenas para comunicação de saída com os endpoint
 - exigência do IMDSv2;
 - volume raiz criptografado;
 - validação independente em modo somente leitura;
-- cleanup explícito e protegido por tags.
+- cleanup explícito e protegido por tags;
+- preservação da infraestrutura criada no Lab 08.
 
 Não são criados:
 
@@ -64,7 +65,8 @@ Não são criados:
 - Elastic IP;
 - Load Balancer;
 - Key Pair;
-- aplicação ou banco de dados.
+- aplicação;
+- banco de dados.
 
 ---
 
@@ -73,6 +75,11 @@ Não são criados:
     labs/09-aws-ec2-systems-manager/
     ├── README.md
     ├── images/
+    │   ├── lab09-deployment-success.png
+    │   ├── lab09-read-only-validation.png
+    │   ├── lab09-session-manager.png
+    │   ├── lab09-cleanup-success.png
+    │   └── lab09-post-cleanup-validation.png
     ├── policies/
     │   └── ec2-ssm-trust-policy.json
     └── scripts/
@@ -122,11 +129,17 @@ O script:
 2. localiza a rede do Lab 08;
 3. impede conflitos com recursos existentes;
 4. cria a IAM Role e o Instance Profile;
-5. cria o Security Group sem ingresso;
+5. cria o Security Group sem regras de entrada;
 6. inicia a EC2 com IMDSv2 e EBS criptografado;
 7. aguarda o registro no Systems Manager.
 
-Se ocorrer uma falha depois da criação de algum recurso, execute o cleanup antes de tentar novamente.
+Se ocorrer uma falha depois da criação de algum recurso, o cleanup deve ser executado antes de uma nova tentativa.
+
+### Evidência da implantação
+
+![Implantação concluída do Lab 09](images/lab09-deployment-success.png)
+
+A implantação foi concluída com código de saída `0`. A instância passou nas verificações de status da EC2 e ficou online no Systems Manager.
 
 ---
 
@@ -138,16 +151,26 @@ Se ocorrer uma falha depois da criação de algum recurso, execute o cleanup ant
         -ProfileName "cloud-operations-lab" `
         -Region "us-east-1"
 
-O validador executa apenas consultas e confirma:
+O validador executa somente consultas e confirma:
 
 - estado da EC2;
 - ausência de Key Pair;
 - IMDSv2 obrigatório;
 - associação do Instance Profile;
+- existência de somente um Security Group;
 - ausência de regras de entrada;
 - criptografia e tipo do volume EBS;
-- política `AmazonSSMManagedInstanceCore`;
+- remoção automática do volume raiz com a instância;
+- existência da IAM Role;
+- associação da política `AmazonSSMManagedInstanceCore`;
+- vínculo entre IAM Role e Instance Profile;
 - registro online no Systems Manager.
+
+### Evidência da validação
+
+![Validação independente concluída](images/lab09-read-only-validation.png)
+
+Todas as verificações foram aprovadas e o script terminou com código de saída `0`.
 
 ---
 
@@ -158,7 +181,9 @@ Obtenha o ID da instância:
     $InstanceId = aws ec2 describe-instances `
         --profile cloud-operations-lab `
         --region us-east-1 `
-        --filters "Name=tag:Name,Values=lab09-managed-instance" "Name=instance-state-name,Values=running" `
+        --filters `
+            "Name=tag:Name,Values=lab09-managed-instance" `
+            "Name=instance-state-name,Values=running" `
         --query "Reservations[0].Instances[0].InstanceId" `
         --output text `
         --no-cli-pager
@@ -173,29 +198,30 @@ Inicie a sessão:
 Dentro da instância:
 
     whoami
-    hostnamectl
-    uname -r
+    hostname
+    uname -a
+    cat /etc/os-release
 
-Finalize a sessão com:
+Finalize a sessão:
 
     exit
 
+### Evidência de acesso
+
+![Acesso administrativo pelo Session Manager](images/lab09-session-manager.png)
+
+A sessão foi iniciada como `ssm-user` em uma instância Amazon Linux 2023 e encerrada corretamente.
+
+O acesso ocorreu sem:
+
+- chave SSH;
+- porta TCP `22`;
+- regra de entrada no Security Group;
+- exposição de um serviço administrativo à Internet.
+
 ---
 
-## 4. Evidências sugeridas
-
-| Arquivo | Conteúdo |
-|---|---|
-| `lab09-deployment-success.png` | Resumo da implantação concluída |
-| `lab09-read-only-validation.png` | Resultado do script de validação |
-| `lab09-session-manager.png` | Sessão administrativa sem SSH |
-| `lab09-cleanup-success.png` | Remoção concluída |
-
-As capturas não devem exibir IDs de conta, URLs de autenticação, tokens ou outras informações sensíveis.
-
----
-
-## 5. Cleanup
+## 4. Cleanup
 
     $RemoveScript = ".\labs\09-aws-ec2-systems-manager\scripts\remove-aws-managed-instance.ps1"
 
@@ -215,18 +241,48 @@ O script remove:
 
 Os recursos são conferidos pelas tags `Lab=09` e `Owner=itamarsb`. A VPC e a sub-rede do Lab 08 não são removidas.
 
+### Evidência do cleanup
+
+![Cleanup controlado concluído](images/lab09-cleanup-success.png)
+
+O cleanup terminou com código de saída `0` e informou explicitamente que os recursos de rede do Lab 08 não foram modificados.
+
 ---
 
-## Critérios de conclusão
+## 5. Verificação pós-cleanup
 
-O Lab 09 estará concluído quando:
+Depois da remoção, consultas independentes confirmaram o estado final da conta.
 
-- a instância estiver online no Systems Manager;
-- o validador terminar sem falhas;
-- uma sessão administrativa for realizada sem SSH;
-- as evidências forem registradas;
-- o cleanup remover os recursos do Lab 09;
-- a rede do Lab 08 permanecer intacta.
+| Verificação | Resultado |
+|---|:---:|
+| Instâncias ativas do Lab 09 | `0` |
+| Security Groups do Lab 09 | `0` |
+| IAM Roles do Lab 09 | `0` |
+| Instance Profiles do Lab 09 | `0` |
+| VPC `lab08-application-vpc` | `1` |
+| Sub-rede `lab08-public-subnet-a` | `1` |
+
+### Evidência do estado final
+
+![Verificação pós-cleanup](images/lab09-post-cleanup-validation.png)
+
+A verificação confirmou a ausência de recursos ativos do Lab 09 e a preservação da rede utilizada pelo Lab 08.
+
+---
+
+## Resultado
+
+O ciclo operacional do Lab 09 foi concluído:
+
+- implantação segura da instância;
+- validação independente da configuração;
+- acesso administrativo pelo Systems Manager;
+- ausência de SSH e regras de entrada;
+- remoção controlada dos recursos;
+- verificação pós-cleanup;
+- preservação da infraestrutura do Lab 08.
+
+O laboratório demonstrou uma forma segura de administrar uma instância EC2 sem expor uma porta administrativa à Internet e sem manter credenciais permanentes dentro do sistema operacional.
 
 ---
 
@@ -234,4 +290,6 @@ O Lab 09 estará concluído quando:
 
 A instância EC2, o volume EBS e o endereço IPv4 público podem gerar cobrança enquanto estiverem em uso.
 
-O laboratório utiliza apenas uma instância `t3.micro`, não cria NAT Gateway e prevê a remoção dos recursos logo após o registro das evidências.
+O laboratório utiliza somente uma instância `t3.micro`, não cria NAT Gateway e prevê a remoção dos recursos imediatamente após o registro das evidências.
+
+Ao final da execução documentada, nenhum recurso ativo do Lab 09 permaneceu na conta.
