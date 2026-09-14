@@ -260,7 +260,7 @@ A rede do Lab 08 não será modificada.
 As capturas serão registradas somente depois das execuções reais.
 
 | Evidência | Conteúdo esperado |
-|---|---|
+|:---:|:---:|
 | `lab10-deployment-success.png` | Implantação concluída e instância online no Systems Manager |
 | `lab10-http-validation.png` | Resposta HTTP `200` e conteúdo da página do Lab 10 |
 | `lab10-systemd-validation.png` | Nginx ativo e habilitado no `systemd` |
