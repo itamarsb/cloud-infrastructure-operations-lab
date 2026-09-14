@@ -467,18 +467,53 @@ try {
     ) {
         $RemoteCommand = "set -e; systemctl is-active nginx; systemctl is-enabled nginx; test -f /var/lib/cloud/instance/lab10-nginx-ready; curl -fsS http://localhost/ | grep -q 'Lab 10'; printf 'LAB10_SYSTEMD_OK\n'"
 
-        $CommandResult = Invoke-AwsJson -Arguments @(
-            "ssm",
-            "send-command",
-            "--instance-ids",
-            $InstanceId,
-            "--document-name",
-            "AWS-RunShellScript",
-            "--comment",
-            "Lab 10 read-only Nginx validation",
-            "--parameters",
-            "commands=$RemoteCommand"
+                $RemoteCommand = "set -e; systemctl is-active nginx; systemctl is-enabled nginx; test -f /var/lib/cloud/instance/lab10-nginx-ready; curl -fsS http://localhost/ | grep -q 'Lab 10'; printf 'LAB10_SYSTEMD_OK\n'"
+
+        $CommandParameters = @{
+            commands = @(
+                $RemoteCommand
+            )
+        } | ConvertTo-Json -Depth 3
+
+        $TemporaryParametersPath = Join-Path `
+            -Path ([System.IO.Path]::GetTempPath()) `
+            -ChildPath "lab10-command-parameters.json"
+
+        $Utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
+
+        [System.IO.File]::WriteAllText(
+            $TemporaryParametersPath,
+            $CommandParameters,
+            $Utf8WithoutBom
         )
+
+        $ParametersFilePath = (
+            Resolve-Path -LiteralPath $TemporaryParametersPath
+        ).Path -replace "\\", "/"
+
+        $ParametersArgument = "file://$ParametersFilePath"
+
+        try {
+            $CommandResult = Invoke-AwsJson -Arguments @(
+                "ssm",
+                "send-command",
+                "--instance-ids",
+                $InstanceId,
+                "--document-name",
+                "AWS-RunShellScript",
+                "--comment",
+                "Lab 10 read-only Nginx validation",
+                "--parameters",
+                $ParametersArgument
+            )
+        }
+        finally {
+            if (Test-Path -LiteralPath $TemporaryParametersPath) {
+                Remove-Item `
+                    -LiteralPath $TemporaryParametersPath `
+                    -Force
+            }
+        }
 
         $CommandId = [string]$CommandResult.Command.CommandId
         $CommandCompleted = $false
