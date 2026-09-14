@@ -56,6 +56,8 @@ O repositório prioriza:
 | ✅ | [Lab 06 — Serviços e logs no Linux](labs/06-linux-processes-services-logs/) | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
 | ✅ | [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) | Inventário somente leitura, segurança, tags, observabilidade e custos |
 | ✅ | [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) | VPC, sub-redes, rotas, Internet Gateway, Security Group e cleanup |
+| ✅ | [Lab 09 — EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) | EC2, IAM Role, Session Manager, validação e cleanup |
+| 🔄 | **Lab 10 — Serviço web em Linux** | Nginx, systemd e validação HTTP |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -63,33 +65,49 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 08** implementou o ciclo operacional completo de uma rede de aplicação na AWS.
+O **Lab 09** implementou o ciclo operacional completo de uma instância Amazon EC2 administrada pelo AWS Systems Manager.
 
-A infraestrutura foi composta por:
+A solução utilizou:
 
-- uma VPC dedicada com o CIDR `10.20.0.0/16`;
-- duas sub-redes públicas distribuídas entre `us-east-1a` e `us-east-1b`;
-- suporte a DNS e nomes DNS habilitados;
-- um Internet Gateway;
-- uma tabela de rotas pública;
-- rota externa `0.0.0.0/0`;
-- associações explícitas entre a tabela de rotas e as sub-redes;
-- um Security Group sem regras de entrada;
-- tags operacionais aplicadas aos recursos.
+- Amazon Linux 2023;
+- instância `t3.micro`;
+- rede criada no Lab 08;
+- IAM Role dedicada;
+- Instance Profile associado à EC2;
+- política gerenciada `AmazonSSMManagedInstanceCore`;
+- Security Group sem regras de entrada;
+- ausência de Key Pair;
+- IMDSv2 obrigatório;
+- volume EBS `gp3` criptografado;
+- administração remota pelo Session Manager.
 
 Três scripts em PowerShell foram implementados:
 
 | Script | Operação |
 |:---:|---|
-| `deploy-aws-application-network.ps1` | Implantação controlada da infraestrutura |
-| `test-aws-application-network.ps1` | Validação independente e somente leitura |
-| `remove-aws-application-network.ps1` | Remoção protegida e ordenada dos recursos |
+| `deploy-aws-managed-instance.ps1` | Implantação controlada da IAM Role, do Security Group e da EC2 |
+| `test-aws-managed-instance.ps1` | Validação independente e somente leitura |
+| `remove-aws-managed-instance.ps1` | Remoção protegida e ordenada dos recursos |
 
-A validação confirmou todos os componentes obrigatórios e encerrou com código de saída `0`.
+A implantação foi concluída com código de saída `0`, e a instância passou nas verificações de integridade da EC2 antes de ficar online no Systems Manager.
 
-O cleanup exigiu autorização explícita, removeu os recursos na ordem correta de dependências e confirmou que a VPC não estava mais presente. Nenhum recurso externo ao escopo do laboratório foi atingido.
+O validador confirmou:
 
-Consulte o [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) para acessar a documentação, os scripts e as evidências.
+- instância em execução;
+- ausência de chave SSH;
+- exigência do IMDSv2;
+- Instance Profile correto;
+- somente um Security Group associado;
+- ausência de regras de entrada;
+- volume raiz criptografado e do tipo `gp3`;
+- política `AmazonSSMManagedInstanceCore` associada;
+- registro online no Systems Manager.
+
+Uma sessão administrativa foi realizada como `ssm-user`, sem abertura da porta TCP `22` e sem exposição de um serviço administrativo à Internet.
+
+O cleanup removeu a instância, o Security Group e os componentes IAM do Lab 09. A verificação final confirmou que nenhum recurso ativo do laboratório permaneceu na conta e que a VPC e a sub-rede do Lab 08 foram preservadas.
+
+Consulte o [Lab 09 — Instância EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) para acessar a documentação, os scripts e as evidências.
 
 ---
 
@@ -149,7 +167,7 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-A próxima implementação prevista é o **Lab 09 — Instância EC2 administrada pelo Systems Manager**, que utilizará a arquitetura de rede desenvolvida no Lab 08 como base para uma instância Linux sem acesso SSH público.
+A próxima implementação prevista é o **Lab 10 — Serviço web em Linux**, que utilizará uma instância Amazon Linux administrada pelo Systems Manager para implantar e operar um serviço Nginx com `systemd` e validação HTTP.
 
 ---
 
