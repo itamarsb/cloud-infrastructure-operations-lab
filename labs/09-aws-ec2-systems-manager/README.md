@@ -81,7 +81,7 @@ Não são criados:
         └── remove-aws-managed-instance.ps1
 
 | Arquivo | Responsabilidade |
-|---|---|
+|:---:|---|
 | `deploy-aws-managed-instance.ps1` | Criar IAM, Security Group e EC2 |
 | `test-aws-managed-instance.ps1` | Validar a configuração sem modificá-la |
 | `remove-aws-managed-instance.ps1` | Remover somente os recursos identificados como Lab 09 |
