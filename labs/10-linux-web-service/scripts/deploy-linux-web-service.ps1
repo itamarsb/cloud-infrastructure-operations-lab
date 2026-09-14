@@ -492,8 +492,8 @@ cat > /usr/share/nginx/html/index.html <<'HTML'
 </head>
 <body>
     <main>
-        <h1>Lab 10 - Serviço web Nginx em Linux</h1>
-        <p class="status">HTTP 200 - serviço disponível</p>
+        <h1>Lab 10 - Servi&ccedil;o web Nginx em Linux</h1>
+        <p class="status">HTTP 200 - serviço dispon&iacute;vel</p>
         <p>Amazon Linux 2023 com Nginx administrado pelo systemd.</p>
         <p>Acesso administrativo realizado pelo AWS Systems Manager.</p>
         <p>Projeto: <code>cloud-infrastructure-operations-lab</code></p>
