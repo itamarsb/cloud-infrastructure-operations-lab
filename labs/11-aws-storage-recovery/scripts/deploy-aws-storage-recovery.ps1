@@ -844,14 +844,15 @@ mkfs.ext4 -F "$DATA_DEVICE"
 DATA_UUID="$(blkid -s UUID -o value "$DATA_DEVICE")"
 
 mkdir -p /mnt/lab11-data
-mkdir -p /mnt/lab11-data/source
-mkdir -p /mnt/lab11-data/restored
 
 if ! grep -q "UUID=$DATA_UUID" /etc/fstab; then
     printf 'UUID=%s /mnt/lab11-data ext4 defaults,nofail 0 2\n' "$DATA_UUID" >> /etc/fstab
 fi
 
 mount /mnt/lab11-data
+
+mkdir -p /mnt/lab11-data/source
+mkdir -p /mnt/lab11-data/restored
 
 SOURCE_FILE="/mnt/lab11-data/source/lab11-storage-data.txt"
 SOURCE_HASH_FILE="/mnt/lab11-data/source/lab11-storage-data.sha256"
