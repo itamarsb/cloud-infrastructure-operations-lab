@@ -361,7 +361,7 @@ A implantação completa, a validação independente na AWS e a restauração co
 - [x] critérios de sucesso definidos;
 - [ ] políticas IAM criadas;
 - [x] scripts de implantação, restauração, validação e remoção preparados;
-- [ ] validação sintática concluída;
+- [x] validação sintática concluída;
 - [ ] implantação executada;
 - [ ] armazenamento validado;
 - [ ] restauração executada;
