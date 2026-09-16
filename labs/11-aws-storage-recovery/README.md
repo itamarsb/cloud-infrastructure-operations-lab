@@ -87,11 +87,7 @@ O fluxo de dados será:
     labs/11-aws-storage-recovery/
     ├── README.md
     ├── images/
-    │   ├── lab11-deployment-success.png
-    │   ├── lab11-storage-validation.png
-    │   ├── lab11-restore-success.png
-    │   ├── lab11-cleanup-success.png
-    │   └── lab11-post-cleanup-validation.png
+    │   └── lab11-cleanup-success.png
     ├── policies/
     │   ├── ec2-ssm-trust-policy.json
     │   └── s3-storage-policy-template.json
@@ -343,19 +339,13 @@ A VPC e a sub-rede do Lab 08 não serão modificadas.
 
 ---
 
-## Evidências planejadas
+## Evidência registrada
 
-As capturas serão registradas somente após as execuções reais.
+A execução parcial foi encerrada com o cleanup controlado. A captura abaixo mostra a remoção dos recursos específicos do Lab 11, código de saída `0` e preservação da VPC e da sub-rede do Lab 08.
 
-| Evidência | Conteúdo esperado |
-|:---:|---|
-| `lab11-deployment-success.png` | Instância, volume EBS, bucket e objeto criados |
-| `lab11-storage-validation.png` | Configurações de segurança e armazenamento validadas |
-| `lab11-restore-success.png` | Restauração concluída e hashes idênticos |
-| `lab11-cleanup-success.png` | Recursos específicos do Lab 11 removidos |
-| `lab11-post-cleanup-validation.png` | Ausência de recursos do Lab 11 e preservação da rede do Lab 08 |
+![Cleanup controlado do Lab 11](images/lab11-cleanup-success.png)
 
-As evidências não serão simuladas nem criadas antecipadamente.
+A implantação completa, a validação independente e a restauração com comparação de hashes ainda não foram concluídas. Novas evidências serão adicionadas após essas etapas serem executadas e verificadas.
 
 ---
 
@@ -366,17 +356,14 @@ As evidências não serão simuladas nem criadas antecipadamente.
 - [x] nomes dos recursos definidos;
 - [x] critérios de sucesso definidos;
 - [ ] políticas IAM criadas;
-- [ ] script de implantação criado;
-- [ ] script de restauração criado;
-- [ ] script de validação criado;
-- [ ] script de remoção criado;
+- [x] scripts de implantação, restauração, validação e remoção preparados;
 - [ ] validação sintática concluída;
 - [ ] implantação executada;
 - [ ] armazenamento validado;
 - [ ] restauração executada;
 - [ ] integridade confirmada;
-- [ ] evidências registradas;
-- [ ] cleanup executado;
+- [x] evidência do cleanup registrada;
+- [x] cleanup da execução parcial concluído;
 - [ ] estado final validado.
 
 ---
