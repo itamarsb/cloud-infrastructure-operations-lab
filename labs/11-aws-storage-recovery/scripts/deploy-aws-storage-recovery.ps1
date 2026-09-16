@@ -122,8 +122,9 @@ function New-TemporaryJsonFile {
 
     $Utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
 
-    $Json = $Value |
-        ConvertTo-Json -Depth $Depth
+    $Json = ConvertTo-Json -InputObject $Value -Depth $Depth -Compress
+
+    $Json | ConvertFrom-Json | Out-Null
 
     [System.IO.File]::WriteAllText(
         $Path,
