@@ -4,9 +4,9 @@
 
 Implementar e validar um fluxo controlado de armazenamento e recuperação utilizando um volume Amazon EBS adicional e um bucket Amazon S3 privado.
 
-O laboratório criará um arquivo de teste em um volume EBS, calculará seu hash SHA-256, enviará uma cópia para o Amazon S3 e restaurará o objeto para outro diretório. A integridade será confirmada pela comparação dos hashes do arquivo original e do arquivo recuperado.
+O laboratório cria um arquivo de teste em um volume EBS, calcula seu hash SHA-256, envia uma cópia para o Amazon S3 e restaura o objeto para outro diretório. A integridade é confirmada pela comparação dos hashes do arquivo original e do arquivo recuperado.
 
-A instância será administrada exclusivamente pelo AWS Systems Manager, sem chave SSH e sem regras de entrada no Security Group.
+A instância é administrada exclusivamente pelo AWS Systems Manager, sem chave SSH e sem regras de entrada no Security Group.
 
 > **English summary:** Implement and validate a controlled storage and recovery workflow using an encrypted Amazon EBS volume, a private versioned Amazon S3 bucket, SHA-256 integrity verification, AWS Systems Manager administration, independent validation, and controlled cleanup.
 
@@ -14,7 +14,7 @@ A instância será administrada exclusivamente pelo AWS Systems Manager, sem cha
 
 ## Arquitetura
 
-O laboratório reutilizará a VPC e a sub-rede pública do Lab 08.
+O laboratório reutiliza a VPC e a sub-rede pública do Lab 08.
 
     AWS IAM Identity Center
               |
@@ -87,7 +87,14 @@ O fluxo de dados será:
     labs/11-aws-storage-recovery/
     ├── README.md
     ├── images/
-    │   └── lab11-cleanup-success.png
+    │   ├── lab11-cleanup-success.png
+    │   ├── lab11-deployment-success.png
+    │   ├── lab11-final-data-validation.png
+    │   ├── lab11-local-s3-mock-tests.png
+    │   ├── lab11-local-syntax-validation.png
+    │   ├── lab11-post-cleanup-validation.png
+    │   ├── lab11-restore-success.png
+    │   └── lab11-storage-validation.png
     ├── policies/
     │   ├── ec2-ssm-trust-policy.json
     │   └── s3-storage-policy-template.json
@@ -110,7 +117,7 @@ O fluxo de dados será:
 
 ## Escopo
 
-O laboratório incluirá:
+O laboratório inclui:
 
 - localização da VPC e da sub-rede do Lab 08;
 - descoberta da imagem mais recente do Amazon Linux 2023;
@@ -341,15 +348,18 @@ A VPC e a sub-rede do Lab 08 não serão modificadas.
 
 ## Evidências registradas
 
-As capturas documentam etapas realizadas, com limites distintos:
+As capturas documentam verificações locais e a execução real do fluxo na AWS:
 
 | Captura | O que comprova |
 |---|---|
-| [Sintaxe local](images/lab11-local-syntax-validation.png) | O parser do PowerShell aceitou os scripts de implantação, restauração e validação após o `git pull`. |
-| [Testes locais com respostas simuladas](images/lab11-local-s3-mock-tests.png) | A função de inspeção do bucket retornou zero itens para resposta vazia, contou uma versão válida e bloqueou uma chave inesperada. Não houve chamada real ao S3. |
-| [Cleanup controlado](images/lab11-cleanup-success.png) | A execução parcial foi encerrada com remoção dos recursos do Lab 11, código de saída `0` e preservação da VPC e da sub-rede do Lab 08. |
-
-A implantação completa, a validação independente na AWS e a restauração com comparação de hashes ainda não foram concluídas. Novas evidências serão adicionadas após essas etapas serem executadas e verificadas.
+| [Sintaxe local](images/lab11-local-syntax-validation.png) | O parser do PowerShell aceitou os scripts de implantação, restauração e validação após a atualização do repositório. |
+| [Testes locais com respostas simuladas](images/lab11-local-s3-mock-tests.png) | A função de inspeção do bucket tratou resposta vazia, contou uma versão válida e bloqueou uma chave inesperada, sem chamadas reais ao S3. |
+| [Implantação concluída](images/lab11-deployment-success.png) | A instância EC2, o volume EBS criptografado e o bucket S3 privado e versionado foram criados; o sistema de arquivos foi montado e o objeto de backup foi armazenado. |
+| [Validação da infraestrutura](images/lab11-storage-validation.png) | A validação independente confirmou os controles de EC2, IMDSv2, Security Group, Systems Manager, EBS e S3, terminando com código de saída `0`. |
+| [Restauração concluída](images/lab11-restore-success.png) | O objeto foi restaurado do Amazon S3 para o volume EBS e o script terminou com código de saída `0`. |
+| [Validação final dos dados](images/lab11-final-data-validation.png) | Uma verificação independente pelo Systems Manager confirmou o ponto de montagem, os dois arquivos e a igualdade dos hashes SHA-256. |
+| [Cleanup controlado](images/lab11-cleanup-success.png) | Os recursos da execução completa do Lab 11 foram removidos com código de saída `0`, sem modificar a rede compartilhada do Lab 08. |
+| [Validação pós-cleanup](images/lab11-post-cleanup-validation.png) | As contagens de recursos remanescentes do Lab 11 ficaram em zero, enquanto a VPC e a sub-rede do Lab 08 permaneceram disponíveis. |
 
 ---
 
@@ -359,16 +369,16 @@ A implantação completa, a validação independente na AWS e a restauração co
 - [x] escopo definido;
 - [x] nomes dos recursos definidos;
 - [x] critérios de sucesso definidos;
-- [ ] políticas IAM criadas;
+- [x] políticas IAM criadas;
 - [x] scripts de implantação, restauração, validação e remoção preparados;
 - [x] validação sintática concluída;
-- [ ] implantação executada;
-- [ ] armazenamento validado;
-- [ ] restauração executada;
-- [ ] integridade confirmada;
+- [x] implantação executada;
+- [x] armazenamento validado;
+- [x] restauração executada;
+- [x] integridade confirmada;
 - [x] evidência do cleanup registrada;
-- [x] cleanup da execução parcial concluído;
-- [ ] estado final validado.
+- [x] cleanup da execução completa concluído;
+- [x] estado final validado.
 
 ---
 
@@ -389,9 +399,9 @@ Os recursos serão removidos após o registro das evidências.
 
 ---
 
-## Resultado esperado
+## Resultado obtido
 
-Ao final, o repositório deverá demonstrar:
+O laboratório demonstrou:
 
 - criação e associação de volume EBS;
 - montagem persistente de sistema de arquivos;
