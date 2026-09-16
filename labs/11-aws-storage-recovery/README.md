@@ -339,13 +339,17 @@ A VPC e a sub-rede do Lab 08 não serão modificadas.
 
 ---
 
-## Evidência registrada
+## Evidências registradas
 
-A execução parcial foi encerrada com o cleanup controlado. A captura abaixo mostra a remoção dos recursos específicos do Lab 11, código de saída `0` e preservação da VPC e da sub-rede do Lab 08.
+As capturas documentam etapas realizadas, com limites distintos:
 
-![Cleanup controlado do Lab 11](images/lab11-cleanup-success.png)
+| Captura | O que comprova |
+|---|---|
+| [Sintaxe local](images/lab11-local-syntax-validation.png) | O parser do PowerShell aceitou os scripts de implantação, restauração e validação após o `git pull`. |
+| [Testes locais com respostas simuladas](images/lab11-local-s3-mock-tests.png) | A função de inspeção do bucket retornou zero itens para resposta vazia, contou uma versão válida e bloqueou uma chave inesperada. Não houve chamada real ao S3. |
+| [Cleanup controlado](images/lab11-cleanup-success.png) | A execução parcial foi encerrada com remoção dos recursos do Lab 11, código de saída `0` e preservação da VPC e da sub-rede do Lab 08. |
 
-A implantação completa, a validação independente e a restauração com comparação de hashes ainda não foram concluídas. Novas evidências serão adicionadas após essas etapas serem executadas e verificadas.
+A implantação completa, a validação independente na AWS e a restauração com comparação de hashes ainda não foram concluídas. Novas evidências serão adicionadas após essas etapas serem executadas e verificadas.
 
 ---
 
