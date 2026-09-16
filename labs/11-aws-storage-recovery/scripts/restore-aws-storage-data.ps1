@@ -185,6 +185,8 @@ echo "SHA-256: $FINAL_HASH"
         $Region
     )
 
+    $RestoreCommands = $RestoreCommands.Replace("`r`n", "`n").Replace("`r", "`n")
+
     $Parameters = @{
         commands = @($RestoreCommands)
         executionTimeout = @("300")
