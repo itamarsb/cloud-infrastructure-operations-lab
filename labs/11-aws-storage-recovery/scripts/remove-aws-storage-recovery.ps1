@@ -108,19 +108,19 @@ function Get-BucketContents {
         "--no-cli-pager"
     )
 
-    $AllVersions = @(
-        foreach ($Version in @($VersionResult.Versions)) {
-            if ($null -ne $Version) {
-                $Version
-            }
-        }
+    $AllVersions = @()
 
-        foreach ($Marker in @($VersionResult.DeleteMarkers)) {
-            if ($null -ne $Marker) {
-                $Marker
+    foreach ($PropertyName in @("Versions", "DeleteMarkers")) {
+        $Property = $VersionResult.PSObject.Properties[$PropertyName]
+
+        if ($null -ne $Property) {
+            foreach ($Entry in @($Property.Value)) {
+                if ($null -ne $Entry) {
+                    $AllVersions += $Entry
+                }
             }
         }
-    )
+    }
 
     foreach ($Version in $AllVersions) {
         if ([string]$Version.Key -cne $ObjectKey) {
@@ -142,12 +142,16 @@ function Get-BucketContents {
         "--no-cli-pager"
     )
 
-    foreach ($Object in @($VisibleObjects.Contents)) {
-        if (
-            $null -ne $Object -and
-            [string]$Object.Key -cne $ObjectKey
-        ) {
-            throw "Unexpected visible object in Lab 11 bucket: $($Object.Key)"
+    $ContentsProperty = $VisibleObjects.PSObject.Properties["Contents"]
+
+    if ($null -ne $ContentsProperty) {
+        foreach ($Object in @($ContentsProperty.Value)) {
+            if (
+                $null -ne $Object -and
+                [string]$Object.Key -cne $ObjectKey
+            ) {
+                throw "Unexpected visible object in Lab 11 bucket: $($Object.Key)"
+            }
         }
     }
 
