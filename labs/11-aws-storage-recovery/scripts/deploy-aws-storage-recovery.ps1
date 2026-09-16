@@ -896,6 +896,9 @@ sha256sum "$SOURCE_FILE"
         $Region
     )
 
+    # AWS-RunShellScript runs on Linux; PowerShell here-strings on Windows carry CRLF.
+    $LinuxConfiguration = $LinuxConfiguration.Replace("`r`n", "`n").Replace("`r", "`n")
+
     $CommandParameters = @{
         commands = @($LinuxConfiguration)
         executionTimeout = @("900")
