@@ -155,7 +155,7 @@ function Get-BucketContents {
         throw "More than 20 object versions were found; review the bucket manually."
     }
 
-    return ,$AllVersions
+    return $AllVersions
 }
 
 try {
@@ -200,7 +200,7 @@ try {
         "--no-cli-pager"
     )
 
-    if (@($VpcResult.Vpcs).Count -ne 1) {
+    if (@($VpcResult.Vpcs | Where-Object { $null -ne $_ }).Count -ne 1) {
         throw "Exactly one Lab 08 VPC must be present."
     }
 
@@ -217,7 +217,7 @@ try {
         "--no-cli-pager"
     )
 
-    if (@($SubnetResult.Subnets).Count -ne 1) {
+    if (@($SubnetResult.Subnets | Where-Object { $null -ne $_ }).Count -ne 1) {
         throw "Exactly one Lab 08 subnet must be present in the Lab 08 VPC."
     }
 
@@ -282,7 +282,7 @@ try {
         "--no-cli-pager"
     )
 
-    $Groups = @($GroupResult.SecurityGroups)
+    $Groups = @($GroupResult.SecurityGroups | Where-Object { $null -ne $_ })
 
     if ($Groups.Count -gt 1) {
         throw "More than one Lab 11 Security Group was found."
@@ -309,7 +309,7 @@ try {
         "--no-cli-pager"
     )
 
-    $Volumes = @($VolumeResult.Volumes)
+    $Volumes = @($VolumeResult.Volumes | Where-Object { $null -ne $_ })
 
     if ($Volumes.Count -gt 1) {
         throw "More than one Lab 11 data volume was found."
