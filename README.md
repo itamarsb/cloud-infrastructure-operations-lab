@@ -58,7 +58,7 @@ O repositório prioriza:
 | ✅ | [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) | VPC, sub-redes, rotas, Internet Gateway, Security Group e cleanup |
 | ✅ | [Lab 09 — EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) | EC2, IAM Role, Session Manager, validação e cleanup |
 | ✅ | [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
-| 🔄 | **Lab 11 — Armazenamento e recuperação** | EBS, Amazon S3, integridade, cópia e restauração |
+| ✅ | [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) | EBS, Amazon S3, integridade, cópia e restauração |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -197,9 +197,9 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-A próxima implementação é o **Lab 11 — Armazenamento e recuperação**.
+A próxima implementação é o **Lab 12 — Disponibilidade da aplicação**.
 
-O laboratório implementará um fluxo controlado de armazenamento utilizando EBS e Amazon S3, incluindo criação de dados de teste, cópia, verificação de integridade, restauração, validação independente e cleanup dos recursos específicos do laboratório.
+O laboratório abordará health checks e distribuição de tráfego, ampliando a arquitetura construída nos laboratórios anteriores.
 
 ---
 
