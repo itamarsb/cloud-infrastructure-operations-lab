@@ -45,7 +45,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 | ✅ | **Lab 08 — Rede da aplicação** | VPC, sub-redes, rotas, Internet Gateway, Security Group, validação e cleanup |
 | ✅ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role, Session Manager, validação e cleanup |
 | ✅ | **Lab 10 — Serviço web em Linux** | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
-| 🔄 | **Lab 11 — Armazenamento e recuperação** | EBS, S3, cópia, integridade e restauração |
+| ✅ | **Lab 11 — Armazenamento e recuperação** | EBS, S3, cópia, integridade e restauração |
 | ⬜ | **Lab 12 — Disponibilidade da aplicação** | Health checks e distribuição de tráfego |
 
 ---
@@ -142,6 +142,6 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 ## Próxima etapa
 
-**Lab 11 — Armazenamento e recuperação**
+**Lab 12 — Disponibilidade da aplicação**
 
-Implementação de um fluxo controlado de armazenamento utilizando EBS e Amazon S3, com criação de dados de teste, cópia, verificação de integridade, restauração, validação independente e cleanup dos recursos específicos do laboratório.
+Implementação de health checks e distribuição de tráfego para ampliar a disponibilidade da aplicação construída nos laboratórios anteriores.
