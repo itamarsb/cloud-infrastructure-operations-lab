@@ -46,7 +46,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 | ✅ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role, Session Manager, validação e cleanup |
 | ✅ | **Lab 10 — Serviço web em Linux** | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
 | ✅ | **Lab 11 — Armazenamento e recuperação** | EBS, S3, cópia, integridade e restauração |
-| ⬜ | **Lab 12 — Disponibilidade da aplicação** | Health checks e distribuição de tráfego |
+| 🔄 | **Lab 12 — Disponibilidade da aplicação** | Health checks e distribuição de tráfego |
 
 ---
 
