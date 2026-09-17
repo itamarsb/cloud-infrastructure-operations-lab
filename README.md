@@ -66,78 +66,79 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 10** implementou o ciclo operacional completo de um serviço web Nginx executado em uma instância Amazon Linux 2023.
+O **Lab 11** implementou um fluxo completo de armazenamento, proteção e recuperação de dados utilizando Amazon EBS e Amazon S3.
 
 A solução utilizou:
 
-- instância EC2 `t3.micro`;
-- rede compartilhada criada no Lab 08;
-- Amazon Linux 2023;
-- Nginx gerenciado pelo `systemd`;
-- IAM Role dedicada;
-- Instance Profile associado à EC2;
-- política gerenciada `AmazonSSMManagedInstanceCore`;
-- administração pelo AWS Systems Manager;
-- Security Group com somente uma regra de entrada;
-- acesso HTTP limitado ao IPv4 público autorizado com máscara `/32`;
-- ausência de Key Pair;
-- ausência de regra para a porta TCP `22`;
-- IMDSv2 obrigatório;
-- volume EBS `gp3` criptografado.
+* instância EC2 `t3.micro` com Amazon Linux 2023;
+* rede compartilhada criada no Lab 08;
+* administração pelo AWS Systems Manager;
+* IAM Role e Instance Profile dedicados;
+* ausência de Key Pair e acesso SSH;
+* IMDSv2 obrigatório;
+* Security Group sem regras de entrada;
+* volume EBS adicional `gp3`, criptografado e com 1 GiB;
+* sistema de arquivos montado em `/mnt/lab11-data`;
+* bucket Amazon S3 privado e versionado;
+* bloqueio completo de acesso público ao bucket;
+* criptografia padrão SSE-S3;
+* política IAM limitada ao bucket do laboratório;
+* verificação de integridade com hashes SHA-256.
 
-Três scripts em PowerShell foram implementados:
+Quatro scripts em PowerShell foram implementados:
 
-| Script | Operação |
-|:---:|---|
-| `deploy-linux-web-service.ps1` | Implantação da IAM Role, do Security Group, da EC2 e do Nginx |
-| `test-linux-web-service.ps1` | Validação independente da infraestrutura, segurança, `systemd` e HTTP |
-| `remove-linux-web-service.ps1` | Remoção protegida e ordenada dos recursos |
+|               Script              | Operação                                                                                         |
+| :-------------------------------: | ------------------------------------------------------------------------------------------------ |
+| `deploy-aws-storage-recovery.ps1` | Criação dos recursos AWS, preparação do volume EBS e armazenamento da cópia no S3                |
+|  `test-aws-storage-recovery.ps1`  | Validação independente da infraestrutura, das configurações de segurança e dos dados armazenados |
+|   `restore-aws-storage-data.ps1`  | Recuperação do objeto armazenado no S3 e comparação de integridade                               |
+| `remove-aws-storage-recovery.ps1` | Remoção protegida e ordenada dos recursos específicos do laboratório                             |
 
-A implantação foi concluída com código de saída `0`. A instância passou nos status checks da EC2, ficou online no Systems Manager e respondeu com HTTP `200`.
+A implantação criou um arquivo de teste no volume EBS, calculou seu hash SHA-256 e armazenou uma cópia no Amazon S3.
 
 O validador independente confirmou:
 
-- existência de exatamente uma instância ativa;
-- presença das tags esperadas;
-- ausência de chave SSH;
-- exigência do IMDSv2;
-- Instance Profile correto;
-- somente um Security Group associado;
-- somente uma regra de entrada;
-- liberação exclusiva da porta TCP `80`;
-- restrição HTTP ao endereço IPv4 `/32`;
-- ausência de acesso pela porta TCP `22`;
-- volume raiz criptografado e do tipo `gp3`;
-- política `AmazonSSMManagedInstanceCore` associada;
-- registro online no Systems Manager;
-- sistema operacional Amazon Linux 2023;
-- Nginx ativo e habilitado no `systemd`;
-- validação HTTP local e externa;
-- conteúdo correspondente ao Lab 10.
+* existência de uma única instância ativa do Lab 11;
+* utilização do Amazon Linux 2023;
+* ausência de chave SSH;
+* exigência do IMDSv2;
+* ausência de regras de entrada no Security Group;
+* registro online da instância no Systems Manager;
+* existência e associação do volume EBS adicional;
+* criptografia e utilização do tipo `gp3`;
+* montagem do sistema de arquivos;
+* existência do arquivo original;
+* bloqueio de acesso público ao bucket;
+* criptografia e versionamento do S3;
+* existência do objeto de backup;
+* aplicação das tags operacionais obrigatórias.
 
-Uma sessão administrativa foi realizada como `ssm-user` pelo Session Manager, sem utilização de SSH.
+O processo de recuperação baixou o objeto do Amazon S3 para um diretório separado no volume EBS. A comparação entre os hashes SHA-256 do arquivo original e do arquivo restaurado confirmou a integridade dos dados.
 
-Durante a execução, também foram diagnosticados e corrigidos:
+Também foram realizados testes locais com respostas simuladas do Amazon S3 para validar:
 
-- serialização do comando remoto enviado ao Systems Manager;
-- interpretação de caracteres acentuados no conteúdo HTML.
+* tratamento de respostas vazias;
+* contagem de versões válidas;
+* rejeição de chaves inesperadas;
+* limitação do escopo antes de operações destrutivas.
 
-O cleanup removeu a instância, o Security Group, o Instance Profile e a IAM Role do Lab 10.
+Após as validações e o registro das evidências, o cleanup removeu:
 
-A verificação final confirmou:
+* instância EC2;
+* volume EBS adicional;
+* versões e marcadores do objeto no S3;
+* bucket do Lab 11;
+* Security Group;
+* política IAM específica;
+* Instance Profile;
+* IAM Role.
 
-| Recurso | Quantidade final |
-|:---:|:---:|
-| Instâncias ativas do Lab 10 | `0` |
-| Security Groups do Lab 10 | `0` |
-| IAM Roles do Lab 10 | `0` |
-| Instance Profiles do Lab 10 | `0` |
-| VPC do Lab 08 | `1` |
-| Sub-rede do Lab 08 | `1` |
+A validação pós-cleanup confirmou que nenhum recurso específico do Lab 11 permaneceu ativo. A VPC e as sub-redes compartilhadas do Lab 08 foram preservadas para os próximos laboratórios.
 
-Nenhum recurso ativo específico do Lab 10 permaneceu na conta, enquanto a VPC e a sub-rede compartilhadas do Lab 08 foram preservadas.
+Consulte o [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) para acessar a documentação completa, os scripts e as evidências.
 
-Consulte o [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) para acessar a documentação, os scripts e as evidências.
+
+
 
 ---
 
