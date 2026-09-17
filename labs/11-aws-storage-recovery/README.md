@@ -351,7 +351,7 @@ A VPC e a sub-rede do Lab 08 não serão modificadas.
 As capturas documentam verificações locais e a execução real do fluxo na AWS:
 
 | Captura | O que comprova |
-|---|---|
+|:---:|---|
 | [Sintaxe local](images/lab11-local-syntax-validation.png) | O parser do PowerShell aceitou os scripts de implantação, restauração e validação após a atualização do repositório. |
 | [Testes locais com respostas simuladas](images/lab11-local-s3-mock-tests.png) | A função de inspeção do bucket tratou resposta vazia, contou uma versão válida e bloqueou uma chave inesperada, sem chamadas reais ao S3. |
 | [Implantação concluída](images/lab11-deployment-success.png) | A instância EC2, o volume EBS criptografado e o bucket S3 privado e versionado foram criados; o sistema de arquivos foi montado e o objeto de backup foi armazenado. |
