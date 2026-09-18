@@ -351,7 +351,7 @@ Se a configuração restaurada não passar pelo `nginx -t`, o script não dever�
 Os recursos compatíveis deverão receber:
 
 | Tag | Valor |
-|---|---|
+|:---:|:---:|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `13` |
