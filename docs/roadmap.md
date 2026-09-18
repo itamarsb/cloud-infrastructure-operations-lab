@@ -46,7 +46,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 | ✅ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role, Session Manager, validação e cleanup |
 | ✅ | **Lab 10 — Serviço web em Linux** | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
 | ✅ | **Lab 11 — Armazenamento e recuperação** | EBS, S3, cópia, integridade e restauração |
-| 🔄 | **Lab 12 — Disponibilidade da aplicação** | Health checks e distribuição de tráfego |
+| ✅ | **Lab 12 — Disponibilidade da aplicação** | Application Load Balancer, health checks, distribuição de tráfego, falha controlada e recuperação |
 
 ---
 
@@ -132,7 +132,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 |:---:|:---:|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
-| Infraestrutura AWS | Em desenvolvimento |
+| Infraestrutura AWS | Concluído |
 | Operação e troubleshooting | Planejado |
 | Terraform | Planejado |
 | Monitoramento e logs | Planejado |
@@ -142,6 +142,6 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 ## Próxima etapa
 
-**Lab 12 — Disponibilidade da aplicação**
+**Lab 13 — Aplicação indisponível**
 
-Implementação de health checks e distribuição de tráfego para ampliar a disponibilidade da aplicação construída nos laboratórios anteriores.
+Diagnóstico de indisponibilidade por meio da verificação de serviço, processo, porta, configuração e logs.
