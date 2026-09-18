@@ -185,7 +185,7 @@ curl -fsS http://localhost/ | grep -q 'backend <strong>__BACKEND__</strong>'
 printf 'LAB12_BACKEND___BACKEND___OK\n'
 '@
 
-    $RemoteCommand = $RemoteTemplate.Replace("__BACKEND__", $Backend)
+    $RemoteCommand = $RemoteTemplate.Replace("__BACKEND__", $Backend).Replace("`r", "")
 
     $CommandParameters = @{
         commands = @(
@@ -1078,7 +1078,7 @@ try {
                 -Uri $RequestUrl `
                 -UseBasicParsing `
                 -TimeoutSec 15 `
-                -Headers @{ Connection = "close" }
+                -DisableKeepAlive
 
             if (
                 $Response.StatusCode -eq 200 -and
