@@ -998,7 +998,7 @@ try {
             if (
                 $Response.StatusCode -eq 200 -and
                 $Response.Content -match "Lab 12" -and
-                $Response.Content -match "backend (A|B)"
+                $Response.Content -match "backend <strong>(A|B)</strong>"
             ) {
                 $HttpReady = $true
                 break
