@@ -138,7 +138,7 @@ Nenhum nome de imagem é reservado antecipadamente. As evidências serão regist
 ## Responsabilidade dos arquivos
 
 | Arquivo | Responsabilidade |
-|---|---|
+|:---:|---|
 | `deploy-aws-application-troubleshooting.ps1` | Criar a infraestrutura e implantar o Nginx em estado saudável |
 | `invoke-aws-application-failure.ps1` | Introduzir uma configuração inválida e provocar a indisponibilidade |
 | `diagnose-aws-application-failure.ps1` | Investigar serviço, processo, porta, configuração e logs sem corrigir a falha |
