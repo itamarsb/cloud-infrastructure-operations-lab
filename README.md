@@ -59,6 +59,7 @@ O repositório prioriza:
 | ✅ | [Lab 09 — EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) | EC2, IAM Role, Session Manager, validação e cleanup |
 | ✅ | [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
 | ✅ | [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) | EBS, Amazon S3, integridade, cópia e restauração |
+| ✅ | [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) | Application Load Balancer, health checks, distribuição de tráfego e recuperação |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -66,76 +67,27 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 11** implementou um fluxo completo de armazenamento, proteção e recuperação de dados utilizando Amazon EBS e Amazon S3.
+O **Lab 12** implementou uma aplicação web disponível em duas zonas da AWS, utilizando duas instâncias Amazon EC2 com Nginx, um Target Group e um Application Load Balancer.
 
-A solução utilizou:
+A solução incluiu:
 
-* instância EC2 `t3.micro` com Amazon Linux 2023;
-* rede compartilhada criada no Lab 08;
-* administração pelo AWS Systems Manager;
-* IAM Role e Instance Profile dedicados;
-* ausência de Key Pair e acesso SSH;
-* IMDSv2 obrigatório;
-* Security Group sem regras de entrada;
-* volume EBS adicional `gp3`, criptografado e com 1 GiB;
-* sistema de arquivos montado em `/mnt/lab11-data`;
-* bucket Amazon S3 privado e versionado;
-* bloqueio completo de acesso público ao bucket;
-* criptografia padrão SSE-S3;
-* política IAM limitada ao bucket do laboratório;
-* verificação de integridade com hashes SHA-256.
+- backends distribuídos entre `us-east-1a` e `us-east-1b`;
+- administração pelo AWS Systems Manager, sem chave SSH;
+- IMDSv2 obrigatório e volumes raiz EBS `gp3` criptografados;
+- Security Group público somente no ALB;
+- acesso HTTP aos backends restrito ao Security Group do ALB;
+- health check HTTP no caminho `/health`;
+- validação independente da infraestrutura e do tráfego;
+- falha controlada e recuperação do serviço;
+- cleanup protegido com preservação da rede do Lab 08.
 
-Quatro scripts em PowerShell foram implementados:
+O validador confirmou HTTP `200`, dois targets saudáveis e respostas provenientes dos backends A e B. Durante o teste de falha, o Nginx do backend A foi interrompido pelo Systems Manager e o Target Group o classificou como `unhealthy`. Enquanto isso, vinte requisições consecutivas foram atendidas pelo backend B sem indisponibilidade da aplicação.
 
-|               Script              | Operação                                                                                         |
-| :-------------------------------: | ------------------------------------------------------------------------------------------------ |
-| `deploy-aws-storage-recovery.ps1` | Criação dos recursos AWS, preparação do volume EBS e armazenamento da cópia no S3                |
-|  `test-aws-storage-recovery.ps1`  | Validação independente da infraestrutura, das configurações de segurança e dos dados armazenados |
-|   `restore-aws-storage-data.ps1`  | Recuperação do objeto armazenado no S3 e comparação de integridade                               |
-| `remove-aws-storage-recovery.ps1` | Remoção protegida e ordenada dos recursos específicos do laboratório                             |
+Após a recuperação, os dois targets retornaram ao estado `healthy` e uma nova validação confirmou o funcionamento integral da arquitetura.
 
-A implantação criou um arquivo de teste no volume EBS, calculou seu hash SHA-256 e armazenou uma cópia no Amazon S3.
+O cleanup removeu Listener, Application Load Balancer, Target Group, instâncias EC2, Security Groups, Instance Profile e IAM Role. A validação final confirmou que nenhum recurso específico do Lab 12 permaneceu ativo e que a VPC e as duas sub-redes do Lab 08 foram preservadas.
 
-O validador independente confirmou:
-
-* existência de uma única instância ativa do Lab 11;
-* utilização do Amazon Linux 2023;
-* ausência de chave SSH;
-* exigência do IMDSv2;
-* ausência de regras de entrada no Security Group;
-* registro online da instância no Systems Manager;
-* existência e associação do volume EBS adicional;
-* criptografia e utilização do tipo `gp3`;
-* montagem do sistema de arquivos;
-* existência do arquivo original;
-* bloqueio de acesso público ao bucket;
-* criptografia e versionamento do S3;
-* existência do objeto de backup;
-* aplicação das tags operacionais obrigatórias.
-
-O processo de recuperação baixou o objeto do Amazon S3 para um diretório separado no volume EBS. A comparação entre os hashes SHA-256 do arquivo original e do arquivo restaurado confirmou a integridade dos dados.
-
-Também foram realizados testes locais com respostas simuladas do Amazon S3 para validar:
-
-* tratamento de respostas vazias;
-* contagem de versões válidas;
-* rejeição de chaves inesperadas;
-* limitação do escopo antes de operações destrutivas.
-
-Após as validações e o registro das evidências, o cleanup removeu:
-
-* instância EC2;
-* volume EBS adicional;
-* versões e marcadores do objeto no S3;
-* bucket do Lab 11;
-* Security Group;
-* política IAM específica;
-* Instance Profile;
-* IAM Role.
-
-A validação pós-cleanup confirmou que nenhum recurso específico do Lab 11 permaneceu ativo. A VPC e as sub-redes compartilhadas do Lab 08 foram preservadas para os próximos laboratórios.
-
-Consulte o [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) para acessar a documentação completa, os scripts e as evidências.
+Consulte o [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) para acessar a documentação completa, os scripts e as evidências.
 
 
 
@@ -198,9 +150,9 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-A próxima implementação é o **Lab 12 — Disponibilidade da aplicação**.
+A próxima implementação é o **Lab 13 — Aplicação indisponível**.
 
-O laboratório abordará health checks e distribuição de tráfego, ampliando a arquitetura construída nos laboratórios anteriores.
+O laboratório iniciará o módulo de operação e troubleshooting, abordando diagnóstico de serviço, processo, porta, configuração e logs.
 
 ---
 
