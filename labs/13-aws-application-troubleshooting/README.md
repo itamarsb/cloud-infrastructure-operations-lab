@@ -93,7 +93,7 @@ A instância não utiliza Key Pair e não possui regra de entrada para SSH.
 ## Componentes
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Região | `us-east-1` |
 | VPC | `lab08-application-vpc` |
 | Sub-rede | `lab08-public-subnet-a` |
