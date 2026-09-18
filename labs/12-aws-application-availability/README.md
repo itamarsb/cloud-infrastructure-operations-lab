@@ -72,7 +72,7 @@ O Application Load Balancer é público e utiliza as duas sub-redes do Lab 08. A
 ## Componentes
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Região | `us-east-1` |
 | VPC | `lab08-application-vpc` |
 | Sub-rede A | `lab08-public-subnet-a` |
