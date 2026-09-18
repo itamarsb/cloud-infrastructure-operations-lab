@@ -306,7 +306,7 @@ function Test-ApplicationContinuity {
                 -Uri $RequestUrl `
                 -UseBasicParsing `
                 -TimeoutSec 15 `
-                -Headers @{ Connection = "close" }
+                -DisableKeepAlive
 
             if (
                 $Response.StatusCode -ne 200 -or
@@ -674,4 +674,3 @@ Write-Host "Final backend B:     healthy"
 Write-Host "Next step: run test-aws-application-availability.ps1 again"
 
 exit 0
-
