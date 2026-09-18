@@ -147,7 +147,7 @@ labs/12-aws-application-availability/
 As tags aplicadas aos recursos compatíveis foram:
 
 | Tag | Valor |
-|---|---|
+|:---:|:---:|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `12` |
