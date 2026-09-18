@@ -120,7 +120,7 @@ labs/12-aws-application-availability/
 ```
 
 | Arquivo | Responsabilidade |
-|---|---|
+|:---:|---|
 | `deploy-aws-application-availability.ps1` | Criar IAM, Security Groups, instâncias EC2, Nginx, Target Group, ALB e Listener |
 | `test-aws-application-availability.ps1` | Validar infraestrutura, segurança, serviços, targets e tráfego HTTP sem alterar recursos |
 | `invoke-aws-availability-failure.ps1` | Interromper um backend, validar a continuidade e recuperar o serviço |
