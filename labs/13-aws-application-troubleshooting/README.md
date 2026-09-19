@@ -12,9 +12,9 @@ O laboratório exercita uma investigação operacional baseada em cinco camadas:
 4. validade da configuração;
 5. logs do sistema.
 
-A instância Amazon EC2 será administrada pelo AWS Systems Manager, sem chave SSH e sem regra de entrada para a porta TCP `22`.
+A instância Amazon EC2 foi administrada pelo AWS Systems Manager, sem chave SSH e sem regra de entrada para a porta TCP `22`.
 
-A falha será provocada por uma configuração inválida do Nginx. O diagnóstico deverá identificar a causa sem modificar o ambiente. A recuperação será executada separadamente por um script específico.
+A falha foi provocada por uma configuração inválida do Nginx. O diagnóstico identificou a causa sem modificar o ambiente, e a recuperação foi executada separadamente por um script específico.
 
 > **English summary:** Deploy a healthy Nginx web application, introduce a controlled configuration failure, diagnose service, process, port, configuration and logs, recover the application, validate the final state and remove temporary AWS resources.
 
@@ -131,7 +131,7 @@ labs/13-aws-application-troubleshooting/
     └── test-aws-application-troubleshooting.ps1
 ```
 
-Nenhum nome de imagem é reservado antecipadamente. As evidências serão registradas durante a execução, conforme os resultados efetivamente produzidos.
+As evidências foram registradas durante a execução, conforme os resultados efetivamente produzidos.
 
 ---
 
@@ -495,6 +495,37 @@ O Lab 13 será considerado concluído quando:
 
 ---
 
+## Resultados da execução
+
+O fluxo completo foi executado com sucesso em `us-east-1`:
+
+- a VPC `lab08-application-vpc` e a sub-rede `lab08-public-subnet-a` foram localizadas e reutilizadas;
+- a instância Amazon EC2 foi implantada com Amazon Linux 2023, IMDSv2 obrigatório, volume EBS `gp3` criptografado e administração pelo Systems Manager;
+- o Nginx e os endpoints `/` e `/health` foram validados inicialmente em estado saudável;
+- uma configuração inválida foi introduzida de maneira controlada;
+- o diagnóstico confirmou a falha do serviço, a ausência do processo e da escuta na porta TCP `80`, o erro do `nginx -t` e a causa registrada nos logs;
+- a configuração válida foi restaurada e o Nginx voltou a responder;
+- a validação independente após a recuperação terminou com sucesso;
+- o cleanup removeu todos os recursos exclusivos do Lab 13;
+- a VPC `vpc-0aad44f1f16b804ad` e a sub-rede `subnet-04048dcc4a1a66b63`, pertencentes ao Lab 08, foram preservadas.
+
+### Evidência de cleanup
+
+![Cleanup concluído e rede compartilhada preservada](images/lab13-cleanup-success.png)
+
+A validação pós-cleanup confirmou:
+
+| Recurso | Estado final |
+|:---|:---:|
+| Instâncias EC2 ativas do Lab 13 | `0` |
+| Security Groups do Lab 13 | `0` |
+| IAM Role do Lab 13 | Ausente |
+| Instance Profile do Lab 13 | Ausente |
+| VPC compartilhada do Lab 08 | Preservada |
+| Sub-rede compartilhada do Lab 08 | Preservada |
+
+---
+
 ## Estado atual
 
 - [x] escopo definido;
@@ -503,23 +534,23 @@ O Lab 13 será considerado concluído quando:
 - [x] nomes dos arquivos definidos;
 - [x] fluxo de troubleshooting definido;
 - [x] critérios de sucesso definidos;
-- [ ] política de confiança IAM implementada;
-- [ ] script de implantação implementado;
-- [ ] script de falha controlada implementado;
-- [ ] script de diagnóstico implementado;
-- [ ] script de recuperação implementado;
-- [ ] script de validação independente implementado;
-- [ ] script de cleanup implementado;
-- [ ] validação sintática concluída;
-- [ ] implantação executada;
-- [ ] estado saudável validado;
-- [ ] falha controlada executada;
-- [ ] diagnóstico concluído;
-- [ ] causa identificada;
-- [ ] serviço recuperado;
-- [ ] estado final validado;
-- [ ] cleanup executado;
-- [ ] validação pós-cleanup concluída.
+- [x] política de confiança IAM implementada;
+- [x] script de implantação implementado;
+- [x] script de falha controlada implementado;
+- [x] script de diagnóstico implementado;
+- [x] script de recuperação implementado;
+- [x] script de validação independente implementado;
+- [x] script de cleanup implementado;
+- [x] validação sintática concluída;
+- [x] implantação executada;
+- [x] estado saudável validado;
+- [x] falha controlada executada;
+- [x] diagnóstico concluído;
+- [x] causa identificada;
+- [x] serviço recuperado;
+- [x] estado final validado;
+- [x] cleanup executado;
+- [x] validação pós-cleanup concluída.
 
 ---
 
@@ -527,7 +558,7 @@ O Lab 13 será considerado concluído quando:
 
 Durante a execução, a instância EC2, o endereço IPv4 público e o volume EBS podem gerar cobrança.
 
-O laboratório utilizará:
+O laboratório utilizou:
 
 - uma instância `t3.micro`;
 - um volume raiz EBS;
@@ -537,15 +568,15 @@ O laboratório utilizará:
 - nenhum Elastic IP;
 - nenhum domínio DNS.
 
-Os recursos específicos do Lab 13 deverão permanecer ativos somente durante a implantação, o diagnóstico, a recuperação e as validações.
+Os recursos específicos do Lab 13 permaneceram ativos somente durante a implantação, o diagnóstico, a recuperação e as validações.
 
-Após a conclusão do fluxo, o cleanup deverá ser executado no mesmo período de trabalho.
+Após a conclusão do fluxo, o cleanup foi executado no mesmo período de trabalho.
 
 ---
 
-## Resultado esperado
+## Resultado alcançado
 
-O laboratório deverá demonstrar:
+O laboratório demonstrou:
 
 - implantação de uma aplicação inicialmente saudável;
 - introdução segura de uma falha de configuração;
