@@ -56,6 +56,42 @@ function Write-InfoMessage {
     Write-Host "[INFO] $Message" -ForegroundColor Cyan
 }
 
+function Invoke-AwsNative {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments
+    )
+
+    # Windows PowerShell 5.1 can turn stderr from native programs into a
+    # terminating NativeCommandError when ErrorActionPreference is Stop.
+    # Capture it with Continue, preserve every output line, and restore the
+    # caller's preference immediately after the AWS CLI process finishes.
+    $PreviousErrorActionPreference = $ErrorActionPreference
+
+    try {
+        $ErrorActionPreference = "Continue"
+        $OutputLines = @(& aws @Arguments 2>&1)
+        $ExitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $PreviousErrorActionPreference
+    }
+
+    $Output = (
+        $OutputLines |
+            ForEach-Object {
+                if ($null -ne $_) {
+                    $_.ToString()
+                }
+            }
+    ) -join [Environment]::NewLine
+
+    return [pscustomobject]@{
+        ExitCode = $ExitCode
+        Output   = $Output.Trim()
+    }
+}
+
 function Invoke-AwsJson {
     param(
         [Parameter(Mandatory = $true)]
@@ -64,8 +100,9 @@ function Invoke-AwsJson {
         [switch]$AllowEmpty
     )
 
-    $Output = & aws @Arguments 2>&1 | Out-String
-    $ExitCode = $LASTEXITCODE
+    $Result = Invoke-AwsNative -Arguments $Arguments
+    $Output = $Result.Output
+    $ExitCode = $Result.ExitCode
 
     if ($ExitCode -ne 0) {
         $CommandText = "aws " + ($Arguments -join " ")
@@ -103,8 +140,9 @@ function Invoke-AwsCommand {
         [string[]]$Arguments
     )
 
-    $Output = & aws @Arguments 2>&1 | Out-String
-    $ExitCode = $LASTEXITCODE
+    $Result = Invoke-AwsNative -Arguments $Arguments
+    $Output = $Result.Output
+    $ExitCode = $Result.ExitCode
 
     if ($ExitCode -ne 0) {
         $CommandText = "aws " + ($Arguments -join " ")
@@ -129,12 +167,7 @@ function Invoke-AwsProbe {
         [string[]]$Arguments
     )
 
-    $Output = & aws @Arguments 2>&1 | Out-String
-
-    return [pscustomobject]@{
-        ExitCode = $LASTEXITCODE
-        Output   = $Output.Trim()
-    }
+    return Invoke-AwsNative -Arguments $Arguments
 }
 
 function Convert-TagsToHashtable {
@@ -348,6 +381,85 @@ function Get-InstanceProfileTags {
     )
 
     return Convert-TagsToHashtable -Tags @($Response.Tags)
+}
+
+function Get-SecurityGroupDependencyReport {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$GroupId
+    )
+
+    $NetworkInterfaceResponse = Invoke-AwsJson -Arguments @(
+        "ec2",
+        "describe-network-interfaces",
+        "--profile", $ProfileName,
+        "--region", $Region,
+        "--filters",
+        "Name=group-id,Values=$GroupId",
+        "--output", "json"
+    )
+
+    $NetworkInterfaces = @(
+        $NetworkInterfaceResponse.NetworkInterfaces
+    )
+
+    $RuleResponse = Invoke-AwsJson -Arguments @(
+        "ec2",
+        "describe-security-group-rules",
+        "--profile", $ProfileName,
+        "--region", $Region,
+        "--filters",
+        "Name=referenced-group-info.group-id,Values=$GroupId",
+        "--output", "json"
+    )
+
+    $ExternalRules = @(
+        $RuleResponse.SecurityGroupRules |
+            Where-Object {
+                [string]$_.GroupId -ne $GroupId
+            }
+    )
+
+    $Lines = @()
+
+    foreach ($NetworkInterface in $NetworkInterfaces) {
+        $AttachmentInstanceId = [string](
+            $NetworkInterface.Attachment.InstanceId
+        )
+
+        if ([string]::IsNullOrWhiteSpace($AttachmentInstanceId)) {
+            $AttachmentInstanceId = "none"
+        }
+
+        $Lines += (
+            "Network interface {0}; status={1}; type={2}; " +
+            "requester-managed={3}; instance={4}; description={5}" -f
+            [string]$NetworkInterface.NetworkInterfaceId,
+            [string]$NetworkInterface.Status,
+            [string]$NetworkInterface.InterfaceType,
+            [string]$NetworkInterface.RequesterManaged,
+            $AttachmentInstanceId,
+            [string]$NetworkInterface.Description
+        )
+    }
+
+    foreach ($Rule in $ExternalRules) {
+        $Lines += (
+            "Security Group rule {0} in group {1} references {2}." -f
+            [string]$Rule.SecurityGroupRuleId,
+            [string]$Rule.GroupId,
+            $GroupId
+        )
+    }
+
+    if ($Lines.Count -eq 0) {
+        $Lines += (
+            "AWS reported a dependency, but no attached network " +
+            "interface or external Security Group rule was returned."
+        )
+    }
+
+    return $Lines
 }
 
 function Wait-SecurityGroupDeletion {
@@ -592,6 +704,20 @@ try {
                 )
             }
 
+            $DependencyReport = @(
+                Get-SecurityGroupDependencyReport -GroupId $GroupId
+            )
+
+            Write-InfoMessage (
+                "AWS still reports dependencies for Security Group " +
+                "${GroupId}."
+            )
+
+            foreach ($DependencyLine in $DependencyReport) {
+                Write-Host ("  - {0}" -f $DependencyLine) `
+                    -ForegroundColor Yellow
+            }
+
             Write-InfoMessage (
                 "Waiting for EC2 network interfaces to release " +
                 "Security Group ${GroupId}: attempt $Attempt/20."
@@ -603,9 +729,14 @@ try {
         }
 
         if (-not $Deleted) {
+            $FinalDependencyReport = @(
+                Get-SecurityGroupDependencyReport -GroupId $GroupId
+            )
+
             throw (
                 "Security Group $GroupId could not be deleted because " +
-                "AWS dependencies remained attached."
+                "AWS dependencies remained attached.`n" +
+                ($FinalDependencyReport -join "`n")
             )
         }
 
