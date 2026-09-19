@@ -69,14 +69,27 @@ function Invoke-AwsCli {
         [switch]$AllowEmpty
     )
 
-    $output = @(
-        & aws @Arguments `
-            --profile $ProfileName `
-            --region $Region `
-            --no-cli-pager 2>&1
-    )
+    $previousErrorActionPreference = $ErrorActionPreference
 
-    $exitCode = $LASTEXITCODE
+    try {
+        # Windows PowerShell 5.1 can convert native stderr output into a
+        # terminating RemoteException when ErrorActionPreference is Stop.
+        # Capture the AWS CLI response first and evaluate its exit code below.
+        $ErrorActionPreference = "Continue"
+
+        $output = @(
+            & aws @Arguments `
+                --profile $ProfileName `
+                --region $Region `
+                --no-cli-pager 2>&1
+        )
+
+        $exitCode = $LASTEXITCODE
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorActionPreference
+    }
+
     $text = ($output | ForEach-Object { $_.ToString() }) -join "`n"
 
     if ($exitCode -ne 0) {
@@ -103,6 +116,46 @@ function ConvertFrom-AwsJson {
     }
     catch {
         throw "AWS CLI returned invalid JSON.`n$json"
+    }
+}
+
+function Invoke-Ec2RunInstancesWithRetry {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments,
+
+        [int]$MaximumAttempts = 6,
+
+        [int]$DelaySeconds = 15
+    )
+
+    $clientToken = [Guid]::NewGuid().ToString()
+    $runArguments = $Arguments + @("--client-token", $clientToken)
+
+    for ($attempt = 1; $attempt -le $MaximumAttempts; $attempt++) {
+        try {
+            return ConvertFrom-AwsJson -Arguments $runArguments
+        }
+        catch {
+            $errorMessage = $_.Exception.Message
+            $isPropagationError = (
+                $errorMessage -match "InvalidParameterValue" -or
+                $errorMessage -match "IAM Instance Profile" -or
+                $errorMessage -match "iamInstanceProfile"
+            )
+
+            if (-not $isPropagationError -or $attempt -eq $MaximumAttempts) {
+                throw
+            }
+
+            Write-InfoMessage (
+                "The IAM Instance Profile is not yet available to EC2. " +
+                "Retrying instance creation: attempt " +
+                "$attempt/$MaximumAttempts."
+            )
+
+            Start-Sleep -Seconds $DelaySeconds
+        }
     }
 }
 
@@ -439,7 +492,7 @@ try {
     ) -AllowEmpty
 
     Write-Ok "IAM Role and Instance Profile configured."
-    Write-InfoMessage "Waiting 15 seconds for IAM propagation."
+    Write-InfoMessage "Waiting 15 seconds before validating IAM propagation."
     Start-Sleep -Seconds 15
 
     Write-Step "Security Group"
@@ -507,7 +560,7 @@ cat > /usr/share/nginx/html/index.html <<'HTML'
   <title>Lab 13</title>
 </head>
 <body>
-  <h1>Lab 13 — Application Troubleshooting</h1>
+  <h1>Lab 13 - Application Troubleshooting</h1>
   <p>Application status: healthy</p>
 </body>
 </html>
@@ -542,7 +595,7 @@ systemctl enable --now nginx
         [Text.Encoding]::UTF8.GetBytes($userData)
     )
 
-    $instanceResponse = ConvertFrom-AwsJson -Arguments @(
+    $instanceResponse = Invoke-Ec2RunInstancesWithRetry -Arguments @(
         "ec2", "run-instances",
         "--image-id", $imageId,
         "--instance-type", $InstanceType,
