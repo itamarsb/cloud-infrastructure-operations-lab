@@ -594,7 +594,7 @@ try {
 
             Write-InfoMessage (
                 "Waiting for EC2 network interfaces to release " +
-                "Security Group $GroupId: attempt $Attempt/20."
+                "Security Group ${GroupId}: attempt $Attempt/20."
             )
 
             if ($Attempt -lt 20) {
