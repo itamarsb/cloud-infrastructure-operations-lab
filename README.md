@@ -60,6 +60,7 @@ O repositório prioriza:
 | ✅ | [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
 | ✅ | [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) | EBS, Amazon S3, integridade, cópia e restauração |
 | ✅ | [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) | Application Load Balancer, health checks, distribuição de tráfego e recuperação |
+| ✅ | [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) | Nginx, falha controlada, diagnóstico estruturado, recuperação e cleanup |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -67,30 +68,28 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 12** implementou uma aplicação web disponível em duas zonas da AWS, utilizando duas instâncias Amazon EC2 com Nginx, um Target Group e um Application Load Balancer.
+O **Lab 13** implementou um cenário completo de troubleshooting de uma aplicação Nginx indisponível em uma instância Amazon EC2 administrada pelo AWS Systems Manager.
 
-A solução incluiu:
+O laboratório incluiu:
 
-- backends distribuídos entre `us-east-1a` e `us-east-1b`;
-- administração pelo AWS Systems Manager, sem chave SSH;
-- IMDSv2 obrigatório e volumes raiz EBS `gp3` criptografados;
-- Security Group público somente no ALB;
-- acesso HTTP aos backends restrito ao Security Group do ALB;
-- health check HTTP no caminho `/health`;
-- validação independente da infraestrutura e do tráfego;
-- falha controlada e recuperação do serviço;
+- implantação e validação inicial do Nginx e dos endpoints `/` e `/health`;
+- administração pelo Systems Manager, sem chave SSH nem regra de entrada para a porta TCP `22`;
+- IMDSv2 obrigatório e volume raiz EBS `gp3` criptografado;
+- introdução controlada de uma configuração inválida;
+- confirmação da indisponibilidade da aplicação;
+- diagnóstico somente leitura baseado em serviço, processo, porta, configuração e logs;
+- identificação da causa antes de qualquer correção;
+- restauração da configuração válida e recuperação do Nginx;
+- validação independente após a recuperação;
 - cleanup protegido com preservação da rede do Lab 08.
 
-O validador confirmou HTTP `200`, dois targets saudáveis e respostas provenientes dos backends A e B. Durante o teste de falha, o Nginx do backend A foi interrompido pelo Systems Manager e o Target Group o classificou como `unhealthy`. Enquanto isso, vinte requisições consecutivas foram atendidas pelo backend B sem indisponibilidade da aplicação.
+Durante o incidente controlado, o diagnóstico confirmou a falha do serviço, a ausência do processo esperado e da escuta na porta TCP `80`, o erro retornado pelo `nginx -t` e a causa registrada nos logs do sistema.
 
-Após a recuperação, os dois targets retornaram ao estado `healthy` e uma nova validação confirmou o funcionamento integral da arquitetura.
+Após a recuperação, o Nginx retornou ao estado ativo e a aplicação voltou a responder corretamente. A validação independente terminou com código de saída `0`.
 
-O cleanup removeu Listener, Application Load Balancer, Target Group, instâncias EC2, Security Groups, Instance Profile e IAM Role. A validação final confirmou que nenhum recurso específico do Lab 12 permaneceu ativo e que a VPC e as duas sub-redes do Lab 08 foram preservadas.
+O cleanup removeu a instância EC2, o Security Group, o Instance Profile e a IAM Role específicos do laboratório. A validação final confirmou que nenhum recurso exclusivo do Lab 13 permaneceu ativo e que a VPC e a sub-rede compartilhadas do Lab 08 foram preservadas.
 
-Consulte o [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) para acessar a documentação completa, os scripts e as evidências.
-
-
-
+Consulte o [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) para acessar a documentação completa, os scripts e as evidências.
 
 ---
 
@@ -150,9 +149,9 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-A próxima implementação é o **Lab 13 — Aplicação indisponível**.
+A próxima implementação é o **Lab 14 — Utilização de disco**.
 
-O laboratório iniciará o módulo de operação e troubleshooting, abordando diagnóstico de serviço, processo, porta, configuração e logs.
+O laboratório abordará capacidade, crescimento controlado de logs, identificação do consumo de armazenamento, mitigação e validação pós-recuperação.
 
 ---
 
