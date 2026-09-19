@@ -292,7 +292,7 @@ function Wait-SsmCommand {
         }
 
         Write-InfoMessage (
-            "Waiting for SSM command $CommandId: " +
+            "Waiting for SSM command ${CommandId}: " +
             "attempt $attempt/$MaximumAttempts; " +
             "status $($invocation.Status)."
         )
