@@ -55,7 +55,7 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 | Status | Laboratório | Conteúdo |
 |:---:|---|---|
 | ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração e logs |
-| ⬜ | **Lab 14 — Utilização de disco** | Capacidade, crescimento de logs e mitigação |
+| 🔄 | **Lab 14 — Utilização de disco** | Capacidade, crescimento de logs e mitigação |
 | ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, Security Groups e portas |
 | ⬜ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente e conectividade |
 | ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação e rollback |
@@ -145,3 +145,4 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 **Lab 14 — Utilização de disco**
 
 Diagnóstico de capacidade, crescimento controlado de logs, identificação do consumo de armazenamento, mitigação e validação pós-recuperação.
+
