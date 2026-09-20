@@ -482,8 +482,17 @@ try {
         -ResourceDescription "EC2 instance" `
         -Tags $instance.Tags
 
+        $keyNameProperty = $instance.PSObject.Properties["KeyName"]
+
+    $hasNoKeyPair = (
+        $null -eq $keyNameProperty -or
+        [string]::IsNullOrWhiteSpace(
+            [string]$keyNameProperty.Value
+        )
+    )
+
     Test-Condition `
-        -Condition ($null -eq $instance.KeyName) `
+        -Condition $hasNoKeyPair `
         -SuccessMessage "The instance has no SSH Key Pair." `
         -FailureMessage "The instance has an SSH Key Pair."
 
