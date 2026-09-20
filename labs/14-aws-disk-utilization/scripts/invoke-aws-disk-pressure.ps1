@@ -529,17 +529,9 @@ fail() {
 mountpoint -q "$MOUNT_POINT" ||
     fail "$MOUNT_POINT is not mounted."
 
-SOURCE=$(
-    findmnt -rn -o SOURCE --target "$MOUNT_POINT"
-)
-
-FSTYPE=$(
-    findmnt -rn -o FSTYPE --target "$MOUNT_POINT"
-)
-
-ROOT_SOURCE=$(
-    findmnt -rn -o SOURCE --target /
-)
+SOURCE=$(findmnt -rn -o SOURCE --target "$MOUNT_POINT")
+FSTYPE=$(findmnt -rn -o FSTYPE --target "$MOUNT_POINT")
+ROOT_SOURCE=$(findmnt -rn -o SOURCE --target /)
 
 [ -n "$SOURCE" ] ||
     fail "The mount source was not identified."
@@ -556,30 +548,13 @@ ROOT_SOURCE=$(
 [ -f "$MOUNT_POINT/.lab14-volume" ] ||
     fail "The Lab 14 volume marker does not exist."
 
-MARKER=$(
-    tr -d '[:space:]' \
-        < "$MOUNT_POINT/.lab14-volume"
-)
+MARKER=$(tr -d '[:space:]' < "$MOUNT_POINT/.lab14-volume")
 
 [ "$MARKER" = "$EXPECTED_VOLUME_ID" ] ||
     fail "The volume marker does not match the attached EBS volume."
 
-read -r \
-    TOTAL_BYTES \
-    USED_BYTES \
-    AVAILABLE_BYTES \
-    CURRENT_PERCENT <<EOF
-$(
-    df -B1 \
-        --output=size,used,avail,pcent \
-        "$MOUNT_POINT" |
-        awk '
-            NR == 2 {
-                gsub(/%/, "", $4)
-                print $1, $2, $3, $4
-            }
-        '
-)
+read -r TOTAL_BYTES USED_BYTES AVAILABLE_BYTES CURRENT_PERCENT <<EOF
+$(df -B1 --output=size,used,avail,pcent "$MOUNT_POINT" | awk 'NR==2 {gsub(/%/, "", $4); print $1, $2, $3, $4}')
 EOF
 
 for VALUE in \
@@ -595,35 +570,12 @@ done
 [ "$CURRENT_PERCENT" -lt "$SAFETY_PERCENT" ] ||
     fail "Current utilization is already at or above the safety limit."
 
-TARGET_BYTES=$(
-    (
-        TOTAL_BYTES * TARGET_PERCENT + 99
-    ) / 100
-)
-
-SAFETY_BYTES=$(
-    (
-        TOTAL_BYTES * SAFETY_PERCENT
-    ) / 100
-)
-
-BYTES_REQUIRED=$(
-    TARGET_BYTES - USED_BYTES
-)
-
-SAFETY_MARGIN=$(
-    SAFETY_BYTES - USED_BYTES
-)
-
-CHUNK_BYTES=$(
-    CHUNK_MIB * 1024 * 1024
-)
-
-MAX_FILE_BYTES=$(
-    (
-        BYTES_REQUIRED + 2
-    ) / 3
-)
+TARGET_BYTES=$(( (TOTAL_BYTES * TARGET_PERCENT + 99) / 100 ))
+SAFETY_BYTES=$(( (TOTAL_BYTES * SAFETY_PERCENT) / 100 ))
+BYTES_REQUIRED=$(( TARGET_BYTES - USED_BYTES ))
+SAFETY_MARGIN=$(( SAFETY_BYTES - USED_BYTES ))
+CHUNK_BYTES=$(( CHUNK_MIB * 1024 * 1024 ))
+MAX_FILE_BYTES=$(( (BYTES_REQUIRED + 2) / 3 ))
 
 echo "BEFORE_PERCENT=$CURRENT_PERCENT"
 echo "TOTAL_BYTES=$TOTAL_BYTES"
@@ -634,9 +586,7 @@ echo "BYTES_REQUIRED=$BYTES_REQUIRED"
 echo "SAFETY_MARGIN=$SAFETY_MARGIN"
 
 if [ "$BYTES_REQUIRED" -le 0 ]; then
-    echo \
-        "[OK] Disk utilization is already at or above the requested target."
-
+    echo "[OK] Disk utilization is already at or above the requested target."
     echo "AFTER_PERCENT=$CURRENT_PERCENT"
     echo "FILES_CREATED=0"
     exit 0
@@ -648,52 +598,31 @@ fi
 [ "$BYTES_REQUIRED" -lt "$SAFETY_MARGIN" ] ||
     fail "The requested target would reach the safety limit."
 
-RUN_ID=$(
-    date -u +%Y%m%dT%H%M%SZ
-)
-
+RUN_ID=$(date -u +%Y%m%dT%H%M%SZ)
 FILE_INDEX=0
 FILES_CREATED=0
 
 while [ "$USED_BYTES" -lt "$TARGET_BYTES" ]; do
-    REMAINING_TO_TARGET=$(
-        TARGET_BYTES - USED_BYTES
-    )
-
-    REMAINING_TO_SAFETY=$(
-        SAFETY_BYTES - USED_BYTES
-    )
-
+    REMAINING_TO_TARGET=$(( TARGET_BYTES - USED_BYTES ))
+    REMAINING_TO_SAFETY=$(( SAFETY_BYTES - USED_BYTES ))
     WRITE_BYTES=$CHUNK_BYTES
 
-    if [
-        "$WRITE_BYTES" -gt
-        "$MAX_FILE_BYTES"
-    ]; then
+    if [ "$WRITE_BYTES" -gt "$MAX_FILE_BYTES" ]; then
         WRITE_BYTES=$MAX_FILE_BYTES
     fi
 
-    if [
-        "$WRITE_BYTES" -gt
-        "$REMAINING_TO_TARGET"
-    ]; then
+    if [ "$WRITE_BYTES" -gt "$REMAINING_TO_TARGET" ]; then
         WRITE_BYTES=$REMAINING_TO_TARGET
     fi
 
-    if [
-        "$WRITE_BYTES" -ge
-        "$REMAINING_TO_SAFETY"
-    ]; then
-        fail \
-            "The next controlled write would reach the safety limit."
+    if [ "$WRITE_BYTES" -ge "$REMAINING_TO_SAFETY" ]; then
+        fail "The next controlled write would reach the safety limit."
     fi
 
     [ "$WRITE_BYTES" -gt 0 ] ||
         break
 
-    FILE_INDEX=$(
-        FILE_INDEX + 1
-    )
+    FILE_INDEX=$(( FILE_INDEX + 1 ))
 
     PRESSURE_FILE=$(
         printf \
@@ -703,54 +632,23 @@ while [ "$USED_BYTES" -lt "$TARGET_BYTES" ]; do
             "$FILE_INDEX"
     )
 
-    head -c \
-        "$WRITE_BYTES" \
-        /dev/zero \
-        > "$PRESSURE_FILE"
-
+    head -c "$WRITE_BYTES" /dev/zero > "$PRESSURE_FILE"
     sync -f "$PRESSURE_FILE"
     chmod 0640 "$PRESSURE_FILE"
     chown root:root "$PRESSURE_FILE"
 
-    FILES_CREATED=$(
-        FILES_CREATED + 1
-    )
+    FILES_CREATED=$(( FILES_CREATED + 1 ))
 
-    read -r \
-        USED_BYTES \
-        CURRENT_PERCENT <<EOF
-$(
-    df -B1 \
-        --output=used,pcent \
-        "$MOUNT_POINT" |
-        awk '
-            NR == 2 {
-                gsub(/%/, "", $2)
-                print $1, $2
-            }
-        '
-)
+    read -r USED_BYTES CURRENT_PERCENT <<EOF
+$(df -B1 --output=used,pcent "$MOUNT_POINT" | awk 'NR==2 {gsub(/%/, "", $2); print $1, $2}')
 EOF
 
     [ "$CURRENT_PERCENT" -lt "$SAFETY_PERCENT" ] ||
         fail "The safety limit was reached unexpectedly."
 done
 
-read -r \
-    USED_BYTES_AFTER \
-    AVAILABLE_BYTES_AFTER \
-    AFTER_PERCENT <<EOF
-$(
-    df -B1 \
-        --output=used,avail,pcent \
-        "$MOUNT_POINT" |
-        awk '
-            NR == 2 {
-                gsub(/%/, "", $3)
-                print $1, $2, $3
-            }
-        '
-)
+read -r USED_BYTES_AFTER AVAILABLE_BYTES_AFTER AFTER_PERCENT <<EOF
+$(df -B1 --output=used,avail,pcent "$MOUNT_POINT" | awk 'NR==2 {gsub(/%/, "", $3); print $1, $2, $3}')
 EOF
 
 [ "$USED_BYTES_AFTER" -ge "$TARGET_BYTES" ] ||
