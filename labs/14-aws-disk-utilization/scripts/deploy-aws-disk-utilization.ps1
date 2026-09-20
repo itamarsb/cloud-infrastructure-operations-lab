@@ -139,8 +139,9 @@ function Get-TagSpecification {
         "Key=Owner,Value=$($CommonTags.Owner)"
     )
 
-    return "ResourceType=$ResourceType,Tags=[{0}]" -f (
+    return "ResourceType=$ResourceType,Tags=[{{{0}}}]" -f (
         $tags -join "},{"
+    )
     )
 }
 
