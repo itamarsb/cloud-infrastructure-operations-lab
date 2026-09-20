@@ -216,11 +216,23 @@ function Invoke-SsmShellScript {
         [string]$Comment
     )
 
-    $scriptBytes = [System.Text.Encoding]::UTF8.GetBytes(
-        $ScriptContent
+    $normalizedScriptContent = $ScriptContent.Replace(
+        "`r`n",
+        "`n"
     )
 
-    $encodedScript = [Convert]::ToBase64String($scriptBytes)
+    $normalizedScriptContent = $normalizedScriptContent.Replace(
+        "`r",
+        "`n"
+    )
+
+    $scriptBytes = [System.Text.Encoding]::UTF8.GetBytes(
+        $normalizedScriptContent
+    )
+
+    $encodedScript = [Convert]::ToBase64String(
+        $scriptBytes
+    )
 
     $parameters = @{
         commands = @(
