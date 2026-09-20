@@ -319,14 +319,38 @@ function Invoke-SsmShellScript {
         commands = $Commands
     } | ConvertTo-Json -Compress
 
-    $response = ConvertFrom-AwsJson -Arguments @(
-        "ssm", "send-command",
-        "--instance-ids", $InstanceId,
-        "--document-name", "AWS-RunShellScript",
-        "--comment", $Comment,
-        "--parameters", $parameters,
-        "--timeout-seconds", "600"
-    )
+    $parametersPath = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        ("lab14-ssm-{0}.json" -f [guid]::NewGuid().ToString("N"))
+
+    try {
+        $utf8WithoutBom = [System.Text.UTF8Encoding]::new($false)
+
+        [System.IO.File]::WriteAllText(
+            $parametersPath,
+            $parameters,
+            $utf8WithoutBom
+        )
+
+        $parametersFileArgument = "file://$parametersPath"
+
+        $response = ConvertFrom-AwsJson -Arguments @(
+            "ssm", "send-command",
+            "--instance-ids", $InstanceId,
+            "--document-name", "AWS-RunShellScript",
+            "--comment", $Comment,
+            "--parameters", $parametersFileArgument,
+            "--timeout-seconds", "600"
+        )
+    }
+    finally {
+        if (Test-Path -LiteralPath $parametersPath -PathType Leaf) {
+            Remove-Item `
+                -LiteralPath $parametersPath `
+                -Force `
+                -ErrorAction SilentlyContinue
+        }
+    }
 
     $commandId = [string]$response.Command.CommandId
 
