@@ -142,7 +142,6 @@ function Get-TagSpecification {
     return "ResourceType=$ResourceType,Tags=[{{{0}}}]" -f (
         $tags -join "},{"
     )
-    )
 }
 
 function Get-IamTags {
