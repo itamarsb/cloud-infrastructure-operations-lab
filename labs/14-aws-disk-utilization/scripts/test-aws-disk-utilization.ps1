@@ -217,13 +217,37 @@ function Invoke-SsmReadOnlyCommand {
         commands = $Commands
     } | ConvertTo-Json -Compress
 
-    $commandResponse = ConvertFrom-AwsJson -Arguments @(
-        "ssm", "send-command",
-        "--instance-ids", $InstanceId,
-        "--document-name", "AWS-RunShellScript",
-        "--comment", "Lab 14 read-only validation",
-        "--parameters", $parameters
-    )
+    $parametersPath = Join-Path `
+        ([System.IO.Path]::GetTempPath()) `
+        ("lab14-test-ssm-{0}.json" -f [guid]::NewGuid().ToString("N"))
+
+    try {
+        $utf8WithoutBom = [System.Text.UTF8Encoding]::new($false)
+
+        [System.IO.File]::WriteAllText(
+            $parametersPath,
+            $parameters,
+            $utf8WithoutBom
+        )
+
+        $parametersFileArgument = "file://$parametersPath"
+
+        $commandResponse = ConvertFrom-AwsJson -Arguments @(
+            "ssm", "send-command",
+            "--instance-ids", $InstanceId,
+            "--document-name", "AWS-RunShellScript",
+            "--comment", "Lab 14 read-only validation",
+            "--parameters", $parametersFileArgument
+        )
+    }
+    finally {
+        if (Test-Path -LiteralPath $parametersPath -PathType Leaf) {
+            Remove-Item `
+                -LiteralPath $parametersPath `
+                -Force `
+                -ErrorAction SilentlyContinue
+        }
+    }
 
     $commandId = $commandResponse.Command.CommandId
 
@@ -849,5 +873,3 @@ catch {
     Write-Host "LAB 14 VALIDATION FAILED" -ForegroundColor Red
     exit 1
 }
-
-
