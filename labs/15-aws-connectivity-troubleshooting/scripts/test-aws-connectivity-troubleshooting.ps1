@@ -446,12 +446,15 @@ try {
         "curl --fail --silent --show-error http://127.0.0.1/health"
     )
 
+    $parametersJson = @{
+        commands = [string[]]$commands
+    } | ConvertTo-Json -Compress -Depth 4
+
     $sendResponse = Get-AwsJson -Arguments @(
         "ssm", "send-command",
         "--instance-ids", $instance.InstanceId,
         "--document-name", "AWS-RunShellScript",
-        "--parameters",
-        "commands=$($commands | ConvertTo-Json -Compress)",
+        "--parameters", $parametersJson,
         "--comment", "Lab 15 read-only local validation"
     )
 
