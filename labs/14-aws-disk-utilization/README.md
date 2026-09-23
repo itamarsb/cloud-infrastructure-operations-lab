@@ -201,7 +201,7 @@ labs/14-aws-disk-utilization/
 ## Responsabilidade dos arquivos
 
 | Arquivo | Responsabilidade |
-|---|---|
+|:---:|---|
 | `deploy-aws-disk-utilization.ps1` | Criar os recursos, anexar o volume de logs, formatá-lo e configurar a montagem persistente |
 | `invoke-aws-disk-pressure.ps1` | Gerar dados controlados até ultrapassar o limite operacional, sem atingir o limite máximo de segurança |
 | `diagnose-aws-disk-utilization.ps1` | Investigar capacidade, inodes, diretórios, arquivos, logs e descritores abertos sem modificar o ambiente |
