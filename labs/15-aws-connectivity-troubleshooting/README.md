@@ -122,7 +122,7 @@ A falha deverá ser reversível pela restauração exata da regra removida.
 Quando a regra HTTP estiver ausente, os seguintes resultados serão esperados:
 
 | Verificação | Resultado esperado |
-|---|---|
+|:---:|:---:|
 | Instância EC2 | `running` |
 | Systems Manager | `Online` |
 | Serviço Nginx | `active` |
