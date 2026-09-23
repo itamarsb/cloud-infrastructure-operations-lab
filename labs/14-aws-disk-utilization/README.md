@@ -591,7 +591,7 @@ A sequência de remoção foi:
 Foram removidos:
 
 | Recurso | Resultado |
-|---|---|
+|:---:|:---:|
 | Instância EC2 do Lab 14 | Removida |
 | Volume EBS dedicado | Removido |
 | Security Group do Lab 14 | Removido |
@@ -601,7 +601,7 @@ Foram removidos:
 Foram preservados:
 
 | Recurso compartilhado | Resultado |
-|---|---|
+|:---:|:---:|
 | VPC `lab08-application-vpc` | Preservada |
 | Sub-rede `lab08-public-subnet-a` | Preservada |
 
@@ -639,7 +639,7 @@ O script também confirmou que o cleanup pode ser executado novamente com segura
 Os recursos compatíveis receberam:
 
 | Tag | Valor |
-|---|---|
+|:---:|:---:|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `14` |
