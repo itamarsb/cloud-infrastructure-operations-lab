@@ -412,7 +412,7 @@ $PressureScript = ".\labs\14-aws-disk-utilization\scripts\invoke-aws-disk-pressu
     -ProfileName "cloud-operations-lab" `
     -Region "us-east-1" `
     -TargetUsagePercent 82 `
-    -MaximumUsagePercent 88 `
+    -SafetyUsageMaximumPercent 88 `
     -ConfirmDiskPressure
 ```
 
@@ -502,18 +502,18 @@ O Lab 14 será considerado concluído quando:
 - [x] critérios de sucesso definidos;
 - [x] estrutura criada no repositório;
 - [x] política de confiança IAM implementada;
-- [ ] script de implantação implementado;
-- [ ] script de pressão controlada implementado;
-- [ ] script de diagnóstico implementado;
+- [x] script de implantação implementado;
+- [x] script de pressão controlada implementado;
+- [x] script de diagnóstico implementado;
 - [ ] script de mitigação implementado;
-- [ ] script de validação independente implementado;
+- [x] script de validação independente implementado;
 - [ ] script de cleanup implementado;
-- [ ] validação sintática concluída;
-- [ ] implantação executada;
-- [ ] estado saudável validado;
-- [ ] pressão controlada executada;
-- [ ] diagnóstico concluído;
-- [ ] causa identificada;
+- [x] validação sintática concluída;
+- [x] implantação executada;
+- [x] estado saudável validado;
+- [x] pressão controlada executada;
+- [x] diagnóstico concluído;
+- [x] causa identificada;
 - [ ] mitigação executada;
 - [ ] estado final validado;
 - [ ] cleanup executado;
@@ -554,4 +554,3 @@ O laboratório deverá demonstrar:
 - validação independente após a mitigação;
 - cleanup dos recursos temporários;
 - preservação da rede compartilhada do Lab 08.
-
