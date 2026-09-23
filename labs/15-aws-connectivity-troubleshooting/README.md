@@ -92,7 +92,7 @@ O objetivo não será apenas restaurar a conectividade, mas demonstrar como dife
 A falha será introduzida exclusivamente pela remoção da seguinte autorização de entrada:
 
 | Protocolo | Porta | Origem |
-|---|---:|---|
+|:---:|:---:|:---:|
 | TCP | `80` | CIDR autorizado pelo operador |
 
 Nenhuma outra camada será modificada durante a introdução da falha.
