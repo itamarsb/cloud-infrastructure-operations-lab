@@ -173,7 +173,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ### Resumo numérico
 
 | Indicador | Quantidade |
-|:---|---:|
+|:---:|:---:|
 | Laboratórios concluídos | `15` |
 | Laboratórios em desenvolvimento | `0` |
 | Laboratórios planejados | `23` |
