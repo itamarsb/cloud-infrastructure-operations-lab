@@ -4,7 +4,18 @@
 
 O **Cloud Infrastructure Operations Lab** reúne atividades práticas relacionadas à administração e à operação de ambientes em nuvem.
 
-A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários progressivos de provisionamento, monitoramento, manutenção e troubleshooting.
+A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários progressivos de provisionamento, monitoramento, manutenção, diagnóstico, recuperação e troubleshooting.
+
+Os laboratórios priorizam:
+
+- execução prática;
+- automação reproduzível;
+- diagnóstico antes de alterações;
+- validação independente;
+- evidências de execução;
+- proteção de recursos compartilhados;
+- controle de custos;
+- cleanup seguro e idempotente.
 
 ## Status
 
@@ -54,12 +65,29 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 
 | Status | Laboratório | Conteúdo |
 |:---:|---|---|
-| ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração e logs |
-| 🔄 | **Lab 14 — Utilização de disco** | Capacidade, crescimento de logs e mitigação |
-| ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, Security Groups e portas |
-| ⬜ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente e conectividade |
-| ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação e rollback |
-| ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados e configurações |
+| ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
+| ✅ | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
+| ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, Security Groups, portas, diagnóstico por camadas e recuperação |
+| ⬜ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente, registro, conectividade e recuperação |
+| ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação, rollback e confirmação do serviço |
+| ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados, configurações e validação de integridade |
+
+### Resultados concluídos no módulo
+
+O **Lab 13** reproduziu uma aplicação Nginx indisponível, separou diagnóstico e recuperação, identificou uma configuração inválida e restaurou o serviço antes do cleanup.
+
+O **Lab 14** reproduziu utilização elevada em um volume EBS dedicado, identificou os arquivos responsáveis, analisou capacidade e inodes, aplicou rotação e compressão controladas e restaurou a utilização saudável.
+
+No Lab 14:
+
+- a utilização elevada chegou a `85%`;
+- `24` arquivos de pressão foram identificados;
+- aproximadamente `1,50 GiB` de espaço recuperável foi localizado;
+- a utilização de inodes permaneceu em `1%`;
+- nenhum arquivo removido ainda aberto foi encontrado;
+- a mitigação reduziu a utilização para `57%`;
+- todos os recursos exclusivos foram removidos;
+- a rede compartilhada do Lab 08 foi preservada.
 
 ---
 
@@ -69,10 +97,10 @@ A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários
 |:---:|---|---|
 | ⬜ | **Lab 19 — Fluxo essencial do Terraform** | `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` |
 | ⬜ | **Lab 20 — Infraestrutura AWS como código** | Rede, IAM, segurança e EC2 |
-| ⬜ | **Lab 21 — Estado remoto** | Armazenamento e proteção do estado |
-| ⬜ | **Lab 22 — Variáveis, outputs e módulos** | Organização e reutilização |
-| ⬜ | **Lab 23 — Mudanças e drift** | Comparação entre código e ambiente |
-| ⬜ | **Lab 24 — Validação automatizada** | Verificação do código em pipeline |
+| ⬜ | **Lab 21 — Estado remoto** | Armazenamento, bloqueio e proteção do estado |
+| ⬜ | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização e reutilização |
+| ⬜ | **Lab 23 — Mudanças e drift** | Comparação entre código, estado e ambiente |
+| ⬜ | **Lab 24 — Validação automatizada** | Formatação, validação e verificação do código em pipeline |
 
 ---
 
@@ -122,7 +150,9 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 - alarmes e notificações;
 - monitoramento com Zabbix;
 - troubleshooting de falhas controladas;
-- validação e cleanup do ambiente.
+- validação independente;
+- preservação de recursos compartilhados;
+- cleanup do ambiente.
 
 ---
 
@@ -140,9 +170,47 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Segurança, custos e confiabilidade | Planejado |
 | Projeto final | Planejado |
 
+### Resumo numérico
+
+| Indicador | Quantidade |
+|:---|---:|
+| Laboratórios concluídos | `15` |
+| Laboratórios em desenvolvimento | `0` |
+| Laboratórios planejados | `23` |
+| Último laboratório concluído | `Lab 14` |
+| Próximo laboratório | `Lab 15` |
+
+---
+
 ## Próxima etapa
 
-**Lab 14 — Utilização de disco**
+**Lab 15 — Falha de conectividade**
 
-Diagnóstico de capacidade, crescimento controlado de logs, identificação do consumo de armazenamento, mitigação e validação pós-recuperação.
+O próximo laboratório deverá implementar um cenário controlado de falha de conectividade e uma investigação operacional por camadas.
 
+O diagnóstico deverá considerar:
+
+1. resolução DNS;
+2. endereço de destino;
+3. estado da instância ou serviço;
+4. processo esperado;
+5. porta em escuta;
+6. Security Group;
+7. Network ACL;
+8. tabela de rotas;
+9. associação da sub-rede;
+10. conectividade observada pelo cliente.
+
+O laboratório deverá manter a separação entre:
+
+- implantação;
+- validação saudável;
+- introdução controlada da falha;
+- diagnóstico somente leitura;
+- recuperação autorizada;
+- validação independente;
+- cleanup.
+
+A recuperação somente deverá ocorrer depois que a causa da falha tiver sido identificada e registrada.
+
+A infraestrutura compartilhada dos laboratórios anteriores deverá ser preservada.
