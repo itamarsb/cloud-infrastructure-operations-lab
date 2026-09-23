@@ -137,7 +137,7 @@ O acesso administrativo ocorreu pelo AWS Systems Manager.
 ## Componentes
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Região | `us-east-1` |
 | VPC compartilhada | `lab08-application-vpc` |
 | Sub-rede compartilhada | `lab08-public-subnet-a` |
