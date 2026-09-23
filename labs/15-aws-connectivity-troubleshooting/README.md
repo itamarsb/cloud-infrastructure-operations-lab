@@ -264,7 +264,7 @@ As evidências serão selecionadas e nomeadas somente depois que os respectivos 
 ## Responsabilidade dos arquivos
 
 | Arquivo | Responsabilidade |
-|---|---|
+|:---:|---|
 | `deploy-aws-connectivity-troubleshooting.ps1` | Localizar a rede do Lab 08 e criar a infraestrutura exclusiva do Lab 15 |
 | `invoke-aws-connectivity-failure.ps1` | Remover somente a regra HTTP autorizada e confirmar a indisponibilidade externa |
 | `diagnose-aws-connectivity-failure.ps1` | Investigar a conectividade por camadas sem modificar o ambiente |
@@ -280,7 +280,7 @@ As evidências serão selecionadas e nomeadas somente depois que os respectivos 
 Os recursos compatíveis deverão receber:
 
 | Tag | Valor |
-|---|---|
+|:---:|:---:|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `15` |
