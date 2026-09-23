@@ -54,7 +54,7 @@ Cleanup dos recursos exclusivos
 Os principais resultados foram:
 
 | Indicador | Resultado |
-|---|---:|
+|:---:|:---:|
 | Estado inicial | Saudável |
 | Limite saudável | Abaixo de `60%` |
 | Limite operacional elevado | A partir de `80%` |
