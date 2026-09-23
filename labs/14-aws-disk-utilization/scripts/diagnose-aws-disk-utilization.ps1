@@ -337,11 +337,32 @@ read -r SIZE_KB USED_KB AVAILABLE_KB USAGE_TEXT < <(
     df -Pk "$MOUNT_POINT" | awk 'NR==2 {print $2, $3, $4, $5}'
 )
 
+read -r INODES_TOTAL INODES_USED INODES_AVAILABLE INODES_USAGE_TEXT < <(
+    df -Pi "$MOUNT_POINT" | awk 'NR==2 {print $2, $3, $4, $5}'
+)
+
 USAGE_PERCENT=${USAGE_TEXT%%%}
 TOTAL_BYTES=$(( SIZE_KB * 1024 ))
 USED_BYTES=$(( USED_KB * 1024 ))
 AVAILABLE_BYTES=$(( AVAILABLE_KB * 1024 ))
 USABLE_BYTES=$(( USED_BYTES + AVAILABLE_BYTES ))
+INODES_USAGE_PERCENT=${INODES_USAGE_TEXT%%%}
+
+if findmnt --verify --tab-file /etc/fstab >/dev/null 2>&1; then
+    FSTAB_VERIFY="ok"
+else
+    FSTAB_VERIFY="failed"
+fi
+
+OPEN_DELETED_COUNT=0
+while IFS= read -r FD_LINK; do
+    LINK_TARGET=$(readlink "$FD_LINK" 2>/dev/null || true)
+    if [[ "$LINK_TARGET" == "$MOUNT_POINT"/*" (deleted)" ]]; then
+        OPEN_DELETED_COUNT=$(( OPEN_DELETED_COUNT + 1 ))
+    fi
+done < <(
+    find /proc/[0-9]*/fd -type l -lname '* (deleted)' 2>/dev/null || true
+)
 
 GENERATED_BYTES=$(du -sB1 "$GENERATED_DIRECTORY" 2>/dev/null | awk '{print $1}')
 ARCHIVE_BYTES=$(du -sB1 "$ARCHIVE_DIRECTORY" 2>/dev/null | awk '{print $1}')
@@ -369,6 +390,12 @@ echo "USED_BYTES=$USED_BYTES"
 echo "AVAILABLE_BYTES=$AVAILABLE_BYTES"
 echo "USABLE_BYTES=$USABLE_BYTES"
 echo "USAGE_PERCENT=$USAGE_PERCENT"
+echo "INODES_TOTAL=$INODES_TOTAL"
+echo "INODES_USED=$INODES_USED"
+echo "INODES_AVAILABLE=$INODES_AVAILABLE"
+echo "INODES_USAGE_PERCENT=$INODES_USAGE_PERCENT"
+echo "FSTAB_VERIFY=$FSTAB_VERIFY"
+echo "OPEN_DELETED_COUNT=$OPEN_DELETED_COUNT"
 echo "GENERATED_BYTES=$GENERATED_BYTES"
 echo "ARCHIVE_BYTES=$ARCHIVE_BYTES"
 echo "PRESSURE_FILE_COUNT=$PRESSURE_FILE_COUNT"
@@ -379,6 +406,26 @@ echo "LARGEST_FILES_BEGIN"
 find "$MOUNT_POINT" -xdev -type f -printf '%s\t%p\n' 2>/dev/null |
     sort -nr | head -n "$LARGEST_FILE_COUNT" || true
 echo "LARGEST_FILES_END"
+
+echo "LARGEST_DIRECTORIES_BEGIN"
+du -x -B1 --max-depth=2 "$MOUNT_POINT" 2>/dev/null |
+    sort -nr | head -n "$LARGEST_FILE_COUNT" || true
+echo "LARGEST_DIRECTORIES_END"
+
+echo "OPEN_DELETED_FILES_BEGIN"
+while IFS= read -r FD_LINK; do
+    LINK_TARGET=$(readlink "$FD_LINK" 2>/dev/null || true)
+    if [[ "$LINK_TARGET" == "$MOUNT_POINT"/*" (deleted)" ]]; then
+        printf '%s\t%s\n' "$FD_LINK" "$LINK_TARGET"
+    fi
+done < <(
+    find /proc/[0-9]*/fd -type l -lname '* (deleted)' 2>/dev/null || true
+)
+echo "OPEN_DELETED_FILES_END"
+
+echo "RECENT_JOURNAL_BEGIN"
+journalctl --since '-30 minutes' --no-pager -n 40 -o short-iso 2>/dev/null || true
+echo "RECENT_JOURNAL_END"
 '@
 
     $remoteScript = $remoteScript.Replace(
@@ -409,7 +456,9 @@ echo "LARGEST_FILES_END"
     $requiredKeys = @(
         "MOUNT_POINT", "SOURCE", "FSTYPE", "UUID", "MARKER",
         "TOTAL_BYTES", "USED_BYTES", "AVAILABLE_BYTES", "USABLE_BYTES",
-        "USAGE_PERCENT", "GENERATED_BYTES", "ARCHIVE_BYTES",
+        "USAGE_PERCENT", "INODES_TOTAL", "INODES_USED",
+        "INODES_AVAILABLE", "INODES_USAGE_PERCENT", "FSTAB_VERIFY",
+        "OPEN_DELETED_COUNT", "GENERATED_BYTES", "ARCHIVE_BYTES",
         "PRESSURE_FILE_COUNT", "PRESSURE_FILE_BYTES", "RECOVERABLE_BYTES"
     )
     foreach ($key in $requiredKeys) {
@@ -426,6 +475,9 @@ echo "LARGEST_FILES_END"
     if ($values["MARKER"] -ne $volumeId) {
         throw "The mounted filesystem does not match the Lab 14 EBS volume."
     }
+    if ($values["FSTAB_VERIFY"] -ne "ok") {
+        throw "The persistent mount configuration did not pass verification."
+    }
 
     $usagePercent = [int]$values["USAGE_PERCENT"]
     $totalBytes = [long]$values["TOTAL_BYTES"]
@@ -437,6 +489,11 @@ echo "LARGEST_FILES_END"
     $pressureFileCount = [int]$values["PRESSURE_FILE_COUNT"]
     $pressureFileBytes = [long]$values["PRESSURE_FILE_BYTES"]
     $recoverableBytes = [long]$values["RECOVERABLE_BYTES"]
+    $inodesTotal = [long]$values["INODES_TOTAL"]
+    $inodesUsed = [long]$values["INODES_USED"]
+    $inodesAvailable = [long]$values["INODES_AVAILABLE"]
+    $inodesUsagePercent = [int]$values["INODES_USAGE_PERCENT"]
+    $openDeletedCount = [int]$values["OPEN_DELETED_COUNT"]
 
     if ($usagePercent -ge $SafetyUsageMaximumPercent) {
         $usageState = "SafetyLimit"
@@ -475,6 +532,14 @@ echo "LARGEST_FILES_END"
         )
     }
 
+    Write-Step "Inode analysis"
+    Write-Host ("Total inodes:         {0:N0}" -f $inodesTotal)
+    Write-Host ("Used inodes:          {0:N0}" -f $inodesUsed)
+    Write-Host ("Available inodes:     {0:N0}" -f $inodesAvailable)
+    Write-Host ("Inode utilization:    {0}%" -f $inodesUsagePercent)
+    Write-Host ("fstab verification:   {0}" -f $values["FSTAB_VERIFY"])
+    Write-Host ("Open deleted files:   {0}" -f $openDeletedCount)
+
     Write-Step "Lab 14 generated data"
     Write-Host ("Generated directory:  {0}" -f $GeneratedDirectory)
     Write-Host ("Generated size:       {0}" -f (Format-ByteSize $generatedBytes))
@@ -502,6 +567,64 @@ echo "LARGEST_FILES_END"
         Write-Host "No regular files were found."
     }
 
+    $directoryStart = [array]::IndexOf(
+        $outputLines,
+        "LARGEST_DIRECTORIES_BEGIN"
+    )
+    $directoryEnd = [array]::IndexOf(
+        $outputLines,
+        "LARGEST_DIRECTORIES_END"
+    )
+    Write-Step "Largest directories on the Lab 14 volume"
+    if ($directoryStart -ge 0 -and $directoryEnd -gt ($directoryStart + 1)) {
+        foreach (
+            $line in $outputLines[($directoryStart + 1)..($directoryEnd - 1)]
+        ) {
+            if ($line -match '^(\d+)\t(.+)$') {
+                Write-Host (
+                    "{0,12}  {1}" -f
+                    (Format-ByteSize ([long]$matches[1])), $matches[2]
+                )
+            }
+        }
+    }
+    else {
+        Write-Host "No directory consumption data was returned."
+    }
+
+    Write-Step "Open deleted files"
+    if ($openDeletedCount -eq 0) {
+        Write-Success "No deleted files remain open on the Lab 14 volume."
+    }
+    else {
+        $deletedStart = [array]::IndexOf(
+            $outputLines,
+            "OPEN_DELETED_FILES_BEGIN"
+        )
+        $deletedEnd = [array]::IndexOf(
+            $outputLines,
+            "OPEN_DELETED_FILES_END"
+        )
+        Write-InfoMessage (
+            "$openDeletedCount deleted file descriptor(s) remain open."
+        )
+        if ($deletedStart -ge 0 -and $deletedEnd -gt ($deletedStart + 1)) {
+            $outputLines[($deletedStart + 1)..($deletedEnd - 1)] |
+                ForEach-Object { Write-Host $_ }
+        }
+    }
+
+    $journalStart = [array]::IndexOf($outputLines, "RECENT_JOURNAL_BEGIN")
+    $journalEnd = [array]::IndexOf($outputLines, "RECENT_JOURNAL_END")
+    Write-Step "Recent system journal"
+    if ($journalStart -ge 0 -and $journalEnd -gt ($journalStart + 1)) {
+        $outputLines[($journalStart + 1)..($journalEnd - 1)] |
+            ForEach-Object { Write-Host $_ }
+    }
+    else {
+        Write-Host "No recent journal entries were returned."
+    }
+
     Write-Step "Diagnostic summary"
     Write-Host ("Instance ID:          {0}" -f $instanceId)
     Write-Host ("Data volume ID:       {0}" -f $volumeId)
@@ -509,6 +632,8 @@ echo "LARGEST_FILES_END"
     Write-Host ("Usage state:          {0}" -f $usageState)
     Write-Host ("Pressure files:       {0}" -f $pressureFileCount)
     Write-Host ("Potential recovery:   {0}" -f (Format-ByteSize $recoverableBytes))
+    Write-Host ("Inode utilization:    {0}%" -f $inodesUsagePercent)
+    Write-Host ("Open deleted files:   {0}" -f $openDeletedCount)
 
     Write-Host ""
     Write-Host "LAB 14 DIAGNOSIS COMPLETED SUCCESSFULLY" `
