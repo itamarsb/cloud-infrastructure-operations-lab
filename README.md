@@ -61,7 +61,7 @@ O repositório prioriza:
 | ✅ | [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) | EBS, Amazon S3, integridade, cópia e restauração |
 | ✅ | [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) | Application Load Balancer, health checks, distribuição de tráfego e recuperação |
 | ✅ | [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) | Nginx, falha controlada, diagnóstico estruturado, recuperação e cleanup |
-| 🔄 | [Lab 14 — Utilização de disco](labs/14-aws-disk-utilization/) | Volume EBS dedicado, crescimento de logs, diagnóstico e mitigação |
+| ✅ | [Lab 14 — Utilização de disco](labs/14-aws-disk-utilization/) | Volume EBS dedicado, pressão controlada, diagnóstico, mitigação e cleanup |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -69,28 +69,57 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 13** implementou um cenário completo de troubleshooting de uma aplicação Nginx indisponível em uma instância Amazon EC2 administrada pelo AWS Systems Manager.
+O **Lab 14 — Utilização de disco e crescimento de logs** implementou um cenário completo de investigação e mitigação de utilização elevada de disco em uma instância Amazon EC2 administrada pelo AWS Systems Manager.
 
 O laboratório incluiu:
 
-- implantação e validação inicial do Nginx e dos endpoints `/` e `/health`;
-- administração pelo Systems Manager, sem chave SSH nem regra de entrada para a porta TCP `22`;
-- IMDSv2 obrigatório e volume raiz EBS `gp3` criptografado;
-- introdução controlada de uma configuração inválida;
-- confirmação da indisponibilidade da aplicação;
-- diagnóstico somente leitura baseado em serviço, processo, porta, configuração e logs;
-- identificação da causa antes de qualquer correção;
-- restauração da configuração válida e recuperação do Nginx;
-- validação independente após a recuperação;
-- cleanup protegido com preservação da rede do Lab 08.
+- implantação de uma instância Amazon EC2 com Amazon Linux 2023;
+- criação de um volume EBS `gp3` criptografado e dedicado aos logs;
+- formatação do volume com `ext4`;
+- montagem persistente por UUID em `/var/log/lab14`;
+- administração pelo Systems Manager, sem Key Pair e sem regra de entrada para SSH;
+- IMDSv2 obrigatório;
+- geração controlada de arquivos de log;
+- proteção por limite máximo de utilização;
+- diagnóstico estruturado e somente leitura;
+- análise de capacidade em bytes e consumo de inodes;
+- identificação dos maiores diretórios e arquivos;
+- inspeção de arquivos removidos ainda abertos;
+- coleta de eventos recentes do sistema;
+- mitigação por rotação, compressão e retenção;
+- validação de integridade antes da remoção dos arquivos originais;
+- validação independente após a mitigação;
+- cleanup protegido e idempotente;
+- preservação da rede compartilhada do Lab 08.
 
-Durante o incidente controlado, o diagnóstico confirmou a falha do serviço, a ausência do processo esperado e da escuta na porta TCP `80`, o erro retornado pelo `nginx -t` e a causa registrada nos logs do sistema.
+Durante o incidente controlado, a utilização do volume dedicado chegou a `85%`, ultrapassando o limite operacional de `80%` e permanecendo abaixo do limite máximo de segurança de `88%`.
 
-Após a recuperação, o Nginx retornou ao estado ativo e a aplicação voltou a responder corretamente. A validação independente terminou com código de saída `0`.
+O diagnóstico identificou:
 
-O cleanup removeu a instância EC2, o Security Group, o Instance Profile e a IAM Role específicos do laboratório. A validação final confirmou que nenhum recurso exclusivo do Lab 13 permaneceu ativo e que a VPC e a sub-rede compartilhadas do Lab 08 foram preservadas.
+- `24` arquivos de pressão;
+- aproximadamente `1,50 GiB` de dados recuperáveis;
+- arquivos de aproximadamente `64 MiB`;
+- utilização de inodes de apenas `1%`;
+- nenhum arquivo removido ainda aberto por processos;
+- concentração do consumo no diretório controlado `/var/log/lab14/generated`.
 
-Consulte o [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) para acessar a documentação completa, os scripts e as evidências.
+A investigação confirmou que o incidente estava relacionado ao consumo da capacidade em bytes e não ao esgotamento de inodes.
+
+A mitigação processou somente os arquivos controlados, realizou compressão temporária, validou a integridade do conteúdo e removeu os arquivos originais somente após a confirmação de sucesso.
+
+Após a mitigação, a utilização foi reduzida de `85%` para `57%`. A validação independente confirmou o retorno ao estado `Healthy`.
+
+O cleanup removeu:
+
+- a instância EC2 do Lab 14;
+- o volume EBS dedicado;
+- o Security Group;
+- o Instance Profile;
+- a IAM Role e sua associação com a política do Systems Manager.
+
+A validação pós-cleanup confirmou que nenhum recurso exclusivo do Lab 14 permaneceu ativo. A VPC e a sub-rede compartilhadas do Lab 08 foram preservadas.
+
+Consulte o [Lab 14 — Utilização de disco e crescimento de logs](labs/14-aws-disk-utilization/) para acessar a documentação completa, os scripts e as evidências.
 
 ---
 
@@ -128,11 +157,44 @@ Consulte o [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws
 - princípio do menor privilégio conforme a evolução da trilha;
 - identificação explícita de perfil, Região, ambiente e recursos;
 - validações antes e depois das alterações;
+- diagnóstico antes da mitigação;
 - scripts limitados ao escopo declarado;
+- autorização explícita para operações destrutivas;
 - proteção de credenciais e identificadores sensíveis;
 - tratamento de respostas vazias e falhas esperadas;
 - infraestrutura reproduzível e mudanças rastreáveis;
+- preservação de recursos compartilhados;
+- scripts de cleanup idempotentes;
 - controle de custos e cleanup documentado.
+
+---
+
+## Práticas demonstradas
+
+Os laboratórios concluídos até esta etapa demonstram:
+
+- preparação e validação de uma estação de trabalho;
+- autenticação temporária na AWS por SSO;
+- administração de sistemas Linux;
+- usuários, grupos e permissões;
+- serviços e logs com `systemd` e `journalctl`;
+- inventário operacional de uma conta AWS;
+- redes VPC, sub-redes, rotas e Internet Gateway;
+- instâncias EC2 administradas pelo Systems Manager;
+- IAM Roles e Instance Profiles;
+- Security Groups com escopo controlado;
+- armazenamento com Amazon EBS e Amazon S3;
+- validação de integridade e recuperação de dados;
+- disponibilidade com Application Load Balancer;
+- health checks e distribuição de tráfego;
+- introdução controlada de falhas;
+- diagnóstico estruturado antes da recuperação;
+- investigação de utilização elevada de disco;
+- análise de capacidade e inodes;
+- rotação, compressão e retenção de logs;
+- automação com PowerShell e Bash;
+- validação independente;
+- cleanup seguro e preservação de infraestrutura compartilhada.
 
 ---
 
@@ -150,9 +212,21 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-O **Lab 14 — Utilização de disco** está em desenvolvimento.
+Os laboratórios de preparação, operações Linux e infraestrutura AWS foram concluídos.
 
-O laboratório abordará capacidade, crescimento controlado de logs, identificação do consumo de armazenamento, mitigação e validação pós-recuperação.
+O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13 e 14 concluíram, respectivamente, os cenários de aplicação indisponível e utilização elevada de disco.
+
+A próxima etapa será o **Lab 15 — Falha de conectividade**, com foco em:
+
+- resolução DNS;
+- rotas;
+- Security Groups;
+- portas e listeners;
+- conectividade entre componentes;
+- diagnóstico por camadas;
+- introdução controlada de falha;
+- recuperação e validação independente;
+- cleanup dos recursos temporários.
 
 ---
 
