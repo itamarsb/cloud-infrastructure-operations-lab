@@ -210,7 +210,7 @@ A falha afetará somente o caminho HTTP externo.
 ## Componentes
 
 | Componente | Configuração planejada |
-|---|---|
+|:---:|:---:|
 | Região | `us-east-1` |
 | VPC compartilhada | `lab08-application-vpc` |
 | Sub-rede compartilhada | `lab08-public-subnet-a` |
