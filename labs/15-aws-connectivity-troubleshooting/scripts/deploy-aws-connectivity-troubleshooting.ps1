@@ -130,7 +130,11 @@ function Get-TagSpecification {
     )
 
     $tags = Get-Ec2Tags -Name $Name
-    return "ResourceType=$ResourceType,Tags=[{0}]" -f ($tags -join ",")
+    $tagStructures = @($tags | ForEach-Object { "{$($_)}" })
+
+    return "ResourceType=$ResourceType,Tags=[{0}]" -f (
+        $tagStructures -join ","
+    )
 }
 
 try {
@@ -520,10 +524,6 @@ nginx -t
 systemctl enable --now nginx
 '@
 
-    $encodedUserData = [Convert]::ToBase64String(
-        [Text.Encoding]::UTF8.GetBytes($userData)
-    )
-
     $instanceResponse = Get-AwsJson -Arguments @(
         "ec2", "run-instances",
         "--image-id", $imageId,
@@ -535,7 +535,7 @@ systemctl enable --now nginx
         "HttpTokens=required,HttpEndpoint=enabled",
         "--block-device-mappings",
         "DeviceName=/dev/xvda,Ebs={VolumeType=gp3,Encrypted=true,DeleteOnTermination=true}",
-        "--user-data", $encodedUserData,
+        "--user-data", $userData,
         "--tag-specifications",
         (Get-TagSpecification `
             -ResourceType "instance" `
