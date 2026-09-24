@@ -32,8 +32,8 @@ function Invoke-Aws {
     $previousPreference = $ErrorActionPreference
 
     try {
-        # PowerShell 5.1 pode tratar stderr de programas nativos como erro
-        # terminante. O código de saída da AWS CLI é verificado abaixo.
+        # No Windows PowerShell 5.1, stderr de programas nativos pode
+        # gerar erro terminante. Verificamos o código de saída da CLI.
         $ErrorActionPreference = "Continue"
 
         $response = @(
@@ -49,9 +49,13 @@ function Invoke-Aws {
         $ErrorActionPreference = $previousPreference
     }
 
-    $output = ($response | ForEach-Object {
-        $_.ToString()
-    }) -join "`n"
+    $output = (
+        $response | ForEach-Object {
+            if ($null -ne $_) {
+                $_.ToString()
+            }
+        }
+    ) -join "`n"
 
     if ($exitCode -ne 0) {
         throw "AWS CLI falhou: aws $($Arguments -join ' ')`n$output"
@@ -66,15 +70,15 @@ function Get-AwsJson {
         [string[]]$Arguments
     )
 
-    $json = Invoke-Aws -Arguments ($Arguments + @(
-        "--output", "json"
-    ))
+    $json = Invoke-Aws -Arguments (
+        $Arguments + @("--output", "json")
+    )
 
     if ([string]::IsNullOrWhiteSpace($json)) {
         throw "A AWS CLI não retornou o JSON esperado."
     }
 
-    return ($json | ConvertFrom-Json)
+    return ($json | ConvertFrom-Json -ErrorAction Stop)
 }
 
 function Assert-Tags {
@@ -92,7 +96,7 @@ function Assert-Tags {
     $tags = @{}
 
     foreach ($tag in @($Resource.Tags)) {
-        $tags[$tag.Key] = $tag.Value
+        $tags[[string]$tag.Key] = [string]$tag.Value
     }
 
     $expected = @{
@@ -111,7 +115,10 @@ function Assert-Tags {
 }
 
 function Get-Ec2Tags {
-    param([string]$Name)
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
 
     return @(
         "Key=Name,Value=$Name",
@@ -125,12 +132,19 @@ function Get-Ec2Tags {
 
 function Get-TagSpecification {
     param(
+        [Parameter(Mandatory = $true)]
         [string]$ResourceType,
+
+        [Parameter(Mandatory = $true)]
         [string]$Name
     )
 
     $tags = Get-Ec2Tags -Name $Name
-    $tagStructures = @($tags | ForEach-Object { "{$($_)}" })
+    $tagStructures = @(
+        $tags | ForEach-Object {
+            "{$($_)}"
+        }
+    )
 
     return "ResourceType=$ResourceType,Tags=[{0}]" -f (
         $tagStructures -join ","
@@ -200,7 +214,7 @@ try {
     }
 
     $trustPolicy = Get-Content -LiteralPath $policyPath -Raw |
-        ConvertFrom-Json
+        ConvertFrom-Json -ErrorAction Stop
 
     if (
         $trustPolicy.Statement[0].Principal.Service -ne
@@ -235,11 +249,17 @@ try {
     $vpcs = @($vpcResponse.Vpcs)
 
     if ($vpcs.Count -ne 1) {
-        throw "É necessária exatamente uma VPC disponível chamada $VpcName. Execute primeiro o deploy do Lab 08, se ela tiver sido removida."
+        throw (
+            "É necessária exatamente uma VPC disponível chamada " +
+            "$VpcName. Se ela foi removida, implante novamente o Lab 08."
+        )
     }
 
     $vpc = $vpcs[0]
-    Assert-Tags -Resource $vpc -Description "VPC do Lab 08" `
+
+    Assert-Tags `
+        -Resource $vpc `
+        -Description "VPC do Lab 08" `
         -ExpectedLab "08"
 
     $subnetResponse = Get-AwsJson -Arguments @(
@@ -257,7 +277,10 @@ try {
     }
 
     $subnet = $subnets[0]
-    Assert-Tags -Resource $subnet -Description "Sub-rede do Lab 08" `
+
+    Assert-Tags `
+        -Resource $subnet `
+        -Description "Sub-rede do Lab 08" `
         -ExpectedLab "08"
 
     if ($subnet.AvailabilityZone -ne $AvailabilityZone) {
@@ -276,9 +299,11 @@ try {
 
     $explicitRoutes = @(
         $routeResponse.RouteTables | Where-Object {
-            @($_.Associations | Where-Object {
-                $_.SubnetId -eq $subnet.SubnetId
-            }).Count -gt 0
+            @(
+                $_.Associations | Where-Object {
+                    $_.SubnetId -eq $subnet.SubnetId
+                }
+            ).Count -gt 0
         }
     )
 
@@ -292,9 +317,11 @@ try {
     else {
         $mainRoutes = @(
             $routeResponse.RouteTables | Where-Object {
-                @($_.Associations | Where-Object {
-                    $_.Main -eq $true
-                }).Count -gt 0
+                @(
+                    $_.Associations | Where-Object {
+                        $_.Main -eq $true
+                    }
+                ).Count -gt 0
             }
         )
 
@@ -324,11 +351,13 @@ try {
 
     if (
         @($gatewayResponse.InternetGateways).Count -ne 1 -or
-        @($gatewayResponse.InternetGateways[0].Attachments |
-            Where-Object {
-                $_.VpcId -eq $vpc.VpcId -and
-                $_.State -eq "available"
-            }).Count -ne 1
+        @(
+            $gatewayResponse.InternetGateways[0].Attachments |
+                Where-Object {
+                    $_.VpcId -eq $vpc.VpcId -and
+                    $_.State -eq "available"
+                }
+        ).Count -ne 1
     ) {
         throw "O Internet Gateway não está associado à VPC esperada."
     }
@@ -364,7 +393,10 @@ try {
     )
 
     if ($existingInstances.Count -gt 0) {
-        throw "Já existe uma instância ativa com o nome $InstanceName. Nenhuma instância adicional será criada."
+        throw (
+            "Já existe uma instância ativa com o nome $InstanceName. " +
+            "Nenhuma instância adicional será criada."
+        )
     }
 
     $groupsResponse = Get-AwsJson -Arguments @(
@@ -375,7 +407,10 @@ try {
     )
 
     if (@($groupsResponse.SecurityGroups).Count -gt 0) {
-        throw "Já existe o Security Group $GroupName. Verifique os recursos antes de repetir a implantação."
+        throw (
+            "Já existe o Security Group $GroupName. " +
+            "Verifique os recursos antes de repetir a implantação."
+        )
     }
 
     $roleNames = Invoke-Aws -Arguments @(
@@ -422,11 +457,11 @@ try {
     Write-Host "=== IAM Role e Instance Profile ===" `
         -ForegroundColor Cyan
 
-    $iamTags = Get-Ec2Tags -Name $RoleName |
-        ForEach-Object { $_ -replace "^Key=", "Key=" }
+    $iamTags = Get-Ec2Tags -Name $RoleName
 
-    $resolvedPolicyPath = (Resolve-Path `
-        -LiteralPath $policyPath).Path
+    $resolvedPolicyPath = (
+        Resolve-Path -LiteralPath $policyPath
+    ).Path
 
     $null = Invoke-Aws -Arguments (
         @(
@@ -524,26 +559,47 @@ nginx -t
 systemctl enable --now nginx
 '@
 
-    $instanceResponse = Get-AwsJson -Arguments @(
-        "ec2", "run-instances",
-        "--image-id", $imageId,
-        "--instance-type", $InstanceType,
-        "--subnet-id", $subnet.SubnetId,
-        "--security-group-ids", $groupId,
-        "--iam-instance-profile", "Name=$ProfileResourceName",
-        "--metadata-options",
-        "HttpTokens=required,HttpEndpoint=enabled",
-        "--block-device-mappings",
-        "DeviceName=/dev/xvda,Ebs={VolumeType=gp3,Encrypted=true,DeleteOnTermination=true}",
-        "--user-data", $userData,
-        "--tag-specifications",
-        (Get-TagSpecification `
-            -ResourceType "instance" `
-            -Name $InstanceName),
-        (Get-TagSpecification `
-            -ResourceType "volume" `
-            -Name "$InstanceName-root")
-    )
+    # Um arquivo UTF-8 sem BOM preserva as aspas e as quebras de linha
+    # do script Linux ao passar o user data pela AWS CLI no Windows.
+    $userDataPath = Join-Path `
+        ([IO.Path]::GetTempPath()) `
+        ("lab15-user-data-{0}.sh" -f [guid]::NewGuid().ToString("N"))
+
+    try {
+        [IO.File]::WriteAllText(
+            $userDataPath,
+            $userData,
+            (New-Object System.Text.UTF8Encoding($false))
+        )
+
+        $userDataUri = "file://$($userDataPath.Replace('\', '/'))"
+
+        $instanceResponse = Get-AwsJson -Arguments @(
+            "ec2", "run-instances",
+            "--image-id", $imageId,
+            "--instance-type", $InstanceType,
+            "--subnet-id", $subnet.SubnetId,
+            "--security-group-ids", $groupId,
+            "--iam-instance-profile", "Name=$ProfileResourceName",
+            "--metadata-options",
+            "HttpTokens=required,HttpEndpoint=enabled",
+            "--block-device-mappings",
+            "DeviceName=/dev/xvda,Ebs={VolumeType=gp3,Encrypted=true,DeleteOnTermination=true}",
+            "--user-data", $userDataUri,
+            "--tag-specifications",
+            (Get-TagSpecification `
+                -ResourceType "instance" `
+                -Name $InstanceName),
+            (Get-TagSpecification `
+                -ResourceType "volume" `
+                -Name "$InstanceName-root")
+        )
+    }
+    finally {
+        if (Test-Path -LiteralPath $userDataPath -PathType Leaf) {
+            Remove-Item -LiteralPath $userDataPath -Force
+        }
+    }
 
     $instanceId = @($instanceResponse.Instances)[0].InstanceId
 
@@ -624,6 +680,7 @@ systemctl enable --now nginx
             $health = Invoke-WebRequest `
                 -Uri "http://$publicIp/health" `
                 -UseBasicParsing `
+                -DisableKeepAlive `
                 -TimeoutSec 8
 
             if (
@@ -635,7 +692,7 @@ systemctl enable --now nginx
             }
         }
         catch {
-            # Aguarda a conclusão do user data e a inicialização do Nginx.
+            # Aguarda o user data e a inicialização do Nginx.
         }
 
         Start-Sleep -Seconds 10
@@ -648,6 +705,7 @@ systemctl enable --now nginx
     $page = Invoke-WebRequest `
         -Uri "http://$publicIp/" `
         -UseBasicParsing `
+        -DisableKeepAlive `
         -TimeoutSec 10
 
     if (
