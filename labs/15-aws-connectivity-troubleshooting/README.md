@@ -152,7 +152,7 @@ O cleanup encerrou a instância e removeu o Security Group, o Instance Profile e
 ## Evidências
 
 | Captura | Resultado |
-|---|---|
+|:---:|---|
 | [04 — falha controlada](images/Clipboard_09-25-2026_04.png) | Regra HTTP removida; HTTP externo indisponível |
 | [05 — diagnóstico](images/Clipboard_09-25-2026_05.png) | Aplicação local saudável; regra HTTP ausente |
 | [06 — recuperação](images/Clipboard_09-25-2026_06.png) | Regra restaurada; HTTP externo saudável |
