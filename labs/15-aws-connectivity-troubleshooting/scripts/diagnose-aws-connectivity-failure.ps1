@@ -267,7 +267,13 @@ try {
     Write-Host "IPv4 privado:    $($instance.PrivateIpAddress)"
     Write-Host "IPv4 público:    $($instance.PublicIpAddress)"
     Write-Host "Zona:            $($instance.Placement.AvailabilityZone)"
-    Write-Host "Key Pair:        $($instance.KeyName)"
+    $keyPair = if ($instance.PSObject.Properties["KeyName"]) {
+        $instance.KeyName
+    }
+    else {
+        "nenhuma"
+    }
+    Write-Host "Key Pair:        $keyPair"
     Write-Host "IMDSv2:          $($instance.MetadataOptions.HttpTokens)"
     Write-Host "Instance Profile: $($instance.IamInstanceProfile.Arn)"
 
@@ -512,7 +518,7 @@ try {
                 "entrada"
             }
 
-            $port = if ($null -ne $_.PortRange) {
+            $port = if ($_.PSObject.Properties["PortRange"] -and $null -ne $_.PortRange) {
                 "$($_.PortRange.From)-$($_.PortRange.To)"
             }
             else {
@@ -520,8 +526,7 @@ try {
             }
 
             Write-Host (
-                "{0}: regra={1} ação={2} protocolo={3} " +
-                "portas={4} origem/destino={5}" -f
+                "{0}: regra={1} ação={2} protocolo={3} portas={4} origem/destino={5}" -f
                 $direction,
                 $_.RuleNumber,
                 $_.RuleAction,
