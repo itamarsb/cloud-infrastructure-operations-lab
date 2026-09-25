@@ -67,7 +67,7 @@ Os laboratórios priorizam:
 |:---:|---|---|
 | ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
 | ✅ | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
-| ⬜ | **Lab 15 — Falha de conectividade** | DNS, rotas, Security Groups, portas, diagnóstico por camadas e recuperação |
+| ✅ | **Lab 15 — Falha de conectividade** | Security Group, rota, Network ACL, serviço local, diagnóstico por camadas, recuperação e cleanup |
 | ⬜ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente, registro, conectividade e recuperação |
 | ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação, rollback e confirmação do serviço |
 | ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados, configurações e validação de integridade |
@@ -77,6 +77,8 @@ Os laboratórios priorizam:
 O **Lab 13** reproduziu uma aplicação Nginx indisponível, separou diagnóstico e recuperação, identificou uma configuração inválida e restaurou o serviço antes do cleanup.
 
 O **Lab 14** reproduziu utilização elevada em um volume EBS dedicado, identificou os arquivos responsáveis, analisou capacidade e inodes, aplicou rotação e compressão controladas e restaurou a utilização saudável.
+
+O **Lab 15** revogou de forma controlada a regra HTTP de um Security Group exclusivo. O Nginx e o endpoint local permaneceram saudáveis, enquanto o acesso externo falhou. O diagnóstico identificou a regra ausente, a recuperação restaurou somente TCP `80` para o CIDR autorizado, e a validação independente confirmou novamente `Healthy`. O cleanup removeu os recursos exclusivos e preservou a VPC e a sub-rede do Lab 08.
 
 No Lab 14:
 
@@ -174,43 +176,16 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `15` |
+| Laboratórios concluídos | `16` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `23` |
-| Último laboratório concluído | `Lab 14` |
-| Próximo laboratório | `Lab 15` |
+| Laboratórios planejados | `22` |
+| Último laboratório concluído | `Lab 15` |
+| Próximo laboratório | `Lab 16` |
 
 ---
 
 ## Próxima etapa
 
-**Lab 15 — Falha de conectividade**
+**Lab 16 — Systems Manager indisponível**
 
-O próximo laboratório deverá implementar um cenário controlado de falha de conectividade e uma investigação operacional por camadas.
-
-O diagnóstico deverá considerar:
-
-1. resolução DNS;
-2. endereço de destino;
-3. estado da instância ou serviço;
-4. processo esperado;
-5. porta em escuta;
-6. Security Group;
-7. Network ACL;
-8. tabela de rotas;
-9. associação da sub-rede;
-10. conectividade observada pelo cliente.
-
-O laboratório deverá manter a separação entre:
-
-- implantação;
-- validação saudável;
-- introdução controlada da falha;
-- diagnóstico somente leitura;
-- recuperação autorizada;
-- validação independente;
-- cleanup.
-
-A recuperação somente deverá ocorrer depois que a causa da falha tiver sido identificada e registrada.
-
-A infraestrutura compartilhada dos laboratórios anteriores deverá ser preservada.
+O próximo laboratório abordará o diagnóstico de uma instância EC2 que deixou de aparecer como `Online` no Systems Manager, com verificação da IAM Role, do agente e da conectividade necessária ao serviço. A falha controlada, a recuperação e o cleanup deverão preservar a rede compartilhada e os recursos dos laboratórios anteriores.
