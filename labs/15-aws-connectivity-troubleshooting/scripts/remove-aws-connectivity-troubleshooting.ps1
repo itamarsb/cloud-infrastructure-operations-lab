@@ -375,19 +375,25 @@ try {
             }
         }
 
-        $rulesResponse = Get-AwsJson -Arguments @(
-            "ec2", "describe-security-group-rules",
+        $inboundReferences = Get-AwsJson -Arguments @(
+            "ec2", "describe-security-groups",
             "--filters",
-            "Name=referenced-group-info.group-id,Values=$($group.GroupId)"
+            "Name=ip-permission.group-id,Values=$($group.GroupId)"
+        )
+
+        $outboundReferences = Get-AwsJson -Arguments @(
+            "ec2", "describe-security-groups",
+            "--filters",
+            "Name=egress.ip-permission.group-id,Values=$($group.GroupId)"
         )
 
         $externalReferences = @(
-            $rulesResponse.SecurityGroupRules |
+            @($inboundReferences.SecurityGroups) +
+            @($outboundReferences.SecurityGroups) |
                 Where-Object {
                     $_.GroupId -ne $group.GroupId
                 }
         )
-
         if ($externalReferences.Count -gt 0) {
             throw (
                 "Outro Security Group referencia o grupo do Lab 15. " +
