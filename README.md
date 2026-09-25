@@ -62,12 +62,21 @@ O repositório prioriza:
 | ✅ | [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) | Application Load Balancer, health checks, distribuição de tráfego e recuperação |
 | ✅ | [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) | Nginx, falha controlada, diagnóstico estruturado, recuperação e cleanup |
 | ✅ | [Lab 14 — Utilização de disco](labs/14-aws-disk-utilization/) | Volume EBS dedicado, pressão controlada, diagnóstico, mitigação e cleanup |
+| ✅ | [Lab 15 — Troubleshooting de conectividade](labs/15-aws-connectivity-troubleshooting/) | Falha controlada no Security Group, diagnóstico por camadas, recuperação e cleanup |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
 ## Resultado mais recente
+
+O **Lab 15 — Troubleshooting de conectividade na AWS** confirmou que uma aplicação Nginx pode permanecer saudável localmente enquanto uma regra de entrada ausente no Security Group impede o acesso HTTP externo. Após validar o estado `Healthy`, a regra TCP `80` restrita ao IPv4 do operador foi removida de forma controlada. A validação independente confirmou `Failed`, com Systems Manager e Nginx saudáveis. O diagnóstico somente leitura identificou a regra ausente; a recuperação restaurou apenas essa autorização e a validação voltou a `Healthy`. Por fim, o cleanup removeu os recursos exclusivos do Lab 15 e preservou a VPC e a sub-rede compartilhadas do Lab 08.
+
+Consulte o [Lab 15](labs/15-aws-connectivity-troubleshooting/) para os comandos, resultados, scripts e evidências.
+
+---
+
+## Resultado anterior
 
 O **Lab 14 — Utilização de disco e crescimento de logs** implementou um cenário completo de investigação e mitigação de utilização elevada de disco em uma instância Amazon EC2 administrada pelo AWS Systems Manager.
 
@@ -214,19 +223,15 @@ A trilha está dividida em nove etapas:
 
 Os laboratórios de preparação, operações Linux e infraestrutura AWS foram concluídos.
 
-O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13 e 14 concluíram, respectivamente, os cenários de aplicação indisponível e utilização elevada de disco.
+O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13, 14 e 15 concluíram, respectivamente, os cenários de aplicação indisponível, utilização elevada de disco e falha de conectividade.
 
-A próxima etapa será o **Lab 15 — Falha de conectividade**, com foco em:
+A próxima etapa será o **Lab 16 — Systems Manager indisponível**, com foco em:
 
-- resolução DNS;
-- rotas;
-- Security Groups;
-- portas e listeners;
-- conectividade entre componentes;
-- diagnóstico por camadas;
-- introdução controlada de falha;
-- recuperação e validação independente;
-- cleanup dos recursos temporários.
+- IAM Role e Instance Profile;
+- agente SSM, registro e estado `Online`;
+- conectividade necessária ao serviço;
+- diagnóstico antes da recuperação;
+- validação independente e cleanup.
 
 ---
 
