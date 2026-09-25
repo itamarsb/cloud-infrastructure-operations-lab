@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$ProfileName = "cloud-operations-lab",
     [string]$Region = "us-east-1"
