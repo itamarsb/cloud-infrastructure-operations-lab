@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$ProfileName = "cloud-operations-lab",
     [string]$Region = "us-east-1",
@@ -164,9 +164,9 @@ try {
     if (@($instance.SecurityGroups).Count -ne 1) {
         throw "A instância deve usar somente um Security Group."
     }
+        $expectedProfileArn = "arn:aws:iam::$($identity.Account):instance-profile/$IamProfileName"
     if (-not $instance.PSObject.Properties["IamInstanceProfile"] -or
-        $instance.IamInstanceProfile.Arn -notmatch
-            ("/instance-profile/" + [regex]::Escape($IamProfileName) + "$")) {
+        $instance.IamInstanceProfile.Arn -ne $expectedProfileArn) {
         throw "Instance Profile incorreto."
     }
     Write-Host "[OK] Instância: $($instance.InstanceId)"
