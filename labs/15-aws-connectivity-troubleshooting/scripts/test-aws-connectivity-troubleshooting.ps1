@@ -1,4 +1,4 @@
-﻿[CmdletBinding()]
+[CmdletBinding()]
 param(
     [string]$ProfileName = "cloud-operations-lab",
     [string]$Region = "us-east-1",
@@ -243,7 +243,10 @@ try {
     $explicit = @(
         $routeResponse.RouteTables | Where-Object {
             @($_.Associations | Where-Object {
-                ($_.PSObject.Properties["SubnetId"] -and $_.SubnetId -eq $subnet.SubnetId)
+                (
+                    $_.PSObject.Properties["SubnetId"] -and
+                    $_.SubnetId -eq $subnet.SubnetId
+                )
             }).Count -gt 0
         }
     )
@@ -259,7 +262,10 @@ try {
         $main = @(
             $routeResponse.RouteTables | Where-Object {
                 @($_.Associations | Where-Object {
-                    ($_.PSObject.Properties["Main"] -and $_.Main -eq $true)
+                    (
+                        $_.PSObject.Properties["Main"] -and
+                        $_.Main -eq $true
+                    )
                 }).Count -gt 0
             }
         )
@@ -336,7 +342,10 @@ try {
         throw "A instância não possui IPv4 público."
     }
 
-    if (-not [string]::IsNullOrWhiteSpace($instance.KeyName)) {
+    if (
+        $instance.PSObject.Properties["KeyName"] -and
+        -not [string]::IsNullOrWhiteSpace($instance.KeyName)
+    ) {
         throw "A instância possui uma Key Pair inesperada."
     }
 
@@ -450,13 +459,31 @@ try {
         commands = [string[]]$commands
     } | ConvertTo-Json -Compress -Depth 4
 
-    $sendResponse = Get-AwsJson -Arguments @(
-        "ssm", "send-command",
-        "--instance-ids", $instance.InstanceId,
-        "--document-name", "AWS-RunShellScript",
-        "--parameters", $parametersJson,
-        "--comment", "Lab 15 read-only local validation"
-    )
+    $parametersPath = Join-Path `
+        ([IO.Path]::GetTempPath()) `
+        ("lab15-ssm-parameters-{0}.json" -f [guid]::NewGuid().ToString("N"))
+
+    try {
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        [IO.File]::WriteAllText(
+            $parametersPath, $parametersJson, $utf8NoBom
+        )
+
+        $parametersUri = "file://$($parametersPath.Replace('\', '/'))"
+
+        $sendResponse = Get-AwsJson -Arguments @(
+            "ssm", "send-command",
+            "--instance-ids", $instance.InstanceId,
+            "--document-name", "AWS-RunShellScript",
+            "--parameters", $parametersUri,
+            "--comment", "Lab 15 read-only local validation"
+        )
+    }
+    finally {
+        if (Test-Path -LiteralPath $parametersPath) {
+            Remove-Item -LiteralPath $parametersPath -Force
+        }
+    }
 
     $commandId = $sendResponse.Command.CommandId
 
