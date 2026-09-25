@@ -100,21 +100,29 @@ function Assert-Tags {
 function Test-ExternalHealth {
     param([Parameter(Mandatory = $true)][string]$Address)
 
-    try {
-        $response = Invoke-WebRequest `
-            -Uri "http://$Address/health" `
-            -UseBasicParsing `
-            -DisableKeepAlive `
-            -TimeoutSec 8
+    $responseLines = @(
+        & curl.exe `
+            --noproxy "*" `
+            --silent `
+            --max-time 8 `
+            --write-out "`nHTTP_STATUS:%{http_code}" `
+            "http://$Address/health"
+    )
+    $curlExitCode = $LASTEXITCODE
 
-        return (
-            $response.StatusCode -eq 200 -and
-            $response.Content.Trim() -eq "healthy"
-        )
-    }
-    catch {
+    if ($curlExitCode -ne 0 -or $responseLines.Count -lt 2) {
         return $false
     }
+
+    $status = ([string]$responseLines[-1]).Trim()
+    $body = (
+        $responseLines[0..($responseLines.Count - 2)] -join "`n"
+    ).Trim()
+
+    return (
+        $status -eq "HTTP_STATUS:200" -and
+        $body -eq "healthy"
+    )
 }
 
 function Assert-LocalHealth {
@@ -130,13 +138,31 @@ function Assert-LocalHealth {
         )
     } | ConvertTo-Json -Compress -Depth 4
 
+    $parametersPath = Join-Path `
+        ([IO.Path]::GetTempPath()) `
+        ("lab15-ssm-{0}.json" -f [guid]::NewGuid().ToString("N"))
+
+    try {
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        [IO.File]::WriteAllText(
+            $parametersPath, $parametersJson, $utf8NoBom
+        )
+
+        $parametersUri = "file://$($parametersPath.Replace('\', '/'))"
+
     $sent = Get-AwsJson -Arguments @(
         "ssm", "send-command",
         "--instance-ids", $InstanceId,
         "--document-name", "AWS-RunShellScript",
-        "--parameters", $parametersJson,
+        "--parameters", $parametersUri,
         "--comment", "Lab 15 read-only recovery precheck"
     )
+    }
+    finally {
+        if (Test-Path -LiteralPath $parametersPath) {
+            Remove-Item -LiteralPath $parametersPath -Force
+        }
+    }
 
     $commandId = $sent.Command.CommandId
 
