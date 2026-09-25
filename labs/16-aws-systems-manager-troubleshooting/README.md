@@ -19,7 +19,7 @@ Essa hipótese será testada na prática. O script de falha deve confirmar o est
 ## Arquitetura e limites
 
 | Componente | Planejamento |
-|---|---|
+|:---:|---|
 | Perfil e Região | `cloud-operations-lab`, `us-east-1` |
 | Rede reutilizada | VPC `lab08-application-vpc`; sub-rede `lab08-public-subnet-a` |
 | Zona e instância | `us-east-1a`; `t3.micro`; Amazon Linux 2023 |
