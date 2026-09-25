@@ -125,8 +125,19 @@ try {
             $null -ne $entry.PortRange) {
             "$($entry.PortRange.From)-$($entry.PortRange.To)"
         } else { "todas" }
-        $line = "{0}: regra={1} ação={2} protocolo={3} portas={4} CIDR={5}" -f `
-            $direction, $entry.RuleNumber, $entry.RuleAction, $entry.Protocol, $ports, $cidr
+
+        $values = @(
+            $direction
+            $entry.RuleNumber
+            $entry.RuleAction
+            $entry.Protocol
+            $ports
+            $cidr
+        )
+        $line = [string]::Format(
+            "{0}: regra={1} ação={2} protocolo={3} portas={4} CIDR={5}",
+            $values
+        )
         Write-Host $line
     }
 
@@ -168,11 +179,13 @@ try {
         "ec2", "describe-network-interfaces", "--filters",
         "Name=group-id,Values=$($group.GroupId)"
     )).NetworkInterfaces )
-    $exclusive = ($instanceGroups.Count -eq 1 -and
+    $exclusive = (
+        $instanceGroups.Count -eq 1 -and
         $instanceGroups[0] -eq $group.GroupId -and
         $interfaces.Count -eq 1 -and
         $interfaces[0].PSObject.Properties["Attachment"] -and
-        $interfaces[0].Attachment.InstanceId -eq $instance.InstanceId)
+        $interfaces[0].Attachment.InstanceId -eq $instance.InstanceId
+    )
 
     $rules = @( (Get-AwsJson -Arguments @(
         "ec2", "describe-security-group-rules", "--filters",
@@ -192,14 +205,36 @@ try {
     Write-Host "Regras de entrada: $($inbound.Count)"
     Write-Host "Regras de saída: $($outbound.Count)"
     foreach ($rule in $rules) {
-        $target = if ($rule.PSObject.Properties["CidrIpv4"]) { $rule.CidrIpv4 } `
-            elseif ($rule.PSObject.Properties["CidrIpv6"]) { $rule.CidrIpv6 } `
-            else { "outro destino" }
-        $fromPort = if ($rule.PSObject.Properties["FromPort"]) { $rule.FromPort } else { "*" }
-        $toPort = if ($rule.PSObject.Properties["ToPort"]) { $rule.ToPort } else { "*" }
-        Write-Host ("ID={0} saída={1} protocolo={2} portas={3}-{4} destino={5}" -f `
-            $rule.SecurityGroupRuleId, $rule.IsEgress, $rule.IpProtocol,
-            $fromPort, $toPort, $target)
+        if ($rule.PSObject.Properties["CidrIpv4"]) {
+            $target = $rule.CidrIpv4
+        }
+        elseif ($rule.PSObject.Properties["CidrIpv6"]) {
+            $target = $rule.CidrIpv6
+        }
+        else {
+            $target = "outro destino"
+        }
+
+        $fromPort = if ($rule.PSObject.Properties["FromPort"]) {
+            $rule.FromPort
+        } else { "*" }
+        $toPort = if ($rule.PSObject.Properties["ToPort"]) {
+            $rule.ToPort
+        } else { "*" }
+
+        $values = @(
+            $rule.SecurityGroupRuleId
+            $rule.IsEgress
+            $rule.IpProtocol
+            $fromPort
+            $toPort
+            $target
+        )
+        $line = [string]::Format(
+            "ID={0} saída={1} protocolo={2} portas={3}-{4} destino={5}",
+            $values
+        )
+        Write-Host $line
     }
 
     $role = (Get-AwsJson -Arguments @(
