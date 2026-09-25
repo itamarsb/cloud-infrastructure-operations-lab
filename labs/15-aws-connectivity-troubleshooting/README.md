@@ -34,7 +34,7 @@ flowchart TD
 ## Scripts e proteção
 
 | Arquivo em `scripts/` | Função |
-|---|---|
+|:---:|:---:|
 | `deploy-aws-connectivity-troubleshooting.ps1` | Implantar e verificar o ambiente |
 | `test-aws-connectivity-troubleshooting.ps1` | Validar independentemente `Healthy` ou `Failed` |
 | `invoke-aws-connectivity-failure.ps1` | Revogar a regra HTTP específica |
