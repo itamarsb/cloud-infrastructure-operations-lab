@@ -301,7 +301,7 @@ try {
         $routeResponse.RouteTables | Where-Object {
             @(
                 $_.Associations | Where-Object {
-                    $_.SubnetId -eq $subnet.SubnetId
+                    ($_.PSObject.Properties["SubnetId"] -and $_.SubnetId -eq $subnet.SubnetId)
                 }
             ).Count -gt 0
         }
@@ -319,7 +319,7 @@ try {
             $routeResponse.RouteTables | Where-Object {
                 @(
                     $_.Associations | Where-Object {
-                        $_.Main -eq $true
+                        ($_.PSObject.Properties["Main"] -and $_.Main -eq $true)
                     }
                 ).Count -gt 0
             }
