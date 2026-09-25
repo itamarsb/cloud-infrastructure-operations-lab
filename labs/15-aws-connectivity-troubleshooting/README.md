@@ -11,7 +11,7 @@ Investigar uma aplicação Nginx saudável em uma instância Amazon EC2, mas ina
 ## Ambiente
 
 | Componente | Configuração observada |
-|---|---|
+|:---:|:---:|
 | Conta e Região | `412381774441`, `us-east-1` |
 | VPC e sub-rede compartilhadas | `vpc-0aad44f1f16b804ad`, `subnet-04048dcc4a1a66b63` |
 | Rota e Network ACL | `rtb-066dd13c45a54d908`, `acl-0535ec68170362eab` |
