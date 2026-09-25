@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$ProfileName = "cloud-operations-lab",
     [string]$Region = "us-east-1",
@@ -122,23 +122,36 @@ function Assert-HttpResponse {
     )
 
     $uri = "http://$Address/health"
-    $succeeded = $false
 
-    try {
-        $response = Invoke-WebRequest `
-            -Uri $uri `
-            -UseBasicParsing `
-            -TimeoutSec 8 `
-            -DisableKeepAlive
+    $responseLines = @(
+        & curl.exe `
+            --noproxy "*" `
+            --silent `
+            --max-time 8 `
+            --write-out "`nHTTP_STATUS:%{http_code}" `
+            $uri
+    )
+    $curlExitCode = $LASTEXITCODE
 
-        $succeeded = (
-            $response.StatusCode -eq 200 -and
-            $response.Content.Trim() -eq "healthy"
-        )
+    $status = if ($responseLines.Count -gt 0) {
+        [string]$responseLines[-1]
     }
-    catch {
-        $succeeded = $false
+    else {
+        ""
     }
+
+    $body = if ($responseLines.Count -gt 1) {
+        ($responseLines[0..($responseLines.Count - 2)] -join "`n").Trim()
+    }
+    else {
+        ""
+    }
+
+    $succeeded = (
+        $curlExitCode -eq 0 -and
+        $status.Trim() -eq "HTTP_STATUS:200" -and
+        $body -eq "healthy"
+    )
 
     if ($ShouldSucceed -and -not $succeeded) {
         throw "O endpoint HTTP externo não respondeu como healthy."
