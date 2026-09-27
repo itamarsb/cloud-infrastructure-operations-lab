@@ -20,7 +20,7 @@ Os laboratórios priorizam:
 ## Status
 
 | Símbolo | Situação |
-|:---:|:---|
+|:---:|:---:|
 | ✅ | Concluído |
 | 🔄 | Em desenvolvimento |
 | ⬜ | Planejado |
