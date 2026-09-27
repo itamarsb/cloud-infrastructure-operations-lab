@@ -120,7 +120,7 @@ A validação pós-cleanup confirmou a ausência dos recursos exclusivos. Uma co
 ## Scripts
 
 | Arquivo | Função |
-|:---|:---|
+|:---:|:---:|
 | [`deploy-aws-systems-manager-troubleshooting.ps1`](scripts/deploy-aws-systems-manager-troubleshooting.ps1) | Criar os recursos exclusivos e aguardar o SSM `Online` |
 | [`test-aws-systems-manager-troubleshooting.ps1`](scripts/test-aws-systems-manager-troubleshooting.ps1) | Validar, somente por leitura, os estados `Healthy` ou `Failed` |
 | [`invoke-aws-systems-manager-failure.ps1`](scripts/invoke-aws-systems-manager-failure.ps1) | Revogar a regra identificada, reiniciar a EC2 exclusiva e observar `ConnectionLost` |
