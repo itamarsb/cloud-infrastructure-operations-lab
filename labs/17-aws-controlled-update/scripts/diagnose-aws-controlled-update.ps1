@@ -85,68 +85,34 @@ function Get-HttpProbe {
 
 function Invoke-ReadOnlySsm {
     param([string]$InstanceId)
-    $script = @'
-#!/bin/sh
-set +e
+    $commands = @(
+        "echo '=== MARCADOR DA VERSÃO ==='"
+        "if test -f /var/lib/lab17/state; then cat /var/lib/lab17/state; else echo none; fi"
+        "echo '=== PACOTE E SERVIÇO ==='"
+        "rpm -q nginx || true"
+        "systemctl is-active nginx || true"
+        "systemctl status nginx --no-pager --lines=12 || true"
+        "echo '=== TESTE DA CONFIGURAÇÃO NGINX ==='"
+        "if nginx -t 2>&1; then echo NGINX_CONFIG=valid; else echo NGINX_CONFIG=invalid; fi"
+        "echo '=== REGISTRO DA CANDIDATA INVÁLIDA ==='"
+        "if test -f /var/lib/lab17/failed-candidate.log; then head -n 30 /var/lib/lab17/failed-candidate.log; else echo 'Registro ainda não existe.'; fi"
+        "echo '=== RESPOSTAS HTTP LOCAIS ==='"
+        "printf 'health: '; curl --noproxy '*' -sS --max-time 5 http://127.0.0.1/health || true; echo"
+        "printf 'version: '; curl --noproxy '*' -sS --max-time 5 http://127.0.0.1/version || true; echo"
+        "echo '=== BACKUP V1 ==='"
+        "if test -f /var/lib/lab17/backup-v1/SHA256SUMS; then (cd /var/lib/lab17/backup-v1 && sha256sum -c SHA256SUMS) || true; else echo 'Backup ainda não existe.'; fi"
+        "echo '=== ARQUIVOS ATIVOS ==='"
+        "sha256sum /usr/share/nginx/html/index.html /usr/share/nginx/html/health /usr/share/nginx/html/version /etc/nginx/conf.d/lab17-release.conf 2>&1 || true"
+        "echo '=== COMPARAÇÃO COM BACKUP ==='"
+        "if cmp -s /var/lib/lab17/backup-v1/index.html /usr/share/nginx/html/index.html; then echo 'index.html: idêntico'; else echo 'index.html: diferente'; fi"
+        "if cmp -s /var/lib/lab17/backup-v1/health /usr/share/nginx/html/health; then echo 'health: idêntico'; else echo 'health: diferente'; fi"
+        "if cmp -s /var/lib/lab17/backup-v1/version /usr/share/nginx/html/version; then echo 'version: idêntico'; else echo 'version: diferente'; fi"
+        "if cmp -s /var/lib/lab17/backup-v1/lab17-release.conf /etc/nginx/conf.d/lab17-release.conf; then echo 'lab17-release.conf: idêntico'; else echo 'lab17-release.conf: diferente'; fi"
+        "echo '=== LOGS RECENTES DO NGINX ==='"
+        "journalctl -u nginx --no-pager -n 25 2>&1 || true"
+    )
 
-work=/var/lib/lab17
-backup="$work/backup-v1"
-web=/usr/share/nginx/html
-conf=/etc/nginx/conf.d/lab17-release.conf
-
-echo '=== MARCADOR DA VERSÃO ==='
-if test -f "$work/state"; then cat "$work/state"; else echo none; fi
-echo '=== PACOTE E SERVIÇO ==='
-rpm -q nginx
-systemctl is-active nginx
-systemctl status nginx --no-pager --lines=12
-echo '=== TESTE DA CONFIGURAÇÃO NGINX ==='
-nginx -t 2>&1
-echo "NGINX_TEST_EXIT=$?"
-echo '=== REGISTRO DA CANDIDATA INVÁLIDA ==='
-if test -f "$work/failed-candidate.log"; then
-    head -n 30 "$work/failed-candidate.log"
-else
-    echo 'Registro ainda não existe.'
-fi
-echo '=== RESPOSTAS HTTP LOCAIS ==='
-for endpoint in health version; do
-    printf '%s: ' "$endpoint"
-    curl --noproxy '*' -sS --max-time 5 \
-        -w ' HTTP_STATUS=%{http_code}\n' "http://127.0.0.1/$endpoint"
-    echo "CURL_EXIT=$?"
-done
-echo '=== BACKUP V1 ==='
-if test -f "$backup/SHA256SUMS"; then
-    (cd "$backup" && sha256sum -c SHA256SUMS)
-    echo "BACKUP_CHECK_EXIT=$?"
-else
-    echo 'Backup/checksums ainda não existem.'
-fi
-echo '=== ARQUIVOS ATIVOS ==='
-sha256sum "$web/index.html" "$web/health" "$web/version" "$conf" 2>&1
-echo '=== COMPARAÇÃO COM BACKUP ==='
-for name in index.html health version; do
-    if test -f "$backup/$name" && test -f "$web/$name"; then
-        if cmp -s "$backup/$name" "$web/$name"; then
-            echo "$name: idêntico"
-        else
-            echo "$name: diferente"
-        fi
-    fi
-done
-if test -f "$backup/lab17-release.conf" && test -f "$conf"; then
-    if cmp -s "$backup/lab17-release.conf" "$conf"; then
-        echo 'lab17-release.conf: idêntico'
-    else
-        echo 'lab17-release.conf: diferente'
-    fi
-fi
-echo '=== LOGS RECENTES DO NGINX ==='
-journalctl -u nginx --no-pager -n 25 2>&1 || true
-'@
-
-    $parameters = @{ commands = @($script) } | ConvertTo-Json -Depth 5
+    $parameters = @{ commands = $commands } | ConvertTo-Json -Depth 5
     $temporaryFile = Join-Path ([IO.Path]::GetTempPath()) `
         ("lab17-diagnose-{0}.json" -f [guid]::NewGuid().ToString("N"))
     try {
