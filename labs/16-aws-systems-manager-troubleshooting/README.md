@@ -49,7 +49,7 @@ A reinicialização faz parte da versão final do procedimento de falha. Ela foi
 ## Resultado observado
 
 | Etapa | Observação |
-|:---:|:---|
+|:---:|:---:|
 | Implantação | EC2 exclusiva criada e Systems Manager `Online` |
 | Validação inicial | Estado `Healthy`; IAM, rede e regra HTTPS conferidos |
 | Primeira tentativa de falha | Regra revogada, mas SSM permaneceu `Online` nas 24 verificações; resultado inconclusivo e regra restaurada |
