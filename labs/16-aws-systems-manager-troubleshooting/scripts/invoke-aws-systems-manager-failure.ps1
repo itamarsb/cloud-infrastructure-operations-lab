@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string]$ProfileName = "cloud-operations-lab",
     [string]$Region = "us-east-1",
@@ -323,11 +323,16 @@ try {
     }
     if ($remaining.Count -ne 0) { throw "A regra não desapareceu ou outra regra está presente." }
     Write-Host "[OK] Regra removida: $ruleId"
+    Write-Host "Reiniciando somente a instância do Lab 16 para encerrar conexões existentes."
+    $null = Invoke-Aws -Arguments @(
+        "ec2", "reboot-instances", "--instance-ids", $instanceId
+    )
+    Write-Host "[OK] Reboot solicitado: $instanceId"
 
     Write-Host "`n=== Observação limitada do SSM ===" -ForegroundColor Cyan
-    for ($attempt = 1; $attempt -le 24; $attempt++) {
+    for ($attempt = 1; $attempt -le 40; $attempt++) {
         $ping = Get-PingStatus -Id $instanceId
-        Write-Host "Verificação $attempt/24`: $ping"
+        Write-Host "Verificação $attempt/40`: $ping"
         if ($ping -eq "ConnectionLost") {
             $confirmed = $true
             break
