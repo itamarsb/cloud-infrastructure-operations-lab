@@ -20,7 +20,7 @@ Os laboratórios priorizam:
 ## Status
 
 | Símbolo | Situação |
-|:---:|:---:|
+|:---:|:---|
 | ✅ | Concluído |
 | 🔄 | Em desenvolvimento |
 | ⬜ | Planejado |
@@ -68,7 +68,7 @@ Os laboratórios priorizam:
 | ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
 | ✅ | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
 | ✅ | **Lab 15 — Falha de conectividade** | Security Group, rota, Network ACL, serviço local, diagnóstico por camadas, recuperação e cleanup |
-| ✅ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente, registro, conectividade e recuperação |
+| ✅ | **Lab 16 — Systems Manager indisponível** | IAM Role, falha de saída HTTPS, diagnóstico, recuperação e cleanup |
 | ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação, rollback e confirmação do serviço |
 | ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados, configurações e validação de integridade |
 
@@ -79,6 +79,8 @@ O **Lab 13** reproduziu uma aplicação Nginx indisponível, separou diagnóstic
 O **Lab 14** reproduziu utilização elevada em um volume EBS dedicado, identificou os arquivos responsáveis, analisou capacidade e inodes, aplicou rotação e compressão controladas e restaurou a utilização saudável.
 
 O **Lab 15** revogou de forma controlada a regra HTTP de um Security Group exclusivo. O Nginx e o endpoint local permaneceram saudáveis, enquanto o acesso externo falhou. O diagnóstico identificou a regra ausente, a recuperação restaurou somente TCP `80` para o CIDR autorizado, e a validação independente confirmou novamente `Healthy`. O cleanup removeu os recursos exclusivos e preservou a VPC e a sub-rede do Lab 08.
+
+O **Lab 16** revogou a saída HTTPS de um Security Group exclusivo. A primeira tentativa não produziu `ConnectionLost` no prazo e restaurou a regra. Após ajustar o procedimento para reiniciar somente a instância do laboratório, a segunda tentativa confirmou SSM `ConnectionLost` com EC2 `running`. O diagnóstico verificou rede e IAM, a recuperação restaurou a saída pela API do EC2, e a validação voltou a `Healthy`. O cleanup removeu os recursos exclusivos e preservou a rede compartilhada do Lab 08.
 
 No Lab 14:
 
@@ -161,7 +163,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|:---:|:---:|
+|:---|:---|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
@@ -175,10 +177,10 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ### Resumo numérico
 
 | Indicador | Quantidade |
-|:---:|:---:|
-| Laboratórios concluídos | `16` |
+|:---|:---|
+| Laboratórios concluídos | `17` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `22` |
+| Laboratórios planejados | `21` |
 | Último laboratório concluído | `Lab 16` |
 | Próximo laboratório | `Lab 17` |
 
@@ -186,6 +188,6 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 ## Próxima etapa
 
-**Lab 16 — Systems Manager indisponível**
+**Lab 17 — Atualização controlada**
 
-O próximo laboratório abordará o diagnóstico de uma instância EC2 que deixou de aparecer como `Online` no Systems Manager, com verificação da IAM Role, do agente e da conectividade necessária ao serviço. A falha controlada, a recuperação e o cleanup deverão preservar a rede compartilhada e os recursos dos laboratórios anteriores.
+O próximo laboratório abordará uma mudança planejada em um serviço de aplicação, com registro do estado anterior, janela de manutenção, validação após a atualização e rollback caso os critérios de saúde não sejam atendidos. A execução deverá proteger os recursos compartilhados, registrar evidências de cada decisão e remover os recursos temporários ao final.
