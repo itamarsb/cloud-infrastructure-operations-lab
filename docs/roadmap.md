@@ -179,8 +179,8 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Laboratórios concluídos | `16` |
 | Laboratórios em desenvolvimento | `0` |
 | Laboratórios planejados | `22` |
-| Último laboratório concluído | `Lab 15` |
-| Próximo laboratório | `Lab 16` |
+| Último laboratório concluído | `Lab 16` |
+| Próximo laboratório | `Lab 17` |
 
 ---
 
