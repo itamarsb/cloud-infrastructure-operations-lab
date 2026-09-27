@@ -142,7 +142,7 @@ Consulte o [Lab 14 — Utilização de disco e crescimento de logs](labs/14-aws-
 ## Estrutura do repositório
 
 | Diretório | Finalidade |
-|:---|---|
+|:---:|:---:|
 | `labs/` | Laboratórios, scripts e evidências de execução |
 | `docs/` | Roadmap e documentação geral |
 | `terraform/` | Infraestrutura como código |
