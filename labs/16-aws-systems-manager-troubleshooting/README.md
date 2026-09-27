@@ -17,7 +17,7 @@ Praticar uma investigação em que a instância EC2 continua em execução, mas 
 ## Ambiente e limites
 
 | Componente | Configuração utilizada |
-|:---|:---|
+|:---:|:---:|
 | Conta e Região | Conta AWS `412381774441`; `us-east-1` |
 | Perfil local | `cloud-operations-lab` |
 | Instância exclusiva | `i-0931fdb3d51d9c100`; `t3.micro`; Amazon Linux 2023 |
