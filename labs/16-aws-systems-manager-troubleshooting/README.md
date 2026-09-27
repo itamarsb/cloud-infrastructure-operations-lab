@@ -112,7 +112,7 @@ O script criou a regra `sgr-0af22e7052e1d0a4f`, aguardou o retorno do Systems Ma
 ## Scripts
 
 | Arquivo | Função |
-|:---|:---|
+|:---:|:---:|
 | [`deploy-aws-systems-manager-troubleshooting.ps1`](scripts/deploy-aws-systems-manager-troubleshooting.ps1) | Criar os recursos exclusivos e aguardar o SSM `Online` |
 | [`test-aws-systems-manager-troubleshooting.ps1`](scripts/test-aws-systems-manager-troubleshooting.ps1) | Validar, somente por leitura, os estados `Healthy` ou `Failed` |
 | [`invoke-aws-systems-manager-failure.ps1`](scripts/invoke-aws-systems-manager-failure.ps1) | Revogar a regra identificada, reiniciar a EC2 exclusiva e observar `ConnectionLost` |
