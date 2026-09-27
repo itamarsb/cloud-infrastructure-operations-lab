@@ -243,7 +243,7 @@ try {
         throw "Instância fora do Systems Manager; diagnóstico local indisponível."
     }
     Invoke-ReadOnlySsm -InstanceId $instance.InstanceId
-    Write-Host "DIAGNÓSTICO COLETADO: nenhuma alteração na aplicação." -ForegroundColor Green
+    Write-Host "DIAGNOSTICO COLETADO: nenhuma alteração na aplicação." -ForegroundColor Green
 }
 catch {
     Write-Host "[FALHA] $($_.Exception.Message)" -ForegroundColor Red
