@@ -30,7 +30,7 @@ O repositório prioriza:
 ## Tecnologias
 
 | Categoria | Tecnologias e práticas |
-|:---:|:---:|
+|:---|:---|
 | Cloud | AWS |
 | Sistemas | Linux, Windows 11 e WSL |
 | Infraestrutura como código | Terraform |
@@ -71,13 +71,19 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 15 — Troubleshooting de conectividade na AWS** confirmou que uma aplicação Nginx pode permanecer saudável localmente enquanto uma regra de entrada ausente no Security Group impede o acesso HTTP externo. Após validar o estado `Healthy`, a regra TCP `80` restrita ao IPv4 do operador foi removida de forma controlada. A validação independente confirmou `Failed`, com Systems Manager e Nginx saudáveis. O diagnóstico somente leitura identificou a regra ausente; a recuperação restaurou apenas essa autorização e a validação voltou a `Healthy`. Por fim, o cleanup removeu os recursos exclusivos do Lab 15 e preservou a VPC e a sub-rede compartilhadas do Lab 08.
+O **Lab 16 — Troubleshooting do AWS Systems Manager** investigou uma instância EC2 que continuava `running`, mas deixou de responder ao Systems Manager depois da remoção controlada de sua saída HTTPS. A primeira tentativa foi inconclusiva: o SSM permaneceu `Online` durante a janela de observação, e a regra foi restaurada. Após ajustar o procedimento para reiniciar somente a instância exclusiva e encerrar conexões existentes, uma segunda execução confirmou `ConnectionLost`.
 
-Consulte o [Lab 15](labs/15-aws-connectivity-troubleshooting/) para os comandos, resultados, scripts e evidências.
+O diagnóstico somente leitura verificou a rede compartilhada, a configuração IAM e a ausência da regra de saída no Security Group exclusivo. A recuperação restaurou HTTPS pela API do EC2, sem depender de uma sessão SSM, e a validação independente voltou a `Healthy`. Por fim, o cleanup removeu a instância, o Security Group, o Instance Profile e a IAM Role exclusivos, preservando a VPC e a sub-rede do Lab 08.
+
+Consulte o [Lab 16](labs/16-aws-systems-manager-troubleshooting/) para os scripts, a cronologia das tentativas, o diagnóstico e as evidências.
 
 ---
 
-## Resultado anterior
+## Resultados anteriores
+
+O **Lab 15 — Troubleshooting de conectividade na AWS** confirmou que uma aplicação Nginx pode permanecer saudável localmente enquanto uma regra de entrada ausente no Security Group impede o acesso HTTP externo. Após validar o estado `Healthy`, a regra TCP `80` restrita ao IPv4 do operador foi removida de forma controlada. A validação independente confirmou `Failed`, com Systems Manager e Nginx saudáveis. O diagnóstico somente leitura identificou a regra ausente; a recuperação restaurou apenas essa autorização e a validação voltou a `Healthy`. Por fim, o cleanup removeu os recursos exclusivos do Lab 15 e preservou a VPC e a sub-rede compartilhadas do Lab 08.
+
+Consulte o [Lab 15](labs/15-aws-connectivity-troubleshooting/) para os comandos, resultados, scripts e evidências.
 
 O **Lab 14 — Utilização de disco e crescimento de logs** implementou um cenário completo de investigação e mitigação de utilização elevada de disco em uma instância Amazon EC2 administrada pelo AWS Systems Manager.
 
@@ -136,7 +142,7 @@ Consulte o [Lab 14 — Utilização de disco e crescimento de logs](labs/14-aws-
 ## Estrutura do repositório
 
 | Diretório | Finalidade |
-|:---:|---|
+|:---|---|
 | `labs/` | Laboratórios, scripts e evidências de execução |
 | `docs/` | Roadmap e documentação geral |
 | `terraform/` | Infraestrutura como código |
@@ -202,6 +208,8 @@ Os laboratórios concluídos até esta etapa demonstram:
 - investigação de utilização elevada de disco;
 - análise de capacidade e inodes;
 - rotação, compressão e retenção de logs;
+- investigação de perda de conectividade do Systems Manager;
+- recuperação pela API do EC2 quando o SSM está indisponível;
 - automação com PowerShell e Bash;
 - validação independente;
 - cleanup seguro e preservação de infraestrutura compartilhada.
@@ -224,15 +232,16 @@ A trilha está dividida em nove etapas:
 
 Os laboratórios de preparação, operações Linux e infraestrutura AWS foram concluídos.
 
-O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13, 14 e 15 concluíram, respectivamente, os cenários de aplicação indisponível, utilização elevada de disco e falha de conectividade.
+O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13 a 16 concluíram os cenários de aplicação indisponível, utilização elevada de disco, falha de conectividade e Systems Manager indisponível.
 
-A próxima etapa será o **Lab 16 — Systems Manager indisponível**, com foco em:
+A próxima etapa será o **Lab 17 — Atualização controlada**, com foco em:
 
-- IAM Role e Instance Profile;
-- agente SSM, registro e estado `Online`;
-- conectividade necessária ao serviço;
-- diagnóstico antes da recuperação;
-- validação independente e cleanup.
+- preparação de uma janela de manutenção;
+- registro do estado e da versão anterior;
+- aplicação de uma mudança com escopo definido;
+- validação independente do serviço;
+- rollback diante de uma validação malsucedida;
+- confirmação do estado final e cleanup dos recursos temporários.
 
 ---
 
