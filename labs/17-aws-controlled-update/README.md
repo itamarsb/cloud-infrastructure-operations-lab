@@ -26,7 +26,7 @@ O endpoint `/health` deverá responder HTTP `200` com um corpo de saúde definid
 ## Arquitetura prevista
 
 | Componente | Uso planejado |
-|---|---|
+|:---:|---|
 | Conta, perfil e Região | Perfil `cloud-operations-lab`, `us-east-1`; confirmar a identidade antes de qualquer alteração |
 | Rede compartilhada | VPC e sub-rede públicas do Lab 08, localizadas por tags e validadas antes do deploy |
 | Computação | EC2 `t3.micro` exclusiva, Amazon Linux 2023, volume raiz criptografado |
