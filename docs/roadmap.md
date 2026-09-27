@@ -68,7 +68,7 @@ Os laboratórios priorizam:
 | ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
 | ✅ | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
 | ✅ | **Lab 15 — Falha de conectividade** | Security Group, rota, Network ACL, serviço local, diagnóstico por camadas, recuperação e cleanup |
-| ⬜ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente, registro, conectividade e recuperação |
+| ✅ | **Lab 16 — Systems Manager indisponível** | IAM Role, agente, registro, conectividade e recuperação |
 | ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação, rollback e confirmação do serviço |
 | ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados, configurações e validação de integridade |
 
