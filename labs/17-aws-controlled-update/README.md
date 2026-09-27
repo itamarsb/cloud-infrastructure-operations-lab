@@ -62,7 +62,7 @@ flowchart TD
 ## Critérios de validação
 
 | Momento | Evidência esperada |
-|---|---|
+|:---:|---|
 | Antes da mudança | Instância `running`, SSM `Online`, Nginx ativo, `nginx -t` válido e `/health` saudável |
 | Candidata inválida | Falha detectada de forma explícita, com motivo registrado; nenhuma confirmação da versão |
 | Depois do rollback | Arquivos restaurados; configuração válida; serviço saudável; `/version` identifica a versão inicial |
