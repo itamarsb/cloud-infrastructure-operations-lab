@@ -6,9 +6,9 @@ Uma instância EC2 gerenciada pelo AWS Systems Manager perdeu a comunicação ap
 
 A primeira tentativa de reproduzir a falha foi inconclusiva: o Systems Manager permaneceu `Online` durante a janela de observação, e o script restaurou a regra. A execução seguinte reiniciou somente a instância do Lab 16 após revogar a regra, encerrando as conexões existentes. Dessa vez, `ConnectionLost` foi observado na verificação 38 de 40.
 
-> **English summary:** A controlled removal of outbound HTTPS access caused an EC2 managed node to become unavailable in AWS Systems Manager. The first attempt was inconclusive and restored the rule. After rebooting the dedicated instance to close existing connections, the second attempt confirmed `ConnectionLost`. Read-only diagnosis identified the missing egress rule, and recovery through the EC2 API returned the node to `Online`.
+> **English summary:** A controlled removal of outbound HTTPS access caused an EC2 managed node to become unavailable in AWS Systems Manager. The first attempt was inconclusive and restored the rule. After rebooting the dedicated instance to close existing connections, the second attempt confirmed `ConnectionLost`. Read-only diagnosis identified the missing egress rule, and recovery through the EC2 API returned the node to `Online`. Dedicated resources were then removed while the shared network remained available.
 
-**Estado atual:** falha controlada, diagnóstico e recuperação concluídos; recursos exclusivos do Lab 16 ainda aguardam cleanup.
+**Estado:** concluído. Falha controlada, diagnóstico, recuperação, validação final e cleanup executados.
 
 ## Objetivo
 
@@ -17,7 +17,7 @@ Praticar uma investigação em que a instância EC2 continua em execução, mas 
 ## Ambiente e limites
 
 | Componente | Configuração utilizada |
-|:---:|:---:|
+|:---|:---|
 | Conta e Região | Conta AWS `412381774441`; `us-east-1` |
 | Perfil local | `cloud-operations-lab` |
 | Instância exclusiva | `i-0931fdb3d51d9c100`; `t3.micro`; Amazon Linux 2023 |
@@ -30,7 +30,7 @@ Praticar uma investigação em que a instância EC2 continua em execução, mas 
 | IAM | Role e Instance Profile exclusivos com `AmazonSSMManagedInstanceCore` |
 | Metadados da instância | IMDSv2 obrigatório |
 
-A VPC, a sub-rede, a tabela de rotas, o Internet Gateway e a Network ACL são recursos compartilhados. A falha controlada alterou somente a regra de saída do Security Group exclusivo. A instância de outro repositório mantida na conta não faz parte deste laboratório.
+A VPC, a sub-rede, a tabela de rotas, o Internet Gateway e a Network ACL são recursos compartilhados. A falha controlada alterou somente a regra de saída do Security Group exclusivo. A instância de outro repositório mantida na conta não fez parte deste laboratório.
 
 ## Arquitetura do cenário
 
@@ -49,7 +49,7 @@ A reinicialização faz parte da versão final do procedimento de falha. Ela foi
 ## Resultado observado
 
 | Etapa | Observação |
-|:---:|:---:|
+|:---|:---|
 | Implantação | EC2 exclusiva criada e Systems Manager `Online` |
 | Validação inicial | Estado `Healthy`; IAM, rede e regra HTTPS conferidos |
 | Primeira tentativa de falha | Regra revogada, mas SSM permaneceu `Online` nas 24 verificações; resultado inconclusivo e regra restaurada |
@@ -58,7 +58,7 @@ A reinicialização faz parte da versão final do procedimento de falha. Ela foi
 | Diagnóstico | Rota pública, Internet Gateway, Network ACL e política IAM presentes; nenhuma regra de saída no Security Group exclusivo |
 | Recuperação | Nova regra HTTPS `sgr-0af22e7052e1d0a4f` criada; SSM retornou a `Online` |
 | Validação final | Estado `Healthy` confirmado de forma independente |
-| Cleanup | Pendente |
+| Cleanup | Instância, Security Group, Instance Profile e IAM Role exclusivos removidos; VPC e sub-rede compartilhadas preservadas |
 
 O diagnóstico concluiu que as observações eram **compatíveis** com a ausência da saída HTTPS como causa da indisponibilidade. A Network ACL foi inspecionada, mas o script não a comparou com uma captura anterior.
 
@@ -109,10 +109,18 @@ O script criou a regra `sgr-0af22e7052e1d0a4f`, aguardou o retorno do Systems Ma
 
 [Captura da recuperação e da validação Healthy](images/Clipboard_09-26-2026_04.png)
 
+## Cleanup
+
+Após a recuperação e a coleta das evidências, `remove-aws-systems-manager-troubleshooting.ps1` confirmou a propriedade dos recursos exclusivos e encerrou a instância `i-0931fdb3d51d9c100`. Em seguida, removeu o Security Group `sg-052869d181178d6af`, o Instance Profile e a IAM Role do Lab 16.
+
+A validação pós-cleanup confirmou a ausência dos recursos exclusivos. Uma consulta adicional confirmou que a VPC `vpc-0aad44f1f16b804ad` e a sub-rede `subnet-04048dcc4a1a66b63` do Lab 08 continuavam disponíveis. O repositório local permaneceu sem alterações após a execução.
+
+[Captura do cleanup e da verificação da rede compartilhada](images/Clipboard_09-26-2026_05.png)
+
 ## Scripts
 
 | Arquivo | Função |
-|:---:|:---:|
+|:---|:---|
 | [`deploy-aws-systems-manager-troubleshooting.ps1`](scripts/deploy-aws-systems-manager-troubleshooting.ps1) | Criar os recursos exclusivos e aguardar o SSM `Online` |
 | [`test-aws-systems-manager-troubleshooting.ps1`](scripts/test-aws-systems-manager-troubleshooting.ps1) | Validar, somente por leitura, os estados `Healthy` ou `Failed` |
 | [`invoke-aws-systems-manager-failure.ps1`](scripts/invoke-aws-systems-manager-failure.ps1) | Revogar a regra identificada, reiniciar a EC2 exclusiva e observar `ConnectionLost` |
@@ -124,7 +132,9 @@ A política de confiança da instância está em [`policies/ec2-ssm-trust-policy
 
 ## Execução e verificações
 
-Os comandos abaixo são referências para reproduzir cada fase **em ordem**, a partir da raiz do repositório, com sessão AWS SSO válida. Os scripts de falha, recuperação e cleanup exigem os respectivos parâmetros de confirmação. Não execute o deploy novamente sobre os recursos atuais.
+Os comandos abaixo documentam as fases executadas **em ordem**, a partir da raiz do repositório, com sessão AWS SSO válida. Para reproduzir o laboratório, implante primeiro novos recursos com o script de deploy. Os IDs da execução documentada acima já foram removidos.
+
+Após o deploy, a validação inicial é feita por:
 
 ```powershell
 $Scripts = ".\labs\16-aws-systems-manager-troubleshooting\scripts"
@@ -171,7 +181,7 @@ A recuperação é realizada por:
     -ExpectedConnectivityState "Healthy"
 ```
 
-**Estado deste repositório:** os comandos até a validação final `Healthy` foram executados. O cleanup abaixo ainda aguarda execução e verificação:
+Por fim, os recursos exclusivos são removidos por:
 
 ```powershell
 & (Join-Path $Scripts "remove-aws-systems-manager-troubleshooting.ps1") `
@@ -191,12 +201,12 @@ A recuperação é realizada por:
 - [x] Diagnóstico somente leitura documentado.
 - [x] Saída HTTPS restaurada pela API do EC2.
 - [x] SSM `Online` e validação independente `Healthy`.
-- [ ] Recursos exclusivos removidos e rede compartilhada preservada após o cleanup.
-- [ ] Evidência do cleanup publicada.
+- [x] Recursos exclusivos removidos e rede compartilhada preservada após o cleanup.
+- [x] Evidência do cleanup publicada.
 
-## Cleanup e custos
+## Custos e limites
 
-A instância EC2, seu volume EBS e o IPv4 público podem gerar custos enquanto os recursos permanecerem ativos. O cleanup deve remover apenas a instância, o Security Group, a IAM Role e o Instance Profile exclusivos do Lab 16. A VPC e a sub-rede do Lab 08 devem continuar disponíveis. A instância mantida para outro repositório não deve ser alterada.
+A instância EC2, seu volume EBS e o IPv4 público podiam gerar custos enquanto permanecessem ativos. Os recursos exclusivos desta execução foram removidos. A VPC e a sub-rede compartilhadas do Lab 08 permaneceram disponíveis. A instância mantida para outro repositório não foi incluída no cleanup.
 
 ## Referências
 
