@@ -6,6 +6,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$env:AWS_CLI_FILE_ENCODING = "UTF-8"
 
 $ExpectedAccount = "412381774441"
 $InstanceName = "lab17-controlled-update-instance"
@@ -86,30 +87,29 @@ function Get-HttpProbe {
 function Invoke-ReadOnlySsm {
     param([string]$InstanceId)
     $commands = @(
-        "echo '=== MARCADOR DA VERSÃO ==='"
+        "echo '=== MARCADOR DA VERSAO ==='"
         "if test -f /var/lib/lab17/state; then cat /var/lib/lab17/state; else echo none; fi"
-        "echo '=== PACOTE E SERVIÇO ==='"
+        "echo '=== PACOTE E SERVICO ==='"
         "rpm -q nginx || true"
         "systemctl is-active nginx || true"
-        "systemctl status nginx --no-pager --lines=12 || true"
-        "echo '=== TESTE DA CONFIGURAÇÃO NGINX ==='"
+        "echo '=== TESTE DA CONFIGURACAO NGINX ==='"
         "if nginx -t 2>&1; then echo NGINX_CONFIG=valid; else echo NGINX_CONFIG=invalid; fi"
-        "echo '=== REGISTRO DA CANDIDATA INVÁLIDA ==='"
-        "if test -f /var/lib/lab17/failed-candidate.log; then head -n 30 /var/lib/lab17/failed-candidate.log; else echo 'Registro ainda não existe.'; fi"
+        "echo '=== REGISTRO DA CANDIDATA INVALIDA ==='"
+        "if test -f /var/lib/lab17/failed-candidate.log; then head -n 30 /var/lib/lab17/failed-candidate.log; else echo 'Registro ainda nao existe.'; fi"
         "echo '=== RESPOSTAS HTTP LOCAIS ==='"
         "printf 'health: '; curl --noproxy '*' -sS --max-time 5 http://127.0.0.1/health || true; echo"
         "printf 'version: '; curl --noproxy '*' -sS --max-time 5 http://127.0.0.1/version || true; echo"
         "echo '=== BACKUP V1 ==='"
-        "if test -f /var/lib/lab17/backup-v1/SHA256SUMS; then (cd /var/lib/lab17/backup-v1 && sha256sum -c SHA256SUMS) || true; else echo 'Backup ainda não existe.'; fi"
+        "if test -f /var/lib/lab17/backup-v1/SHA256SUMS; then (cd /var/lib/lab17/backup-v1 && sha256sum -c SHA256SUMS) || true; else echo 'Backup ainda nao existe.'; fi"
         "echo '=== ARQUIVOS ATIVOS ==='"
         "sha256sum /usr/share/nginx/html/index.html /usr/share/nginx/html/health /usr/share/nginx/html/version /etc/nginx/conf.d/lab17-release.conf 2>&1 || true"
-        "echo '=== COMPARAÇÃO COM BACKUP ==='"
-        "if cmp -s /var/lib/lab17/backup-v1/index.html /usr/share/nginx/html/index.html; then echo 'index.html: idêntico'; else echo 'index.html: diferente'; fi"
-        "if cmp -s /var/lib/lab17/backup-v1/health /usr/share/nginx/html/health; then echo 'health: idêntico'; else echo 'health: diferente'; fi"
-        "if cmp -s /var/lib/lab17/backup-v1/version /usr/share/nginx/html/version; then echo 'version: idêntico'; else echo 'version: diferente'; fi"
-        "if cmp -s /var/lib/lab17/backup-v1/lab17-release.conf /etc/nginx/conf.d/lab17-release.conf; then echo 'lab17-release.conf: idêntico'; else echo 'lab17-release.conf: diferente'; fi"
+        "echo '=== COMPARACAO COM BACKUP ==='"
+        "if cmp -s /var/lib/lab17/backup-v1/index.html /usr/share/nginx/html/index.html; then echo 'index.html: identico'; else echo 'index.html: diferente'; fi"
+        "if cmp -s /var/lib/lab17/backup-v1/health /usr/share/nginx/html/health; then echo 'health: identico'; else echo 'health: diferente'; fi"
+        "if cmp -s /var/lib/lab17/backup-v1/version /usr/share/nginx/html/version; then echo 'version: identico'; else echo 'version: diferente'; fi"
+        "if cmp -s /var/lib/lab17/backup-v1/lab17-release.conf /etc/nginx/conf.d/lab17-release.conf; then echo 'lab17-release.conf: identico'; else echo 'lab17-release.conf: diferente'; fi"
         "echo '=== LOGS RECENTES DO NGINX ==='"
-        "journalctl -u nginx --no-pager -n 25 2>&1 || true"
+        "journalctl -u nginx --no-pager -n 25 -o cat 2>&1 || true"
     )
 
     $parameters = @{ commands = $commands } | ConvertTo-Json -Depth 5
@@ -122,13 +122,15 @@ function Invoke-ReadOnlySsm {
             (New-Object System.Text.UTF8Encoding($false))
         )
         $uri = "file://$($temporaryFile.Replace('\', '/'))"
-        $response = Get-AwsJson -Arguments @(
+        $commandId = Invoke-Aws -Arguments @(
             "ssm", "send-command",
             "--instance-ids", $InstanceId,
             "--document-name", "AWS-RunShellScript",
             "--comment", "Lab 17 read-only update diagnosis",
             "--parameters", $uri,
-            "--timeout-seconds", "90"
+            "--timeout-seconds", "90",
+            "--query", "Command.CommandId",
+            "--output", "text"
         )
     }
     finally {
@@ -137,7 +139,6 @@ function Invoke-ReadOnlySsm {
         }
     }
 
-    $commandId = [string]$response.Command.CommandId
     if ([string]::IsNullOrWhiteSpace($commandId)) {
         throw "Systems Manager não retornou CommandId."
     }
