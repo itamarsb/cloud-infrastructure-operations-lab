@@ -7,6 +7,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$env:AWS_CLI_FILE_ENCODING = "UTF-8"
 
 $InstanceName = "lab17-controlled-update-instance"
 $GroupName = "lab17-controlled-update-sg"
@@ -67,9 +68,12 @@ function Assert-Tags {
 
 function Invoke-SsmScript {
     param([string]$InstanceId, [string]$Script)
-    $parameters = @{ commands = @($Script) } | ConvertTo-Json -Depth 5
+
+    $normalizedScript = ($Script -replace "`r`n", "`n") -replace "`r", "`n"
+    $parameters = @{ commands = @($normalizedScript) } | ConvertTo-Json -Depth 5
     $temporaryFile = Join-Path ([IO.Path]::GetTempPath()) `
         ("lab17-rollback-{0}.json" -f [guid]::NewGuid().ToString("N"))
+
     try {
         [IO.File]::WriteAllText(
             $temporaryFile,
@@ -77,13 +81,15 @@ function Invoke-SsmScript {
             (New-Object System.Text.UTF8Encoding($false))
         )
         $uri = "file://$($temporaryFile.Replace('\', '/'))"
-        $response = Get-AwsJson -Arguments @(
+        $commandId = Invoke-Aws -Arguments @(
             "ssm", "send-command",
             "--instance-ids", $InstanceId,
             "--document-name", "AWS-RunShellScript",
             "--comment", "Lab 17 restore verified v1 backup",
             "--parameters", $uri,
-            "--timeout-seconds", "120"
+            "--timeout-seconds", "120",
+            "--query", "Command.CommandId",
+            "--output", "text"
         )
     }
     finally {
@@ -92,7 +98,6 @@ function Invoke-SsmScript {
         }
     }
 
-    $commandId = [string]$response.Command.CommandId
     if ([string]::IsNullOrWhiteSpace($commandId)) {
         throw "Systems Manager não retornou CommandId."
     }
@@ -132,6 +137,7 @@ try {
     if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
         throw "AWS CLI não encontrada."
     }
+
     $identity = Get-AwsJson -Arguments @("sts", "get-caller-identity")
     if ($identity.Account -ne "412381774441") {
         throw "Conta AWS inesperada: $($identity.Account)."
@@ -148,6 +154,7 @@ try {
     }
     $instance = $instances[0]
     Assert-Tags -Resource $instance -Name $InstanceName
+
     if ($instance.MetadataOptions.HttpTokens -ne "required" -or
         $instance.IamInstanceProfile.Arn -notmatch
             "/$([regex]::Escape($ProfileResourceName))$") {
@@ -163,6 +170,7 @@ try {
         throw "Security Group exclusivo ausente ou ambíguo."
     }
     Assert-Tags -Resource $groups[0] -Name $GroupName
+
     if (@($instance.SecurityGroups).Count -ne 1 -or
         $instance.SecurityGroups[0].GroupId -ne $groups[0].GroupId) {
         throw "A instância utiliza outro Security Group."
@@ -196,7 +204,7 @@ state=none
 if test -f "$work/state"; then state=$(cat "$work/state"); fi
 case "$state" in
     candidate-failed|updated|rolled-back) ;;
-    *) echo "Estado $state não admite rollback" >&2; exit 1 ;;
+    *) echo "Estado $state nao admite rollback" >&2; exit 1 ;;
 esac
 
 cp -p "$backup/index.html" "$web/index.html"
@@ -210,6 +218,7 @@ if systemctl is-active --quiet nginx; then
 else
     systemctl start nginx
 fi
+
 test "$(curl --noproxy '*' -fsS http://127.0.0.1/health)" = healthy
 test "$(curl --noproxy '*' -fsS http://127.0.0.1/version)" = v1
 test "$(cat "$web/version")" = v1
@@ -218,8 +227,9 @@ cmp -s "$backup/index.html" "$web/index.html"
 cmp -s "$backup/health" "$web/health"
 cmp -s "$backup/version" "$web/version"
 cmp -s "$backup/lab17-release.conf" "$conf"
+
 printf 'rolled-back\n' > "$work/state"
-echo 'ROLLBACK CONCLUÍDO: arquivos idênticos ao backup, Nginx saudável em v1.'
+echo 'ROLLBACK CONCLUIDO: arquivos identicos ao backup, Nginx saudavel em v1.'
 sha256sum "$web/index.html" "$web/health" "$web/version" "$conf"
 '@
 
