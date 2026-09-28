@@ -12,6 +12,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$env:AWS_CLI_FILE_ENCODING = "UTF-8"
 
 $InstanceName = "lab17-controlled-update-instance"
 $GroupName = "lab17-controlled-update-sg"
@@ -110,8 +111,10 @@ function Invoke-SsmScript {
         [string]$Script
     )
 
+    $normalizedScript = ($Script -replace "`r`n", "`n") -replace "`r", "`n"
+
     $parameters = @{
-        commands = @($Script)
+        commands = @($normalizedScript)
     } | ConvertTo-Json -Depth 5
 
     $temporaryFile = Join-Path `
@@ -127,13 +130,15 @@ function Invoke-SsmScript {
 
         $uri = "file://$($temporaryFile.Replace('\', '/'))"
 
-        $response = Get-AwsJson -Arguments @(
+        $commandId = Invoke-Aws -Arguments @(
             "ssm", "send-command",
             "--instance-ids", $InstanceId,
             "--document-name", "AWS-RunShellScript",
             "--comment", "Lab 17 controlled update: $ReleaseMode",
             "--parameters", $uri,
-            "--timeout-seconds", "120"
+            "--timeout-seconds", "120",
+            "--query", "Command.CommandId",
+            "--output", "text"
         )
     }
     finally {
@@ -141,8 +146,6 @@ function Invoke-SsmScript {
             Remove-Item -LiteralPath $temporaryFile -Force
         }
     }
-
-    $commandId = [string]$response.Command.CommandId
 
     if ([string]::IsNullOrWhiteSpace($commandId)) {
         throw "Systems Manager não retornou CommandId."
@@ -320,7 +323,7 @@ lab17_invalid_directive on;
 CONF
 
 if nginx -t > "$work/failed-candidate.log" 2>&1; then
-    echo 'ERRO: candidata inválida foi aceita pelo Nginx' >&2
+    echo 'ERRO: candidata invalida foi aceita pelo Nginx' >&2
     exit 1
 fi
 
@@ -330,7 +333,7 @@ test "$(cat "$web/version")" = v1
 test "$(curl --noproxy '*' -fsS http://127.0.0.1/health)" = healthy
 systemctl is-active --quiet nginx
 
-echo 'CANDIDATA INVÁLIDA CONFIRMADA; Nginx ativo em v1; rollback necessário.'
+echo 'CANDIDATA INVALIDA CONFIRMADA; Nginx ativo em v1; rollback necessario.'
 cat "$work/failed-candidate.log"
 '@
 
@@ -387,7 +390,7 @@ test "$(curl --noproxy '*' -fsS http://127.0.0.1/health)" = healthy
 test "$(curl --noproxy '*' -fsS http://127.0.0.1/version)" = v2
 
 printf 'updated\n' > "$work/state"
-echo 'ATUALIZAÇÃO VÁLIDA APLICADA: v2; confirmação ainda pendente.'
+echo 'ATUALIZACAO VALIDA APLICADA: v2; confirmacao ainda pendente.'
 
 sha256sum \
     "$web/index.html" \
