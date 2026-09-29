@@ -92,7 +92,7 @@ O diagnóstico confirmará os arquivos ausentes e registrará o estado do Nginx,
 ## Critérios de validação
 
 | Estado | Critérios esperados |
-|:---|:---|
+|:---:|:---:|
 | `Baseline` | Nginx e configuração válidos; arquivos protegidos presentes; página, `/health` e `/version` respondem conforme o baseline |
 | `BackedUp` | Baseline preservado; bucket privado e versionado; objeto recuperável por `VersionId`; hash do pacote e manifesto conferidos |
 | `DataLoss` | `index.html` e `version` ausentes; falha observável nos respectivos endpoints; `/health` e Nginx ainda ativos; backup preservado |
