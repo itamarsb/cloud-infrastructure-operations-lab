@@ -78,7 +78,7 @@ Durante a candidata inválida, os arquivos `index.html`, `health` e `version` pe
 As capturas publicadas em [`images/`](images/) documentam as etapas da execução:
 
 | Etapa | Captura |
-| --- | --- |
+| :---: | :---: |
 | Implantação e baseline v1 | [Baseline](images/Clipboard_09-27-2026_06.png) |
 | Candidata inválida | [Falha controlada](images/Clipboard_09-28-2026_08.png) |
 | Diagnóstico | [Diagnóstico](images/Clipboard_09-28-2026_09.png) |
