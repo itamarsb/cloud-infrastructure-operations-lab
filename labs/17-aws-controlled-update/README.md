@@ -55,7 +55,7 @@ A falha foi introduzida por uma diretiva inválida em `/etc/nginx/conf.d/lab17-r
 ## Validações e rastreabilidade
 
 | Operação | CommandId do Systems Manager |
-| --- | --- |
+| :---: | :---: |
 | Aplicação da candidata inválida | `4ae5454c-7a70-41c6-a896-5fae37e237d5` |
 | Diagnóstico | `c2a5f8b5-cc99-4ebf-aeba-dbc630e3e136` |
 | Rollback | `0251f080-9b68-4d2d-ab07-284cc053518c` |
@@ -65,7 +65,7 @@ A falha foi introduzida por uma diretiva inválida em `/etc/nginx/conf.d/lab17-r
 Os hashes SHA-256 após o rollback coincidiram com os do baseline v1:
 
 | Arquivo | SHA-256 da v1 e após rollback | SHA-256 da v2 confirmada |
-| --- | --- | --- |
+| :---: | :---: | :---: |
 | `index.html` | `088411c1140f02c9ec9d01bb8e7525da9dee1a53420fcc964877e49cd061bdf6` | `ab9acd41a12eff3a56359668eb5963f0fc80f049a5b4c2377ecfa655f4e9e775` |
 | `health` | `63745aef95742025c6d7a1b4fc0e7107e6f3c3eb2e0cb290f33c46f176e6740d` | `63745aef95742025c6d7a1b4fc0e7107e6f3c3eb2e0cb290f33c46f176e6740d` |
 | `version` | `2d27fbdf4e8ca207afbfa388ca9172fbcc6c70e534af2476b3b704f87debadcf` | `81db67b6a5702b9b68f0016f061c409bf3fb16d062fc854d1b424bb4e9c28c56` |
