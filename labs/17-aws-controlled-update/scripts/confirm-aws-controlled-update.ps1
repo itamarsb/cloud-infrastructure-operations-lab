@@ -11,6 +11,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
+$env:AWS_CLI_FILE_ENCODING = "UTF-8"
 
 $ExpectedAccount = "412381774441"
 $InstanceName = "lab17-controlled-update-instance"
@@ -90,9 +91,12 @@ function Get-HttpBody {
 
 function Invoke-SsmScript {
     param([string]$InstanceId, [string]$Script)
-    $parameters = @{ commands = @($Script) } | ConvertTo-Json -Depth 5
+
+    $normalizedScript = ($Script -replace "`r`n", "`n") -replace "`r", "`n"
+    $parameters = @{ commands = @($normalizedScript) } | ConvertTo-Json -Depth 5
     $temporaryFile = Join-Path ([IO.Path]::GetTempPath()) `
         ("lab17-confirm-{0}.json" -f [guid]::NewGuid().ToString("N"))
+
     try {
         [IO.File]::WriteAllText(
             $temporaryFile,
@@ -100,13 +104,15 @@ function Invoke-SsmScript {
             (New-Object System.Text.UTF8Encoding($false))
         )
         $uri = "file://$($temporaryFile.Replace('\', '/'))"
-        $response = Get-AwsJson -Arguments @(
+        $commandId = Invoke-Aws -Arguments @(
             "ssm", "send-command",
             "--instance-ids", $InstanceId,
             "--document-name", "AWS-RunShellScript",
             "--comment", "Lab 17 confirm verified v2 update",
             "--parameters", $uri,
-            "--timeout-seconds", "120"
+            "--timeout-seconds", "120",
+            "--query", "Command.CommandId",
+            "--output", "text"
         )
     }
     finally {
@@ -115,7 +121,6 @@ function Invoke-SsmScript {
         }
     }
 
-    $commandId = [string]$response.Command.CommandId
     if ([string]::IsNullOrWhiteSpace($commandId)) {
         throw "Systems Manager não retornou CommandId."
     }
@@ -156,6 +161,7 @@ try {
     if (-not (Get-Command curl.exe -ErrorAction SilentlyContinue)) {
         throw "curl.exe não encontrado."
     }
+
     $parts = $AllowedHttpCidr -split "/"
     $parsedIp = $null
     if ($parts.Count -ne 2 -or $parts[1] -ne "32" -or
@@ -168,6 +174,7 @@ try {
     if ($identity.Account -ne $ExpectedAccount) {
         throw "Conta AWS inesperada: $($identity.Account)."
     }
+
     $response = Get-AwsJson -Arguments @(
         "ec2", "describe-instances", "--filters",
         "Name=tag:Name,Values=$InstanceName",
@@ -199,6 +206,7 @@ try {
         $instance.SecurityGroups[0].GroupId -ne $groups[0].GroupId) {
         throw "A instância utiliza outro Security Group."
     }
+
     $rules = @( (Get-AwsJson -Arguments @(
         "ec2", "describe-security-group-rules", "--filters",
         "Name=group-id,Values=$($groups[0].GroupId)"
@@ -240,8 +248,9 @@ conf=/etc/nginx/conf.d/lab17-release.conf
 state=$(cat "$work/state")
 case "$state" in
     updated|confirmed) ;;
-    *) echo "Estado $state não admite confirmação" >&2; exit 1 ;;
+    *) echo "Estado $state nao admite confirmacao" >&2; exit 1 ;;
 esac
+
 test -f "$backup/SHA256SUMS"
 (cd "$backup" && sha256sum -c SHA256SUMS)
 test "$(cat "$backup/version")" = v1
@@ -257,8 +266,9 @@ test "$(curl --noproxy '*' -fsS http://127.0.0.1/version)" = v2
 if test "$state" = updated; then
     printf 'confirmed\n' > "$work/state"
 fi
+
 test "$(cat "$work/state")" = confirmed
-echo 'ATUALIZAÇÃO CONFIRMADA: versão v2 saudável; backup v1 preservado.'
+echo 'ATUALIZACAO CONFIRMADA: versao v2 saudavel; backup v1 preservado.'
 sha256sum "$web/index.html" "$web/health" "$web/version" "$conf"
 '@
 
@@ -270,6 +280,7 @@ sha256sum "$web/index.html" "$web/health" "$web/version" "$conf"
         (Get-HttpBody -Url "http://$publicIp/version") -ne "v2") {
         throw "Falha na verificação externa após a confirmação; examine o CommandId."
     }
+
     Write-Host "CONFIRMAÇÃO CONCLUÍDA: v2" -ForegroundColor Green
 }
 catch {
