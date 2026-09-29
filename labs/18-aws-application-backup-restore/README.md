@@ -26,7 +26,7 @@ O [Lab 11](../11-aws-storage-recovery/) copiou um arquivo de teste entre EBS e S
 ## Arquitetura prevista
 
 | Componente | Uso |
-|:---|:---|
+|:---:|:---:|
 | VPC e sub-rede do Lab 08 | Rede compartilhada, somente reutilizada |
 | Amazon EC2 com Amazon Linux 2023 | Instância exclusiva com Nginx e arquivos da aplicação |
 | AWS Systems Manager | Execução dos procedimentos sem entrada SSH |
