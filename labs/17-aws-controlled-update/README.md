@@ -41,7 +41,7 @@ O Security Group autorizou HTTP na porta 80 apenas para o IPv4 público usado no
 ## Fluxo executado
 
 | Etapa | Estado verificado |
-| --- | --- |
+| :---: | --- |
 | Implantação e baseline | Nginx ativo; configuração válida; `/health` saudável; `/version` em `v1` |
 | Candidata inválida | Configuração rejeitada por `nginx -t`; processo Nginx ainda ativo; HTTP servindo `v1` |
 | Diagnóstico | Diretiva inválida identificada; backup íntegro; somente o arquivo de configuração ativo diferia do backup |
