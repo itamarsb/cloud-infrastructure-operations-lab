@@ -21,7 +21,7 @@ A VPC e a sub-rede compartilhadas do Lab 08 foram preservadas.
 ## Ambiente utilizado
 
 | Item | Valor durante a execução |
-| --- | --- |
+| :---: | :---: |
 | Conta AWS | `412381774441` |
 | Região | `us-east-1` |
 | Perfil AWS CLI | `cloud-operations-lab` |
