@@ -64,6 +64,7 @@ O repositório prioriza:
 | ✅ | [Lab 14 — Utilização de disco](labs/14-aws-disk-utilization/) | Volume EBS dedicado, pressão controlada, diagnóstico, mitigação e cleanup |
 | ✅ | [Lab 15 — Troubleshooting de conectividade](labs/15-aws-connectivity-troubleshooting/) | Falha controlada no Security Group, diagnóstico por camadas, recuperação e cleanup |
 | ✅ | [Lab 16 — Troubleshooting do AWS Systems Manager](labs/16-aws-systems-manager-troubleshooting/) | Falha controlada na saída HTTPS, diagnóstico SSM, recuperação e cleanup |
+| ✅ | [Lab 17 — Atualização controlada de aplicação](labs/17-aws-controlled-update/) | Baseline v1, falha de configuração, diagnóstico, rollback, atualização v2, confirmação e cleanup |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -71,15 +72,21 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
+O **Lab 17 — Atualização controlada de aplicação na AWS** implantou uma aplicação Nginx na versão v1 e registrou seu estado inicial, com backup e hashes SHA-256. Uma candidata com diretiva inválida fez o teste `nginx -t` falhar, enquanto o serviço permaneceu ativo e continuou respondendo em v1. O diagnóstico confirmou que somente o arquivo de configuração diferia do backup.
+
+O rollback restaurou os quatro arquivos da v1 com hashes idênticos aos do baseline. Em seguida, a candidata v2 passou pelas verificações do Nginx e pelos testes HTTP locais e externos, foi confirmada e manteve o backup v1. O cleanup removeu a instância EC2, o Security Group, o Instance Profile e a IAM Role exclusivos, preservando a VPC e a sub-rede compartilhadas do Lab 08.
+
+Consulte o [Lab 17](labs/17-aws-controlled-update/) para o procedimento, os scripts, os estados validados e as evidências.
+
+---
+
+## Resultados anteriores
+
 O **Lab 16 — Troubleshooting do AWS Systems Manager** investigou uma instância EC2 que continuava `running`, mas deixou de responder ao Systems Manager depois da remoção controlada de sua saída HTTPS. A primeira tentativa foi inconclusiva: o SSM permaneceu `Online` durante a janela de observação, e a regra foi restaurada. Após ajustar o procedimento para reiniciar somente a instância exclusiva e encerrar conexões existentes, uma segunda execução confirmou `ConnectionLost`.
 
 O diagnóstico somente leitura verificou a rede compartilhada, a configuração IAM e a ausência da regra de saída no Security Group exclusivo. A recuperação restaurou HTTPS pela API do EC2, sem depender de uma sessão SSM, e a validação independente voltou a `Healthy`. Por fim, o cleanup removeu a instância, o Security Group, o Instance Profile e a IAM Role exclusivos, preservando a VPC e a sub-rede do Lab 08.
 
 Consulte o [Lab 16](labs/16-aws-systems-manager-troubleshooting/) para os scripts, a cronologia das tentativas, o diagnóstico e as evidências.
-
----
-
-## Resultados anteriores
 
 O **Lab 15 — Troubleshooting de conectividade na AWS** confirmou que uma aplicação Nginx pode permanecer saudável localmente enquanto uma regra de entrada ausente no Security Group impede o acesso HTTP externo. Após validar o estado `Healthy`, a regra TCP `80` restrita ao IPv4 do operador foi removida de forma controlada. A validação independente confirmou `Failed`, com Systems Manager e Nginx saudáveis. O diagnóstico somente leitura identificou a regra ausente; a recuperação restaurou apenas essa autorização e a validação voltou a `Healthy`. Por fim, o cleanup removeu os recursos exclusivos do Lab 15 e preservou a VPC e a sub-rede compartilhadas do Lab 08.
 
@@ -210,6 +217,8 @@ Os laboratórios concluídos até esta etapa demonstram:
 - rotação, compressão e retenção de logs;
 - investigação de perda de conectividade do Systems Manager;
 - recuperação pela API do EC2 quando o SSM está indisponível;
+- atualização controlada de aplicação com baseline, backup e confirmação;
+- diagnóstico de configuração inválida e rollback verificado por hashes;
 - automação com PowerShell e Bash;
 - validação independente;
 - cleanup seguro e preservação de infraestrutura compartilhada.
@@ -232,16 +241,15 @@ A trilha está dividida em nove etapas:
 
 Os laboratórios de preparação, operações Linux e infraestrutura AWS foram concluídos.
 
-O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13 a 16 concluíram os cenários de aplicação indisponível, utilização elevada de disco, falha de conectividade e Systems Manager indisponível.
+O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13 a 17 concluíram os cenários de aplicação indisponível, utilização elevada de disco, falha de conectividade, Systems Manager indisponível e atualização controlada.
 
-A próxima etapa será o **Lab 17 — Atualização controlada**, com foco em:
+A próxima etapa prevista é o **Lab 18 — Backup e restauração**, com foco em:
 
-- preparação de uma janela de manutenção;
-- registro do estado e da versão anterior;
-- aplicação de uma mudança com escopo definido;
-- validação independente do serviço;
-- rollback diante de uma validação malsucedida;
-- confirmação do estado final e cleanup dos recursos temporários.
+- identificação de dados e configurações que exigem proteção;
+- criação de backup e registro de sua integridade;
+- simulação controlada de perda ou alteração;
+- restauração e validação independente dos dados e do serviço;
+- cleanup dos recursos temporários, preservando a infraestrutura compartilhada.
 
 ---
 
