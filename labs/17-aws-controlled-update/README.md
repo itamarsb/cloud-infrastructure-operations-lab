@@ -80,13 +80,14 @@ As capturas publicadas em [`images/`](images/) documentam as etapas da execuçã
 | Etapa | Captura |
 | :---: | :---: |
 | Implantação e baseline v1 | [Baseline](images/Clipboard_09-27-2026_06.png) |
-| Candidata inválida | [Falha controlada](images/Clipboard_09-28-2026_08.png) |
-| Diagnóstico | [Diagnóstico](images/Clipboard_09-28-2026_09.png) |
-| Rollback | [Restauração da v1](images/Clipboard_09-28-2026_10.png) |
-| Atualização válida | [Aplicação da v2](images/Clipboard_09-28-2026_11.png) |
-| Confirmação | [Validação da v2 confirmada](images/Clipboard_09-28-2026_12.png) |
+| Preparação da atualização | [Validação de sintaxe do script](images/Clipboard_09-28-2026_07.png) |
+| Falha controlada e diagnóstico | [Estado `candidate-failed` e diagnóstico](images/Clipboard_09-28-2026_08.png) |
+| Rollback | [Restauração da v1](images/Clipboard_09-28-2026_09.png) |
+| Atualização válida | [Aplicação da v2](images/Clipboard_09-28-2026_10.png) |
+| Confirmação | [Validação da v2 confirmada](images/Clipboard_09-28-2026_11.png) |
+| Cleanup | [Recursos exclusivos removidos](images/Clipboard_09-28-2026_12.png) |
 
-O resultado do cleanup foi registrado na saída da execução: instância encerrada, Security Group, Instance Profile e IAM Role removidos, recursos exclusivos ausentes na validação posterior e rede compartilhada preservada.
+O resultado do cleanup também foi registrado na saída da execução: instância encerrada, Security Group, Instance Profile e IAM Role removidos, recursos exclusivos ausentes na validação posterior e rede compartilhada preservada.
 
 ## Como reproduzir
 
