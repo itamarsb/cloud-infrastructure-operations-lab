@@ -1,1 +1,34 @@
-
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "InspectLab18BucketVersioning",
+      "Effect": "Allow",
+      "Action": "s3:GetBucketVersioning",
+      "Resource": "arn:aws:s3:::__LAB18_BUCKET_NAME__"
+    },
+    {
+      "Sid": "WriteAndReadLab18BackupVersions",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObjectVersion"
+      ],
+      "Resource": "arn:aws:s3:::__LAB18_BUCKET_NAME__/backups/*"
+    },
+    {
+      "Sid": "DenyInsecureTransportToLab18Bucket",
+      "Effect": "Deny",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::__LAB18_BUCKET_NAME__",
+        "arn:aws:s3:::__LAB18_BUCKET_NAME__/*"
+      ],
+      "Condition": {
+        "Bool": {
+          "aws:SecureTransport": "false"
+        }
+      }
+    }
+  ]
+}
