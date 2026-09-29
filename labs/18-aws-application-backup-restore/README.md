@@ -58,7 +58,7 @@ labs/18-aws-application-backup-restore/
 ```
 
 | Script | Responsabilidade prevista |
-|:---|:---|
+|:---:|:---:|
 | `deploy-aws-application-backup-restore.ps1` | Validar pré-requisitos, criar recursos exclusivos, publicar a aplicação e registrar o baseline |
 | `test-aws-application-backup-restore.ps1` | Validar sem mutações os estados `Baseline`, `BackedUp`, `DataLoss` e `Restored` |
 | `create-aws-application-backup.ps1` | Criar o pacote, verificar o upload e registrar chave, `VersionId` e hash |
