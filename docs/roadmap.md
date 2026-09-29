@@ -30,7 +30,7 @@ Os laboratórios priorizam:
 ## Módulo 00 — Preparação e acesso
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ✅ | **Lab 00 — Preparação da estação de trabalho** | Git, VS Code, PowerShell e organização local |
 | ✅ | **Lab 01 — Configuração segura da conta AWS** | Proteção da conta e acesso administrativo |
 | ✅ | **Lab 02 — AWS CLI e autenticação por SSO** | Perfis, sessões temporárias e validação de identidade |
@@ -41,7 +41,7 @@ Os laboratórios priorizam:
 ## Módulo 01 — Operações Linux
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ✅ | **Lab 04 — Arquivos e diretórios** | Navegação, busca, cópia, movimentação e remoção |
 | ✅ | **Lab 05 — Usuários, grupos e permissões** | Identidades, permissões e acesso compartilhado |
 | ✅ | **Lab 06 — Serviços e logs** | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
@@ -51,7 +51,7 @@ Os laboratórios priorizam:
 ## Módulo 02 — Infraestrutura AWS
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ✅ | **Lab 07 — Baseline operacional da conta AWS** | Inventário somente leitura de identidade, rede, recursos, segurança, tags, observabilidade e custos |
 | ✅ | **Lab 08 — Rede da aplicação** | VPC, sub-redes, rotas, Internet Gateway, Security Group, validação e cleanup |
 | ✅ | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role, Session Manager, validação e cleanup |
@@ -64,12 +64,12 @@ Os laboratórios priorizam:
 ## Módulo 03 — Operação e troubleshooting
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ✅ | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
 | ✅ | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
 | ✅ | **Lab 15 — Falha de conectividade** | Security Group, rota, Network ACL, serviço local, diagnóstico por camadas, recuperação e cleanup |
 | ✅ | **Lab 16 — Systems Manager indisponível** | IAM Role, falha de saída HTTPS, diagnóstico, recuperação e cleanup |
-| ⬜ | **Lab 17 — Atualização controlada** | Manutenção, validação, rollback e confirmação do serviço |
+| ✅ | **Lab 17 — Atualização controlada** | Baseline v1, falha de configuração, diagnóstico, rollback, atualização v2, confirmação e cleanup |
 | ⬜ | **Lab 18 — Backup e restauração** | Recuperação de dados, configurações e validação de integridade |
 
 ### Resultados concluídos no módulo
@@ -77,10 +77,6 @@ Os laboratórios priorizam:
 O **Lab 13** reproduziu uma aplicação Nginx indisponível, separou diagnóstico e recuperação, identificou uma configuração inválida e restaurou o serviço antes do cleanup.
 
 O **Lab 14** reproduziu utilização elevada em um volume EBS dedicado, identificou os arquivos responsáveis, analisou capacidade e inodes, aplicou rotação e compressão controladas e restaurou a utilização saudável.
-
-O **Lab 15** revogou de forma controlada a regra HTTP de um Security Group exclusivo. O Nginx e o endpoint local permaneceram saudáveis, enquanto o acesso externo falhou. O diagnóstico identificou a regra ausente, a recuperação restaurou somente TCP `80` para o CIDR autorizado, e a validação independente confirmou novamente `Healthy`. O cleanup removeu os recursos exclusivos e preservou a VPC e a sub-rede do Lab 08.
-
-O **Lab 16** revogou a saída HTTPS de um Security Group exclusivo. A primeira tentativa não produziu `ConnectionLost` no prazo e restaurou a regra. Após ajustar o procedimento para reiniciar somente a instância do laboratório, a segunda tentativa confirmou SSM `ConnectionLost` com EC2 `running`. O diagnóstico verificou rede e IAM, a recuperação restaurou a saída pela API do EC2, e a validação voltou a `Healthy`. O cleanup removeu os recursos exclusivos e preservou a rede compartilhada do Lab 08.
 
 No Lab 14:
 
@@ -93,12 +89,18 @@ No Lab 14:
 - todos os recursos exclusivos foram removidos;
 - a rede compartilhada do Lab 08 foi preservada.
 
+O **Lab 15** revogou de forma controlada a regra HTTP de um Security Group exclusivo. O Nginx e o endpoint local permaneceram saudáveis, enquanto o acesso externo falhou. O diagnóstico identificou a regra ausente, a recuperação restaurou somente TCP `80` para o CIDR autorizado, e a validação independente confirmou novamente `Healthy`. O cleanup removeu os recursos exclusivos e preservou a VPC e a sub-rede do Lab 08.
+
+O **Lab 16** revogou a saída HTTPS de um Security Group exclusivo. A primeira tentativa não produziu `ConnectionLost` no prazo e restaurou a regra. Após ajustar o procedimento para reiniciar somente a instância do laboratório, a segunda tentativa confirmou SSM `ConnectionLost` com EC2 `running`. O diagnóstico verificou rede e IAM, a recuperação restaurou a saída pela API do EC2, e a validação voltou a `Healthy`. O cleanup removeu os recursos exclusivos e preservou a rede compartilhada do Lab 08.
+
+O **Lab 17** registrou o baseline v1 e o backup de quatro arquivos da aplicação Nginx. Uma candidata com diretiva inválida foi rejeitada por `nginx -t`, enquanto o serviço continuou respondendo em v1. O diagnóstico identificou o arquivo de configuração divergente. O rollback restaurou os hashes do baseline; depois, a candidata v2 foi validada local e externamente e confirmada. O cleanup removeu somente a instância, o Security Group, o Instance Profile e a IAM Role exclusivos, preservando a rede compartilhada do Lab 08. As etapas e evidências estão no [README do Lab 17](../labs/17-aws-controlled-update/README.md).
+
 ---
 
 ## Módulo 04 — Terraform
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ⬜ | **Lab 19 — Fluxo essencial do Terraform** | `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` |
 | ⬜ | **Lab 20 — Infraestrutura AWS como código** | Rede, IAM, segurança e EC2 |
 | ⬜ | **Lab 21 — Estado remoto** | Armazenamento, bloqueio e proteção do estado |
@@ -111,7 +113,7 @@ No Lab 14:
 ## Módulo 05 — Monitoramento e logs
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ⬜ | **Lab 25 — Métricas no CloudWatch** | Métricas, consultas e dashboard |
 | ⬜ | **Lab 26 — CloudWatch Agent** | Memória, disco e coleta de logs |
 | ⬜ | **Lab 27 — Alarmes e notificações** | Thresholds, alarmes e Amazon SNS |
@@ -124,7 +126,7 @@ No Lab 14:
 ## Módulo 06 — Docker
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ⬜ | **Lab 31 — Containerização da aplicação** | Imagem, container e publicação |
 | ⬜ | **Lab 32 — Configuração e persistência** | Variáveis, volumes e health checks |
 | ⬜ | **Lab 33 — Docker Compose** | Administração de serviços relacionados |
@@ -135,7 +137,7 @@ No Lab 14:
 ## Módulo 07 — Segurança, custos e confiabilidade
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|:---:|:---|---|
 | ⬜ | **Lab 35 — Revisão de segurança** | IAM, credenciais, portas e acesso administrativo |
 | ⬜ | **Lab 36 — Custos e recursos ociosos** | Tags, dimensionamento e oportunidades de redução |
 | ⬜ | **Lab 37 — Melhoria de confiabilidade** | Análise de falhas e implementação de melhorias |
@@ -178,16 +180,16 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `17` |
+| Laboratórios concluídos | `18` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `21` |
-| Último laboratório concluído | `Lab 16` |
-| Próximo laboratório | `Lab 17` |
+| Laboratórios planejados | `20` |
+| Último laboratório concluído | `Lab 17` |
+| Próximo laboratório | `Lab 18` |
 
 ---
 
 ## Próxima etapa
 
-**Lab 17 — Atualização controlada**
+**Lab 18 — Backup e restauração**
 
-O próximo laboratório abordará uma mudança planejada em um serviço de aplicação, com registro do estado anterior, janela de manutenção, validação após a atualização e rollback caso os critérios de saúde não sejam atendidos. A execução deverá proteger os recursos compartilhados, registrar evidências de cada decisão e remover os recursos temporários ao final.
+O próximo laboratório abordará a proteção e a recuperação de dados e configurações de uma aplicação. O fluxo previsto inclui criar um backup verificável, simular uma perda ou alteração controlada, restaurar os arquivos e validar sua integridade e o funcionamento do serviço. A execução deverá preservar os recursos compartilhados e remover os recursos temporários ao final.
