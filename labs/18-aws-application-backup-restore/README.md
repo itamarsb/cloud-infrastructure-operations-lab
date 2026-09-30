@@ -45,7 +45,7 @@ Não foram criados NAT Gateway, Elastic IP, Load Balancer, Key Pair ou regra de 
 As pastas do laboratório são `images/`, `policies/` e `scripts/`.
 
 | Arquivo | Responsabilidade |
-|---|---|
+|:---:|:---:|
 | `policies/ec2-ssm-trust-policy.json` | Permitir que a EC2 assuma a IAM Role |
 | `policies/s3-application-backup-policy-template.json` | Definir o acesso da instância ao bucket e aos objetos de backup |
 | `scripts/deploy-aws-application-backup-restore.ps1` | Criar recursos exclusivos, publicar a aplicação e registrar o baseline |
