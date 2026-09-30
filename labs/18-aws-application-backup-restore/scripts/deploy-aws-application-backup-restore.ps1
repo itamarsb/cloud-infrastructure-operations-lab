@@ -468,7 +468,7 @@ touch /var/lib/lab18/bootstrap-complete
     $userDataPath = Join-Path $tempDirectory "user-data.sh"
     Write-Utf8File -Path $userDataPath -Content $userData
     $runArguments = @("ec2", "run-instances", "--image-id", $imageId,
-        "--instance-type", "t3.micro", "--min-count", "1", "--max-count", "1",
+        "--instance-type", "t3.micro", "--count", "1",
         "--credit-specification", "CpuCredits=standard",
         "--client-token", $clientToken, "--subnet-id", $subnet.SubnetId,
         "--security-group-ids", $groupId, "--iam-instance-profile", "Name=$InstanceProfileName",
