@@ -320,7 +320,7 @@ try {
                 $last = [Math]::Min($offset + 999, $versions.Count - 1)
                 $batch = @($versions[$offset..$last])
                 $deletePath = Join-Path $tempDirectory "delete-versions.json"
-                Write-JsonFile $deletePath @{ Objects = $batch; Quiet = $true }
+                Write-JsonFile $deletePath @{ Objects = $batch; Quiet = $false }
                 $deleted = Get-AwsJson (@("s3api", "delete-objects", "--delete",
                     (Get-FileUri $deletePath)) + $ownerArgs)
                 $errors = @(Get-Property $deleted "Errors" | Where-Object { $null -ne $_ })
