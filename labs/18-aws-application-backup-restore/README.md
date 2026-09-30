@@ -27,7 +27,7 @@ O [Lab 17](../17-aws-controlled-update/) exercitou mudança e rollback de versã
 ## Arquitetura utilizada
 
 | Componente | Uso |
-|---|---|
+|:---:|:---:|
 | VPC e sub-rede do Lab 08 | Rede compartilhada reutilizada |
 | EC2 `t3.micro` com Amazon Linux 2023 | Instância exclusiva com Nginx |
 | AWS Systems Manager Run Command | Execução remota sem entrada SSH |
