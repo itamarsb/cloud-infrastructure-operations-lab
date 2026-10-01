@@ -92,7 +92,7 @@ Em caso de erro ou perda de resposta, registrar o `CommandId` e conferir o estad
 ## Estados e respostas HTTP observadas
 
 | Estado | `/` | `/health` | `/version` | Arquivos e serviço |
-|---|---|---|---|---|
+|:---:|:---:|:---:|:---:|:---:|
 | `Baseline` | 200, página do Lab 18 | 200, `healthy` | 200, `v1` | Quatro arquivos válidos; Nginx ativo |
 | `BackedUp` | 200 | 200, `healthy` | 200, `v1` | Baseline preservado; backup verificável por versão |
 | `DataLoss` | 404 | 200, `healthy` | 404 | `index.html` e `version` ausentes; Nginx ativo e configuração válida |
