@@ -169,7 +169,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|---|---|
+|:---:|:---:|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
@@ -183,7 +183,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ### Resumo numérico
 
 | Indicador | Quantidade |
-|---|---|
+|:---:|:---:|
 | Laboratórios concluídos | `19` |
 | Laboratórios em desenvolvimento | `0` |
 | Laboratórios planejados | `19` |
