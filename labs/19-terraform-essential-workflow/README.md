@@ -52,7 +52,7 @@ A versão instalada será conferida com `terraform version` e deverá atender à
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Procedimento, critérios e resultados |
 | `images/` | Evidências reais da execução |
 | `terraform/versions.tf` | Restrição de versão do Terraform |
