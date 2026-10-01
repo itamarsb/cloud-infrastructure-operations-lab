@@ -275,7 +275,7 @@ Não excluir o estado para simular uma remoção: a remoção deve ser feita pel
 ## Resultados esperados
 
 | Etapa | Critério |
-|---|---|
+|:---:|:---:|
 | Inicialização | Concluída sem erro |
 | Formatação | Código zero em `fmt -check` |
 | Validação | Configuração válida |
