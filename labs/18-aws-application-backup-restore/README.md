@@ -157,7 +157,7 @@ O backup cobre somente os quatro arquivos definidos. Não é uma imagem da inst�
 ## Evidências
 
 | Etapa | Captura publicada |
-|---|---|
+|:---:|:---:|
 | Remoção da implantação parcial após correção da EC2 | [Clipboard_09-29-2026_16.png](images/Clipboard_09-29-2026_16.png) |
 | Deploy e baseline v1 | [Clipboard_09-29-2026_17.png](images/Clipboard_09-29-2026_17.png) |
 | Backup versionado validado | [Clipboard_09-29-2026_19.png](images/Clipboard_09-29-2026_19.png) |
