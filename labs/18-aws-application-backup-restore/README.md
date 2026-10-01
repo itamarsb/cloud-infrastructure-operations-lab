@@ -117,7 +117,7 @@ Os identificadores abaixo são históricos. O bucket e sua versão de backup for
 ### Intervalos medidos
 
 | Medição | Valor | Interpretação |
-|---|---|---|
+|:---:|:---:|---|
 | `ObservedRecoverySeconds` | 356,294 s | Da perda até a confirmação HTTP local; inclui diagnóstico e espera do operador |
 | `RestoreOperationSeconds` | 0,663 s | Trecho Python remoto, incluindo download, verificações, gravação e confirmação local |
 | `BackupAgeSecondsAtLoss` | 77.716,093 s | Idade do backup quando a perda foi introduzida |
