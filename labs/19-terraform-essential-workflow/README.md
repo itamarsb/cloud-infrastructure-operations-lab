@@ -72,7 +72,7 @@ Os comandos devem ser executados nesse diretório, e não na raiz do repositóri
 ## Conceitos utilizados
 
 | Conceito | Significado neste exercício |
-|---|---|
+|:---:|:---:|
 | Configuração | Arquivos `.tf` que descrevem o resultado desejado |
 | Recurso | Objeto `terraform_data` acompanhado pelo Terraform |
 | Estado | Registro local dos objetos gerenciados e de seus atributos |
