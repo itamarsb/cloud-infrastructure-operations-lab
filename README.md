@@ -46,7 +46,7 @@ O repositório prioriza:
 ## Progresso atual
 
 | Status | Laboratório | Conteúdo principal |
-|---|---|---|
+|:---:|:---:|---|
 | Concluído | [Lab 00 — Preparação da estação de trabalho](labs/00-workstation-preparation/) | Git, VS Code, PowerShell e organização local |
 | Concluído | [Lab 01 — Configuração segura da conta AWS](labs/01-secure-aws-account-configuration/) | Proteção da conta e acesso administrativo |
 | Concluído | [Lab 02 — AWS CLI e autenticação por SSO](labs/02-aws-cli-installation-and-configuration/) | Perfis, sessões temporárias e validação de identidade |
