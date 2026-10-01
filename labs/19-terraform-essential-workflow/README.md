@@ -208,7 +208,7 @@ terraform plan -input=false -detailed-exitcode
 Conferir imediatamente `$LASTEXITCODE`.
 
 | Código | Significado |
-|---|---|
+|:---:|:---:|
 | `0` | Plano concluído sem mudanças |
 | `1` | Erro |
 | `2` | Plano concluído com mudanças propostas |
