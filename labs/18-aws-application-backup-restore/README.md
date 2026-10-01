@@ -61,7 +61,7 @@ Os procedimentos foram executados no Windows PowerShell 5.1, com AWS CLI e `curl
 ## Arquivos protegidos e formato do backup
 
 | Arquivo ativo | Papel | Perda controlada |
-|---|---|---|
+|:---:|:---:|:---:|
 | `/usr/share/nginx/html/index.html` | Página principal | Removido |
 | `/usr/share/nginx/html/health` | Resposta `healthy` | Preservado |
 | `/usr/share/nginx/html/version` | Resposta `v1` | Removido |
