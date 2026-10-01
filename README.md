@@ -30,7 +30,7 @@ O repositório prioriza:
 ## Tecnologias
 
 | Categoria | Tecnologias e práticas |
-|:---:|:---:|
+|---|---|
 | Cloud | AWS |
 | Sistemas | Linux, Windows 11 e WSL |
 | Infraestrutura como código | Terraform |
@@ -46,25 +46,26 @@ O repositório prioriza:
 ## Progresso atual
 
 | Status | Laboratório | Conteúdo principal |
-|:---:|:---:|:---:|
-| ✅ | [Lab 00 — Preparação da estação de trabalho](labs/00-workstation-preparation/) | Git, VS Code, PowerShell e organização local |
-| ✅ | [Lab 01 — Configuração segura da conta AWS](labs/01-secure-aws-account-configuration/) | Proteção da conta e acesso administrativo |
-| ✅ | [Lab 02 — AWS CLI e autenticação por SSO](labs/02-aws-cli-installation-and-configuration/) | Perfis, sessões temporárias e validação de identidade |
-| ✅ | [Lab 03 — Ferramentas de infraestrutura](labs/03-infrastructure-tools-installation/) | Terraform e Session Manager Plugin |
-| ✅ | [Lab 04 — Arquivos e diretórios Linux](labs/04-linux-file-management/) | Navegação, busca e operações com arquivos |
-| ✅ | [Lab 05 — Usuários, grupos e permissões](labs/05-linux-users-groups-permissions/) | Identidades, permissões e acesso compartilhado |
-| ✅ | [Lab 06 — Serviços e logs no Linux](labs/06-linux-processes-services-logs/) | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
-| ✅ | [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) | Inventário somente leitura, segurança, tags, observabilidade e custos |
-| ✅ | [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) | VPC, sub-redes, rotas, Internet Gateway, Security Group e cleanup |
-| ✅ | [Lab 09 — EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) | EC2, IAM Role, Session Manager, validação e cleanup |
-| ✅ | [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
-| ✅ | [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) | EBS, Amazon S3, integridade, cópia e restauração |
-| ✅ | [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) | Application Load Balancer, health checks, distribuição de tráfego e recuperação |
-| ✅ | [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) | Nginx, falha controlada, diagnóstico estruturado, recuperação e cleanup |
-| ✅ | [Lab 14 — Utilização de disco](labs/14-aws-disk-utilization/) | Volume EBS dedicado, pressão controlada, diagnóstico, mitigação e cleanup |
-| ✅ | [Lab 15 — Troubleshooting de conectividade](labs/15-aws-connectivity-troubleshooting/) | Falha controlada no Security Group, diagnóstico por camadas, recuperação e cleanup |
-| ✅ | [Lab 16 — Troubleshooting do AWS Systems Manager](labs/16-aws-systems-manager-troubleshooting/) | Falha controlada na saída HTTPS, diagnóstico SSM, recuperação e cleanup |
-| ✅ | [Lab 17 — Atualização controlada de aplicação](labs/17-aws-controlled-update/) | Baseline v1, falha de configuração, diagnóstico, rollback, atualização v2, confirmação e cleanup |
+|---|---|---|
+| Concluído | [Lab 00 — Preparação da estação de trabalho](labs/00-workstation-preparation/) | Git, VS Code, PowerShell e organização local |
+| Concluído | [Lab 01 — Configuração segura da conta AWS](labs/01-secure-aws-account-configuration/) | Proteção da conta e acesso administrativo |
+| Concluído | [Lab 02 — AWS CLI e autenticação por SSO](labs/02-aws-cli-installation-and-configuration/) | Perfis, sessões temporárias e validação de identidade |
+| Concluído | [Lab 03 — Ferramentas de infraestrutura](labs/03-infrastructure-tools-installation/) | Terraform e Session Manager Plugin |
+| Concluído | [Lab 04 — Arquivos e diretórios Linux](labs/04-linux-file-management/) | Navegação, busca e operações com arquivos |
+| Concluído | [Lab 05 — Usuários, grupos e permissões](labs/05-linux-users-groups-permissions/) | Identidades, permissões e acesso compartilhado |
+| Concluído | [Lab 06 — Serviços e logs no Linux](labs/06-linux-processes-services-logs/) | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
+| Concluído | [Lab 07 — Baseline operacional da conta AWS](labs/07-aws-account-baseline/) | Inventário somente leitura, segurança, tags, observabilidade e custos |
+| Concluído | [Lab 08 — Rede da aplicação na AWS](labs/08-aws-application-network/) | VPC, sub-redes, rotas, Internet Gateway, Security Group e cleanup |
+| Concluído | [Lab 09 — EC2 administrada pelo Systems Manager](labs/09-aws-ec2-systems-manager/) | EC2, IAM Role, Session Manager, validação e cleanup |
+| Concluído | [Lab 10 — Serviço web Nginx em Linux](labs/10-linux-web-service/) | Nginx, `systemd`, acesso HTTP restrito, Systems Manager, validação e cleanup |
+| Concluído | [Lab 11 — Armazenamento e recuperação](labs/11-aws-storage-recovery/) | EBS, Amazon S3, integridade, cópia e restauração |
+| Concluído | [Lab 12 — Disponibilidade da aplicação](labs/12-aws-application-availability/) | Application Load Balancer, health checks, distribuição de tráfego e recuperação |
+| Concluído | [Lab 13 — Troubleshooting de aplicação indisponível](labs/13-aws-application-troubleshooting/) | Nginx, falha controlada, diagnóstico estruturado, recuperação e cleanup |
+| Concluído | [Lab 14 — Utilização de disco](labs/14-aws-disk-utilization/) | Volume EBS dedicado, pressão controlada, diagnóstico, mitigação e cleanup |
+| Concluído | [Lab 15 — Troubleshooting de conectividade](labs/15-aws-connectivity-troubleshooting/) | Falha controlada no Security Group, diagnóstico por camadas, recuperação e cleanup |
+| Concluído | [Lab 16 — Troubleshooting do AWS Systems Manager](labs/16-aws-systems-manager-troubleshooting/) | Falha controlada na saída HTTPS, diagnóstico SSM, recuperação e cleanup |
+| Concluído | [Lab 17 — Atualização controlada de aplicação](labs/17-aws-controlled-update/) | Baseline v1, falha de configuração, diagnóstico, rollback, atualização v2, confirmação e cleanup |
+| Concluído | [Lab 18 — Backup e restauração de aplicação](labs/18-aws-application-backup-restore/) | S3 versionado, SHA-256, perda controlada, diagnóstico, restauração por VersionId e cleanup |
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -72,15 +73,23 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
+O **Lab 18 — Backup e restauração de aplicação na AWS** criou um backup verificável de quatro arquivos de uma aplicação Nginx em um bucket S3 privado e versionado. O pacote foi recuperado pelo `VersionId` registrado e conferido por SHA-256 e manifesto antes da simulação de perda.
+
+A exclusão controlada de `index.html` e `version` produziu HTTP 404 em `/` e `/version`, enquanto o Nginx permaneceu ativo e `/health` continuou saudável. O diagnóstico identificou os arquivos ausentes. A restauração recuperou os dois arquivos da versão registrada; os quatro hashes finais coincidiram com o baseline e os testes HTTP locais e externos retornaram 200 com o conteúdo esperado.
+
+O intervalo entre a perda e a recuperação observada localmente foi de **5 min 56,294 s**, incluindo diagnóstico e espera do operador. O cleanup removeu EC2, volume root, Security Group, bucket e recursos IAM exclusivos, preservando a rede compartilhada do Lab 08.
+
+Consulte o [Lab 18](labs/18-aws-application-backup-restore/) para os scripts, os resultados, os limites das medições e as evidências.
+
+---
+
+## Resultados anteriores
+
 O **Lab 17 — Atualização controlada de aplicação na AWS** implantou uma aplicação Nginx na versão v1 e registrou seu estado inicial, com backup e hashes SHA-256. Uma candidata com diretiva inválida fez o teste `nginx -t` falhar, enquanto o serviço permaneceu ativo e continuou respondendo em v1. O diagnóstico confirmou que somente o arquivo de configuração diferia do backup.
 
 O rollback restaurou os quatro arquivos da v1 com hashes idênticos aos do baseline. Em seguida, a candidata v2 passou pelas verificações do Nginx e pelos testes HTTP locais e externos, foi confirmada e manteve o backup v1. O cleanup removeu a instância EC2, o Security Group, o Instance Profile e a IAM Role exclusivos, preservando a VPC e a sub-rede compartilhadas do Lab 08.
 
 Consulte o [Lab 17](labs/17-aws-controlled-update/) para o procedimento, os scripts, os estados validados e as evidências.
-
----
-
-## Resultados anteriores
 
 O **Lab 16 — Troubleshooting do AWS Systems Manager** investigou uma instância EC2 que continuava `running`, mas deixou de responder ao Systems Manager depois da remoção controlada de sua saída HTTPS. A primeira tentativa foi inconclusiva: o SSM permaneceu `Online` durante a janela de observação, e a regra foi restaurada. Após ajustar o procedimento para reiniciar somente a instância exclusiva e encerrar conexões existentes, uma segunda execução confirmou `ConnectionLost`.
 
@@ -149,7 +158,7 @@ Consulte o [Lab 14 — Utilização de disco e crescimento de logs](labs/14-aws-
 ## Estrutura do repositório
 
 | Diretório | Finalidade |
-|:---:|:---:|
+|---|---|
 | `labs/` | Laboratórios, scripts e evidências de execução |
 | `docs/` | Roadmap e documentação geral |
 | `terraform/` | Infraestrutura como código |
@@ -219,6 +228,10 @@ Os laboratórios concluídos até esta etapa demonstram:
 - recuperação pela API do EC2 quando o SSM está indisponível;
 - atualização controlada de aplicação com baseline, backup e confirmação;
 - diagnóstico de configuração inválida e rollback verificado por hashes;
+- backup de aplicação em S3 privado e versionado;
+- restauração por VersionId com verificação de pacote e manifesto SHA-256;
+- diagnóstico de perda parcial com comparação de arquivos e respostas HTTP;
+- registro dos intervalos observados de recuperação e da idade do backup;
 - automação com PowerShell e Bash;
 - validação independente;
 - cleanup seguro e preservação de infraestrutura compartilhada.
@@ -241,15 +254,16 @@ A trilha está dividida em nove etapas:
 
 Os laboratórios de preparação, operações Linux e infraestrutura AWS foram concluídos.
 
-O módulo de operação e troubleshooting está em desenvolvimento. Os Labs 13 a 17 concluíram os cenários de aplicação indisponível, utilização elevada de disco, falha de conectividade, Systems Manager indisponível e atualização controlada.
+O módulo de operação e troubleshooting foi concluído. Os Labs 13 a 18 demonstraram aplicação indisponível, utilização elevada de disco, falha de conectividade, Systems Manager indisponível, atualização controlada e recuperação de aplicação a partir de backup versionado.
 
-A próxima etapa prevista é o **Lab 18 — Backup e restauração**, com foco em:
+A próxima etapa prevista é o **Lab 19 — Fluxo essencial do Terraform**, que inicia o módulo de infraestrutura como código, com foco em:
 
-- identificação de dados e configurações que exigem proteção;
-- criação de backup e registro de sua integridade;
-- simulação controlada de perda ou alteração;
-- restauração e validação independente dos dados e do serviço;
-- cleanup dos recursos temporários, preservando a infraestrutura compartilhada.
+- inicialização do diretório de trabalho com `terraform init`;
+- formatação e validação com `terraform fmt` e `terraform validate`;
+- análise das mudanças propostas com `terraform plan`;
+- aplicação e conferência do resultado com `terraform apply`;
+- remoção dos recursos do exercício com `terraform destroy`;
+- proteção do estado e preservação da infraestrutura compartilhada.
 
 ---
 
@@ -259,7 +273,7 @@ Este projeto está distribuído sob a [licença MIT](LICENSE).
 
 ---
 
-## 📈 Repository Metrics
+## Repository Metrics
 
 <p align="center">
 
