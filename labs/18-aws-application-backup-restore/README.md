@@ -105,7 +105,7 @@ Os resultados foram conferidos tanto pela própria instância quanto pelo comput
 Os identificadores abaixo são históricos. O bucket e sua versão de backup foram removidos no cleanup.
 
 | Campo | Valor |
-|---|---|
+|:---:|:---:|
 | Bucket | `lab18-app-backup-412381774441-us-east-1` |
 | Chave | `backups/application-v1-20260930T004914Z-7ffa80ef94424f51909e71c4b6e18a14.tar.gz` |
 | VersionId | `c2IcBx1ixAjrHrOJjayEkNws1.4r6oLM` |
