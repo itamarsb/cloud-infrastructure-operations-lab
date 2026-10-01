@@ -288,9 +288,9 @@ Não excluir o estado para simular uma remoção: a remoção deve ser feita pel
 
 ## Evidências
 
-As capturas serão adicionadas em `images/` após a execução, mantendo seus nomes reais.
+As capturas serão adicionadas em `images/` após a execução.
 
-Registrar:
+Serão registrados:
 
 - versão do Terraform;
 - inicialização, formatação e validação;
@@ -300,7 +300,6 @@ Registrar:
 - plano sem mudanças;
 - destroy e estado sem recursos.
 
-Nenhum resultado de execução foi registrado nesta etapa.
 
 ## Limites do exercício
 
