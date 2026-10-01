@@ -258,7 +258,7 @@ Um plano de criação após a remoção não indica falha no cleanup.
 ## Arquivos locais e versionamento
 
 | Arquivo ou diretório | Tratamento |
-|---|---|
+|:---:|:---:|
 | Arquivos `.tf` | Versionar |
 | `README.md` e evidências | Versionar |
 | `.terraform/` | Não versionar |
