@@ -105,7 +105,7 @@ O módulo de operação e troubleshooting está concluído.
 
 | Status | Laboratório | Conteúdo |
 |---|---|---|
-| Planejado | **Lab 19 — Fluxo essencial do Terraform** | `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` |
+| Em desenvolvimento | **Lab 19 — Fluxo essencial do Terraform** | `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` |
 | Planejado | **Lab 20 — Infraestrutura AWS como código** | Rede, IAM, segurança e EC2 |
 | Planejado | **Lab 21 — Estado remoto** | Armazenamento, bloqueio e proteção do estado |
 | Planejado | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização e reutilização |
