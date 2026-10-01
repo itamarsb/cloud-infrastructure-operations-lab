@@ -25,7 +25,7 @@ A execução não provisionará recursos AWS. A infraestrutura compartilhada dos
 ## Organização
 
 | Diretório | Finalidade |
-|---|---|
+|:---:|:---:|
 | `terraform/` | Configuração Terraform do exercício |
 | `images/` | Evidências reais de execução |
 
