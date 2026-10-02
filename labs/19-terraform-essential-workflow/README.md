@@ -2,41 +2,62 @@
 
 ## Resumo
 
-Este laboratório introduz o fluxo de trabalho do Terraform por meio de um exercício local com o recurso integrado `terraform_data`.
+Este laboratório demonstra o fluxo de trabalho do Terraform por meio de um exercício local com o recurso integrado `terraform_data`.
 
 O procedimento abrange inicialização, formatação, validação, planejamento, aplicação, inspeção do estado e remoção.
 
-**Estado:** em preparação. Configuração e execução pendentes.
+**Estado:** concluído. Recurso criado, estado e outputs validados, segundo plano sem mudanças e remoção confirmada.
 
-> **English summary:** Local Terraform workflow exercise using the built-in terraform_data resource. Covers initialization, formatting, validation, plan review, application, state inspection and destruction. Execution evidence is pending.
+> **English summary:** Completed local Terraform workflow exercise using the built-in terraform_data resource. Initialization, formatting, validation, saved-plan application, state and output inspection, and a no-change plan were verified. The resource was destroyed, leaving no resources in state while preserving the configuration files.
 
 ## Objetivo
 
-Compreender como o Terraform compara a configuração desejada com o estado registrado e propõe as operações necessárias.
+Compreender como o Terraform utiliza a configuração e o estado registrado para propor e executar operações.
 
-Ao final, o operador deverá conseguir:
+O exercício permite:
 
 - identificar o diretório de execução;
 - inicializar uma configuração;
 - conferir formatação e validade;
-- interpretar um plano;
+- interpretar e salvar um plano;
 - aplicar um plano previamente analisado;
 - consultar recursos e outputs no estado;
 - verificar a ausência de mudanças após a aplicação;
-- remover o recurso do exercício;
+- remover o recurso gerenciado;
 - distinguir remoção de recursos de exclusão dos arquivos locais.
 
 ## Escopo
 
-O exercício utilizará um único recurso `terraform_data`, sem provisioners ou comandos externos.
+Foi utilizado um único recurso `terraform_data`, sem provisioners ou comandos externos.
 
-Esse recurso permite registrar dados e acompanhar seu ciclo de vida no estado do Terraform. Sua criação não representa uma instância, um bucket ou outro recurso AWS.
+Esse recurso registra dados e acompanha seu ciclo de vida no estado do Terraform. Sua criação não representa uma instância, um bucket ou outro recurso AWS.
 
-A execução será local, sem autenticação AWS e sem provisionamento em nuvem.
+A execução foi local, sem autenticação AWS e sem provisionamento em nuvem.
 
 A rede compartilhada do Lab 08 e os recursos de outros projetos permanecem fora do escopo.
 
 O provisionamento AWS com Terraform será abordado no Lab 20.
+
+## Ambiente utilizado
+
+| Item | Valor |
+|:---:|:---:|
+| Sistema | Windows |
+| Shell | Windows PowerShell 5.1 |
+| Terraform | `1.16.1` |
+| Plataforma | `windows_amd64` |
+| Workspace | `default` |
+| Provider | `terraform.io/builtin/terraform` |
+| Recurso | `terraform_data.lab19` |
+| Estado | Local |
+
+A restrição definida em `versions.tf` é:
+
+```hcl
+terraform {
+  required_version = ">= 1.4.0, < 2.0.0"
+}
+```
 
 ## Pré-requisitos
 
@@ -47,27 +68,23 @@ O provisionamento AWS com Terraform será abordado no Lab 20.
 - Arquivos deste laboratório publicados e sincronizados.
 - Repositório sem alterações locais antes da atualização.
 
-A versão instalada será conferida com `terraform version` e deverá atender à restrição definida em `versions.tf`.
-
 ## Organização
 
 | Caminho | Finalidade |
 |:---:|:---:|
 | `README.md` | Procedimento, critérios e resultados |
-| `images/` | Evidências reais da execução |
+| `images/` | Evidências da execução |
 | `terraform/versions.tf` | Restrição de versão do Terraform |
 | `terraform/main.tf` | Recurso integrado do exercício |
 | `terraform/outputs.tf` | Informações disponibilizadas após a aplicação |
 
-Os arquivos Terraform serão publicados antes da execução.
-
-O diretório de trabalho será:
+Diretório de execução:
 
 ```text
 C:\GitHub\cloud-infrastructure-operations-lab\labs\19-terraform-essential-workflow\terraform
 ```
 
-Os comandos devem ser executados nesse diretório, e não na raiz do repositório ou na pasta de outro laboratório.
+Os comandos Terraform devem ser executados nesse diretório.
 
 ## Conceitos utilizados
 
@@ -79,11 +96,13 @@ Os comandos devem ser executados nesse diretório, e não na raiz do repositóri
 | Plano | Operações propostas a partir da configuração e do estado |
 | Aplicação | Execução das operações do plano |
 | Output | Valor disponibilizado pela configuração |
-| Remoção | Encerramento do recurso gerenciado por este exercício |
+| Remoção | Encerramento do recurso gerenciado pelo exercício |
 
 O estado não substitui a configuração. A configuração descreve o que deve existir; o estado registra o que o Terraform acompanha.
 
-## Procedimento previsto
+## Procedimento
+
+Os comandos abaixo descrevem o ciclo completo do exercício. Em PowerShell, o código de saída deve ser conferido imediatamente após cada comando externo.
 
 ### 1. Conferir e atualizar o repositório
 
@@ -96,84 +115,111 @@ Na raiz do repositório:
 - verificar a presença dos três arquivos `.tf`;
 - consultar `terraform version`.
 
-Depois, acessar somente o diretório `terraform/` deste laboratório.
+Depois, acessar o diretório `terraform/` deste laboratório e conferir o workspace:
+
+```powershell
+terraform workspace show
+```
+
+Resultado utilizado: `default`.
 
 ### 2. Inicializar
 
-Executar:
-
 ```powershell
-terraform init -input=false
+terraform init -input=false -no-color
 ```
 
-Resultado esperado: inicialização concluída.
+Resultado observado: inicialização concluída.
 
 O exercício utiliza um provider integrado ao Terraform e não depende de um plugin AWS.
 
 ### 3. Conferir formatação
 
-Executar:
-
 ```powershell
-terraform fmt -check -diff
+terraform fmt -check -diff -no-color
 ```
 
-Resultado esperado: código de saída zero.
+Resultado observado: código de saída `0`, sem diferenças de formatação.
 
-Se houver diferenças, revisar a saída e corrigir os arquivos antes de continuar. Uma correção com `terraform fmt` pode alterar os arquivos versionados e deve ser conferida no Git.
+Se houver diferenças em uma nova execução, revisar e corrigir os arquivos antes de continuar. Uma correção com `terraform fmt` pode alterar arquivos versionados e deve ser conferida no Git.
 
 ### 4. Validar a configuração
 
-Executar:
-
 ```powershell
-terraform validate
+terraform validate -no-color
 ```
 
-Resultado esperado: configuração válida.
+Resultado observado:
 
-Essa validação não comprova que o recurso foi criado. Ela verifica a configuração antes do planejamento e da aplicação.
+```text
+Success! The configuration is valid.
+```
+
+Essa validação verifica a configuração; ela não comprova a criação do recurso.
 
 ### 5. Gerar e analisar o plano
 
-Executar:
+No Windows PowerShell, passar os argumentos como strings em um array:
 
 ```powershell
-terraform plan -input=false -out=lab19-create.tfplan
+$PlanArguments = @(
+    "plan"
+    "-input=false"
+    "-no-color"
+    "-detailed-exitcode"
+    "-out=lab19-create.tfplan"
+)
+
+& terraform @PlanArguments
+$PlanExitCode = $LASTEXITCODE
+
+if ($PlanExitCode -ne 2) {
+    throw "Esperado plano com mudanças; código recebido: $PlanExitCode"
+}
 ```
 
 Inspecionar o plano salvo:
 
 ```powershell
-terraform show lab19-create.tfplan
+terraform show -no-color "lab19-create.tfplan"
 ```
 
-Para a primeira execução, o resultado esperado é:
+Resultado observado:
 
 ```text
 Plan: 1 to add, 0 to change, 0 to destroy.
 ```
 
-Conferir:
+O plano continha somente `terraform_data.lab19`, com os dados:
 
-- apenas um recurso `terraform_data`;
-- dados correspondentes ao Lab 19;
-- ausência de recursos AWS;
-- ausência de alterações ou remoções inesperadas.
+```text
+environment = "local"
+lab         = "19"
+name        = "terraform-essential-workflow"
+project     = "cloud-infrastructure-operations-lab"
+version     = "v1"
+```
 
-Se o plano divergir do esperado, interromper e investigar antes da aplicação.
+Antes da aplicação, conferir o recurso, seus atributos e as operações propostas.
+
+Se o plano divergir do esperado, interromper e investigar.
 
 ### 6. Aplicar o plano analisado
 
-Executar somente após revisar o plano:
-
 ```powershell
-terraform apply -input=false lab19-create.tfplan
+$ApplyArguments = @(
+    "apply"
+    "-input=false"
+    "-no-color"
+    "lab19-create.tfplan"
+)
+
+& terraform @ApplyArguments
 ```
 
 A aplicação de um plano salvo não solicita uma nova confirmação interativa. A revisão deve ocorrer antes desse comando.
 
-Resultado esperado:
+Resultado observado:
 
 ```text
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
@@ -185,57 +231,86 @@ Executar separadamente:
 
 ```powershell
 terraform state list
-terraform show
-terraform output
+terraform show -no-color
+terraform output -json
 ```
 
-Conferir:
+O estado continha somente:
 
-- um único recurso gerenciado;
-- identificação do exercício;
-- valores dos outputs compatíveis com a configuração.
+```text
+terraform_data.lab19
+```
+
+O output `lab_summary` apresentou os cinco valores definidos na configuração.
+
+Identificador observado nesta execução:
+
+```text
+2caa5624-41d8-6213-ee7d-2ed6eada7a79
+```
+
+Esse identificador pertence à execução registrada e pode ser diferente em uma nova criação.
 
 Não editar manualmente o arquivo de estado.
 
 ### 8. Verificar ausência de mudanças
 
-Executar:
-
 ```powershell
-terraform plan -input=false -detailed-exitcode
+$CheckArguments = @(
+    "plan"
+    "-input=false"
+    "-no-color"
+    "-detailed-exitcode"
+)
+
+& terraform @CheckArguments
+$PlanExitCode = $LASTEXITCODE
+
+if ($PlanExitCode -ne 0) {
+    throw "Esperado plano sem mudanças; código recebido: $PlanExitCode"
+}
 ```
 
-Conferir imediatamente `$LASTEXITCODE`.
+Resultado observado:
 
-| Código | Significado |
+```text
+No changes. Your infrastructure matches the configuration.
+```
+
+O código de saída foi `0`.
+
+| Código | Significado de `plan -detailed-exitcode` |
 |:---:|:---:|
 | `0` | Plano concluído sem mudanças |
 | `1` | Erro |
 | `2` | Plano concluído com mudanças propostas |
 
-Após a aplicação, sem alterações na configuração, o resultado esperado é código `0` e mensagem de ausência de mudanças.
-
-O código `2` não significa falha de execução, mas exige análise das mudanças propostas.
+O código `2` não representa falha, mas exige análise das mudanças propostas.
 
 ### 9. Remover o recurso
+
+Conferir o workspace e confirmar que o estado contém somente `terraform_data.lab19`.
 
 Executar:
 
 ```powershell
-terraform destroy
+$DestroyArguments = @(
+    "destroy"
+    "-no-color"
+)
+
+& terraform @DestroyArguments
 ```
 
-Antes de confirmar, conferir que a proposta contém somente a remoção do recurso do Lab 19.
-
-Resultado esperado:
+Proposta observada:
 
 ```text
 Plan: 0 to add, 0 to change, 1 to destroy.
 ```
 
-Digitar `yes` após conferir o escopo.
+Após conferir o escopo, confirmar com `yes`.
 
-Ao final, o resultado esperado é:
+Resultado observado:
 
 ```text
 Destroy complete! Resources: 1 destroyed.
@@ -243,17 +318,57 @@ Destroy complete! Resources: 1 destroyed.
 
 ### 10. Validar a remoção
 
-Executar:
-
 ```powershell
-terraform state list
+$RemainingResources = @(terraform state list)
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Falha ao consultar o estado após a remoção."
+}
+
+if ($RemainingResources.Count -ne 0) {
+    throw "Ainda existem recursos no estado."
+}
 ```
 
-Resultado esperado: código de saída zero e nenhum recurso listado.
+A consulta retornou código `0` e nenhum recurso.
 
-Os arquivos `.tf` permanecem no diretório. Por isso, um novo plano normal após o destroy proporá criar o recurso novamente.
+Também foi confirmada a presença de:
 
-Um plano de criação após a remoção não indica falha no cleanup.
+- `versions.tf`;
+- `main.tf`;
+- `outputs.tf`.
+
+Como os arquivos `.tf` permanecem no diretório, um novo plano normal após o destroy proporá criar o recurso novamente.
+
+Essa proposta de criação não indica falha na remoção.
+
+## Ocorrência durante a execução
+
+A primeira tentativa de planejamento retornou:
+
+```text
+Error: Too many command line arguments
+```
+
+O plano foi gerado com sucesso após passar os argumentos por um array de strings no PowerShell, incluindo `"-out=lab19-create.tfplan"`.
+
+Nenhum recurso havia sido criado na tentativa que apresentou o erro.
+
+## Resultados obtidos
+
+| Etapa | Resultado |
+|:---:|:---:|
+| Inicialização | Concluída |
+| Formatação | Sem diferenças; código `0` |
+| Validação | Configuração válida |
+| Plano inicial | `1 to add, 0 to change, 0 to destroy` |
+| Aplicação | Um recurso criado |
+| Inspeção do estado | Somente `terraform_data.lab19` |
+| Outputs | Valores compatíveis com a configuração |
+| Segundo plano | Sem mudanças; código `0` |
+| Destroy | Um recurso destruído |
+| Pós-destroy | Nenhum recurso no estado |
+| Configuração | Três arquivos `.tf` preservados |
 
 ## Arquivos locais e versionamento
 
@@ -266,40 +381,31 @@ Um plano de criação após a remoção não indica falha no cleanup.
 | Planos `*.tfplan` | Não versionar |
 | `.terraform.lock.hcl`, caso gerado | Versionar quando registrar dependências externas |
 
-O `.gitignore` principal já contém regras para o diretório `.terraform/`, arquivos de estado e planos com extensão `.tfplan`.
+O `.gitignore` principal contém regras para o diretório `.terraform/`, arquivos de estado e planos com extensão `.tfplan`.
 
 O destroy remove o recurso gerenciado, mas pode manter arquivos locais de estado e seus backups. Esses arquivos não devem ser publicados como evidência nem adicionados ao Git.
 
-Não excluir o estado para simular uma remoção: a remoção deve ser feita pelo Terraform e comprovada pela consulta ao estado.
-
-## Resultados esperados
-
-| Etapa | Critério |
-|:---:|:---:|
-| Inicialização | Concluída sem erro |
-| Formatação | Código zero em `fmt -check` |
-| Validação | Configuração válida |
-| Plano inicial | Um recurso a criar |
-| Aplicação | Um recurso criado |
-| Inspeção | Um recurso no estado e outputs corretos |
-| Segundo plano | Nenhuma mudança; código zero |
-| Destroy | Um recurso removido |
-| Pós-destroy | Nenhum recurso no estado |
+Não excluir o estado para simular uma remoção. A remoção deve ser executada pelo Terraform e comprovada pela consulta ao estado.
 
 ## Evidências
 
-As capturas serão adicionadas em `images/` após a execução.
+### Plano inicial
 
-Serão registrados:
+Plano salvo e inspecionado, contendo somente a criação de `terraform_data.lab19`.
 
-- versão do Terraform;
-- inicialização, formatação e validação;
-- plano inicial;
-- aplicação e outputs;
-- consulta ao estado;
-- plano sem mudanças;
-- destroy e estado sem recursos.
+![Plano inicial do Lab 19](images/Clipboard_10-01-2026_26.png)
 
+### Estado, outputs e plano sem mudanças
+
+Inspeção do recurso e dos outputs, seguida de um plano sem mudanças.
+
+![Estado, outputs e plano sem mudanças](images/Clipboard_10-01-2026_27.png)
+
+### Remoção e validação final
+
+Destroy concluído, estado sem recursos e arquivos de configuração preservados.
+
+![Remoção e validação final do Lab 19](images/Clipboard_10-01-2026_28.png)
 
 ## Limites do exercício
 
@@ -311,19 +417,20 @@ Esses assuntos serão desenvolvidos nos próximos laboratórios.
 
 ## Critérios de conclusão
 
-- [ ] Configuração publicada.
-- [ ] Versão do Terraform conferida.
-- [ ] Inicialização concluída.
-- [ ] Formatação conferida.
-- [ ] Configuração validada.
-- [ ] Plano inicial analisado.
-- [ ] Aplicação concluída.
-- [ ] Estado e outputs conferidos.
-- [ ] Segundo plano sem mudanças.
-- [ ] Recurso removido pelo Terraform.
-- [ ] Estado sem recursos após o destroy.
-- [ ] Evidências publicadas.
-- [ ] Documentação atualizada com os resultados reais.
+- [x] Configuração publicada.
+- [x] Versão do Terraform conferida.
+- [x] Inicialização concluída.
+- [x] Formatação conferida.
+- [x] Configuração validada.
+- [x] Plano inicial analisado.
+- [x] Aplicação concluída.
+- [x] Estado e outputs conferidos.
+- [x] Segundo plano sem mudanças.
+- [x] Recurso removido pelo Terraform.
+- [x] Estado sem recursos após o destroy.
+- [x] Arquivos de configuração preservados.
+- [x] Evidências publicadas.
+- [x] Resultados documentados.
 
 ## Referências
 
@@ -331,4 +438,5 @@ Esses assuntos serão desenvolvidos nos próximos laboratórios.
 - [Fluxo de execução do Terraform](https://developer.hashicorp.com/terraform/cli/run)
 - [Comando terraform plan](https://developer.hashicorp.com/terraform/cli/commands/plan)
 - [Comando terraform apply](https://developer.hashicorp.com/terraform/cli/commands/apply)
+- [Comando terraform destroy](https://developer.hashicorp.com/terraform/cli/commands/destroy)
 - [Estado do Terraform](https://developer.hashicorp.com/terraform/language/state)
