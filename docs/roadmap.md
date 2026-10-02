@@ -105,12 +105,26 @@ O módulo de operação e troubleshooting está concluído.
 
 | Status | Laboratório | Conteúdo |
 |:---:|---|---|
-| Em desenvolvimento | **Lab 19 — Fluxo essencial do Terraform** | `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` |
+| Concluído | **Lab 19 — Fluxo essencial do Terraform** | Recurso local `terraform_data`, inicialização, formatação, validação, plano salvo, aplicação, estado, outputs e destroy |
 | Planejado | **Lab 20 — Infraestrutura AWS como código** | Rede, IAM, segurança e EC2 |
 | Planejado | **Lab 21 — Estado remoto** | Armazenamento, bloqueio e proteção do estado |
 | Planejado | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização e reutilização |
 | Planejado | **Lab 23 — Mudanças e drift** | Comparação entre código, estado e ambiente |
 | Planejado | **Lab 24 — Validação automatizada** | Formatação, validação e verificação do código em pipeline |
+
+### Resultados concluídos no módulo
+
+O **Lab 19** executou o ciclo completo de um recurso local `terraform_data`, utilizando Terraform `1.16.1` e o workspace `default`.
+
+A inicialização foi concluída, a formatação não apresentou diferenças e a configuração passou pela validação. O plano inicial propôs a criação de um único recurso e foi salvo, inspecionado e aplicado.
+
+A consulta ao estado confirmou somente `terraform_data.lab19`. Os outputs corresponderam aos valores definidos na configuração, e um segundo plano confirmou ausência de mudanças, com código de saída `0`.
+
+O destroy removeu o recurso. A validação final confirmou estado sem recursos e preservação dos arquivos `versions.tf`, `main.tf` e `outputs.tf`.
+
+O exercício foi inteiramente local, sem provisionamento AWS. O procedimento e as evidências estão no [README do Lab 19](../labs/19-terraform-essential-workflow/README.md).
+
+O módulo de Terraform está em desenvolvimento.
 
 ---
 
@@ -174,7 +188,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
 | Operação e troubleshooting | Concluído |
-| Terraform | Planejado |
+| Terraform | Em desenvolvimento |
 | Monitoramento e logs | Planejado |
 | Docker | Planejado |
 | Segurança, custos e confiabilidade | Planejado |
@@ -184,31 +198,38 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `19` |
+| Laboratórios concluídos | `20` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `19` |
-| Último laboratório concluído | `Lab 18` |
-| Próximo laboratório | `Lab 19` |
+| Laboratórios planejados | `18` |
+| Último laboratório concluído | `Lab 19` |
+| Próximo laboratório | `Lab 20` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
+
+O módulo de Terraform está em desenvolvimento porque sua primeira etapa foi concluída e os demais laboratórios permanecem planejados.
 
 ---
 
 ## Próxima etapa
 
-**Lab 19 — Fluxo essencial do Terraform**
+**Lab 20 — Infraestrutura AWS como código**
 
-O próximo laboratório inicia o módulo de infraestrutura como código. O objetivo é executar e compreender o fluxo `init`, `fmt`, `validate`, `plan`, `apply` e `destroy` em um exercício com escopo definido.
+O próximo laboratório aplica o fluxo aprendido no Lab 19 ao provisionamento de infraestrutura AWS com Terraform.
 
 O procedimento deverá incluir:
 
 - conferência do ambiente e dos pré-requisitos;
-- inicialização e validação da configuração;
-- análise do plano antes de aplicar mudanças;
-- verificação do resultado e dos outputs;
-- compreensão do papel do estado local;
+- configuração do provider AWS;
+- autenticação temporária e validação da conta e da Região;
+- definição dos recursos gerenciados e das dependências compartilhadas;
+- configuração de rede, IAM, segurança e EC2 conforme o escopo;
+- inicialização, formatação e validação da configuração;
+- geração, salvamento e análise do plano;
+- aplicação do plano analisado;
+- verificação dos recursos, do estado e dos outputs;
 - proteção do estado e dos arquivos gerados;
-- remoção somente dos recursos do exercício;
+- remoção dos recursos exclusivos pelo Terraform;
+- validação após a remoção;
 - registro das evidências.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de remoção.
