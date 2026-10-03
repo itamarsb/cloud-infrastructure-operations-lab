@@ -1,1 +1,136 @@
+#!/bin/bash
+set -Eeuo pipefail
 
+exec > >(tee -a /var/log/lab20-user-data.log) 2>&1
+
+trap 'echo "[FALHA] Inicializacao interrompida na linha $LINENO."' ERR
+
+echo "=== LAB 20: inicializacao da aplicacao ==="
+
+install -d -m 0755 /var/lib/lab20
+rm -f /var/lib/lab20/bootstrap-complete
+
+systemctl enable --now amazon-ssm-agent
+
+dnf install -y nginx
+
+install -d -m 0755 /usr/share/nginx/html
+install -d -m 0755 /etc/nginx/conf.d
+
+cat > /etc/nginx/nginx.conf <<'NGINX_MAIN'
+user nginx;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    access_log /var/log/nginx/access.log;
+
+    sendfile on;
+    keepalive_timeout 65;
+    types_hash_max_size 4096;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+NGINX_MAIN
+
+cat > /etc/nginx/conf.d/lab20-app.conf <<'NGINX_APP'
+server {
+    listen 80 default_server;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location = /health {
+        default_type text/plain;
+        try_files $uri =404;
+    }
+
+    location = /version {
+        default_type text/plain;
+        try_files $uri =404;
+    }
+}
+NGINX_APP
+
+cat > /usr/share/nginx/html/index.html <<'HTML'
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LAB 20 - Infraestrutura AWS como codigo</title>
+</head>
+<body>
+    <h1>LAB 20 - Infraestrutura AWS como codigo</h1>
+    <p>Projeto: cloud-infrastructure-operations-lab</p>
+    <p>Infraestrutura provisionada com Terraform.</p>
+    <p>Aplicacao: Nginx no Amazon Linux 2023.</p>
+    <p>Versao: v1</p>
+    <ul>
+        <li><a href="/health">Health</a></li>
+        <li><a href="/version">Version</a></li>
+    </ul>
+</body>
+</html>
+HTML
+
+printf 'healthy\n' > /usr/share/nginx/html/health
+printf 'v1\n' > /usr/share/nginx/html/version
+
+chmod 0644 \
+    /etc/nginx/nginx.conf \
+    /etc/nginx/conf.d/lab20-app.conf \
+    /usr/share/nginx/html/index.html \
+    /usr/share/nginx/html/health \
+    /usr/share/nginx/html/version
+
+nginx -t
+systemctl enable --now nginx
+systemctl is-active --quiet nginx
+
+CurlArguments=(
+    --noproxy "*"
+    --fail
+    --silent
+    --show-error
+    --connect-timeout 5
+    --max-time 10
+    --retry 5
+    --retry-connrefused
+    --retry-delay 2
+)
+
+Page=$(curl "${CurlArguments[@]}" http://127.0.0.1/)
+Health=$(curl "${CurlArguments[@]}" http://127.0.0.1/health)
+Version=$(curl "${CurlArguments[@]}" http://127.0.0.1/version)
+
+grep -Fq "LAB 20 - Infraestrutura AWS como codigo" <<< "$Page"
+test "$Health" = "healthy"
+test "$Version" = "v1"
+
+sha256sum \
+    /usr/share/nginx/html/index.html \
+    /usr/share/nginx/html/health \
+    /usr/share/nginx/html/version \
+    /etc/nginx/conf.d/lab20-app.conf
+
+printf 'v1\n' > /var/lib/lab20/bootstrap-complete
+chmod 0644 /var/lib/lab20/bootstrap-complete
+
+echo "BOOTSTRAP_COMPLETE=v1"
+echo "[OK] Nginx ativo; pagina, health e versao validados localmente."
