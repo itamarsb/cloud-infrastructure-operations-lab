@@ -176,7 +176,8 @@ try {
         throw "Estado Terraform sem recursos provisionados."
     }
 
-    if (@($State.values.root_module.child_modules).Count -gt 0) {
+    if ($null -ne $State.values.root_module.child_modules -and
+        @($State.values.root_module.child_modules).Count -gt 0) {
         throw "Modulos adicionais encontrados no estado."
     }
 
