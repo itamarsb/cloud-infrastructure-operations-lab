@@ -6,7 +6,7 @@ O projeto documenta a construção e a operação de um ambiente de aplicação 
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–20 are complete; the latest exercise provisioned seven AWS resources with Terraform, independently validated the application, verified a plan with no changes and removed the exclusive resources while preserving the shared network.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–21 are complete; the latest exercise migrated Terraform state from a local backend to a private, versioned S3 bucket, preserved resource identity and outputs, verified concurrent operation locking and completed cleanup of the exercise and backend resources.
 
 ---
 
@@ -68,14 +68,31 @@ O repositório prioriza:
 | Concluído | [Lab 18 — Backup e restauração de aplicação](labs/18-aws-application-backup-restore/) | S3 versionado, SHA-256, perda controlada, diagnóstico, restauração por VersionId e cleanup |
 | Concluído | [Lab 19 — Fluxo essencial do Terraform](labs/19-terraform-essential-workflow/) | Recurso local `terraform_data`, plano salvo, aplicação, estado, outputs, plano sem mudanças e destroy |
 | Concluído | [Lab 20 — Infraestrutura AWS como código](labs/20-terraform-aws-infrastructure/) | Provider AWS, lock de dependências, sete recursos, EC2 com Nginx, validação independente, plano sem mudanças e cleanup |
+| Concluído | [Lab 21 — Estado remoto](labs/21-terraform-remote-state/) | Bootstrap independente, S3 privado e versionado, migração de estado, bloqueio concorrente e cleanup |
 
-**21 laboratórios concluídos**, considerando a numeração de 00 a 20.
+**22 laboratórios concluídos**, considerando a numeração de 00 a 21.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
 ## Resultado mais recente
+
+O **Lab 21 — Estado remoto** executou a migração de um estado local do Terraform para um bucket S3 privado e versionado, utilizando Terraform `1.16.1`, provider AWS `6.67.0`, Windows PowerShell e o workspace `default`.
+
+Um bootstrap independente criou seis recursos AWS para o armazenamento do estado. Seu backend permaneceu local durante todo o laboratório. A validação independente conferiu identidade, Região, propriedade, tags, bloqueios de acesso público, versionamento, criptografia SSE-S3 e política de transporte seguro.
+
+O exercício criou somente o recurso `terraform_data.lab21`. Antes da migração, um plano confirmou ausência de mudanças, a cópia do estado foi conferida por SHA-256 e os outputs foram preservados. A migração para o backend S3 manteve o identificador do recurso e os outputs, com nova confirmação de plano sem mudanças.
+
+A validação pela API do S3 confirmou o objeto de estado criptografado e com identificador de versão. O teste de concorrência confirmou a presença do arquivo `.tflock` e a recusa de uma segunda operação com `Error acquiring the state lock` e HTTP `412 PreconditionFailed`. A operação que mantinha o bloqueio foi cancelada, liberando-o sem aplicar a substituição proposta.
+
+O cleanup removeu o recurso do exercício e preservou uma cópia do estado final vazio. Em seguida, foram excluídas oito versões de objetos e seis marcadores de exclusão, com confirmação de bucket vazio. O plano do bootstrap removeu os seis recursos gerenciados, e uma consulta independente à AWS confirmou a ausência do bucket.
+
+Consulte o [Lab 21](labs/21-terraform-remote-state/) para os arquivos Terraform, os procedimentos de migração e bloqueio, os resultados e as evidências.
+
+---
+
+## Resultados anteriores
 
 O **Lab 20 — Infraestrutura AWS como código** executou o ciclo de provisionamento e remoção de uma aplicação Nginx na AWS utilizando Terraform `1.16.1`, provider AWS `6.67.0`, Windows PowerShell e estado local no workspace `default`.
 
@@ -90,10 +107,6 @@ Um segundo plano confirmou ausência de mudanças, com código de saída `0`.
 O plano de remoção foi salvo, revisado e aplicado, destruindo os sete recursos gerenciados. A validação pós-cleanup confirmou a ausência dos recursos exclusivos, incluindo o volume root, e a preservação das condições verificadas da rede compartilhada. O estado local e os arquivos de configuração foram mantidos.
 
 Consulte o [Lab 20](labs/20-terraform-aws-infrastructure/) para os arquivos Terraform, os scripts de validação, os resultados e as evidências.
-
----
-
-## Resultados anteriores
 
 O **Lab 19 — Fluxo essencial do Terraform** executou o ciclo completo de um recurso local `terraform_data`, utilizando Terraform `1.16.1`, Windows PowerShell e o workspace `default`.
 
@@ -225,6 +238,8 @@ Consulte o [Lab 14 — Utilização de disco e crescimento de logs](labs/14-aws-
 - infraestrutura reproduzível e mudanças rastreáveis;
 - preservação de recursos compartilhados;
 - proteção do estado e dos planos do Terraform;
+- separação entre o estado do bootstrap e o estado do exercício;
+- bloqueio do estado durante operações concorrentes;
 - versionamento do arquivo de dependências do Terraform;
 - análise do plano antes da aplicação;
 - scripts de cleanup idempotentes;
@@ -269,6 +284,11 @@ Os laboratórios concluídos até esta etapa demonstram:
 - provisionamento de IAM, Security Group, regras e EC2 pelo Terraform;
 - análise e aplicação de plano salvo;
 - inspeção de estado local e outputs;
+- bootstrap independente para armazenamento do estado;
+- configuração de backend S3 privado, versionado e criptografado;
+- migração de estado com preservação do identificador do recurso e dos outputs;
+- validação de bloqueio concorrente por arquivo `.tflock`;
+- inventário e exclusão de versões e marcadores de exclusão do S3;
 - validação independente dos recursos AWS e da aplicação;
 - verificação de plano sem mudanças após a aplicação;
 - remoção pelo Terraform e validação do estado após o cleanup;
@@ -296,16 +316,16 @@ Os laboratórios de preparação, operações Linux e infraestrutura AWS foram c
 
 O módulo de operação e troubleshooting foi concluído. Os Labs 13 a 18 demonstraram aplicação indisponível, utilização elevada de disco, falha de conectividade, Systems Manager indisponível, atualização controlada e recuperação de aplicação a partir de backup versionado.
 
-O módulo de Terraform está em andamento. O Lab 19 demonstrou o ciclo de vida de um recurso local, a aplicação de um plano salvo, a inspeção do estado e a remoção validada. O Lab 20 aplicou esse fluxo à AWS, com sete recursos gerenciados, validação independente, plano sem mudanças e cleanup verificado.
+O módulo de Terraform está em andamento. O Lab 19 demonstrou o ciclo de vida de um recurso local, a aplicação de um plano salvo, a inspeção do estado e a remoção validada. O Lab 20 aplicou esse fluxo à AWS, com sete recursos gerenciados, validação independente, plano sem mudanças e cleanup verificado. O Lab 21 acrescentou estado remoto em S3, migração com preservação do recurso e dos outputs, teste de bloqueio concorrente e remoção validada do exercício e do bootstrap.
 
-A próxima etapa prevista é o **Lab 21 — Estado remoto**, com foco em:
+A próxima etapa prevista é o **Lab 22 — Variáveis, outputs e módulos**, com foco em:
 
-- configuração de armazenamento remoto para o estado do Terraform;
-- controle de acesso e proteção das informações do estado;
-- bloqueio para evitar operações concorrentes;
-- distinção entre configuração, estado e planos;
-- validação do uso do backend remoto;
-- definição do ciclo de vida dos recursos que armazenam o estado.
+- parametrização da configuração Terraform;
+- definição de tipos e validações de variáveis;
+- exposição de resultados por outputs;
+- organização de recursos em módulos reutilizáveis;
+- comunicação entre o módulo raiz e os módulos filhos;
+- análise de planos e validação do ciclo de vida da configuração.
 
 ---
 
