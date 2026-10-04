@@ -436,7 +436,7 @@ Um plano normal após o cleanup pode propor novamente as sete criações, pois a
 Execução concluída em **03/10/2026**, horário de Brasília.
 
 | Etapa | Resultado |
-|:---|:---|
+|:---:|:---:|
 | Sintaxe PowerShell | Três scripts validados |
 | Inicialização | Provider AWS `6.67.0` instalado |
 | Lock | Versionado e reutilizado com `-lockfile=readonly` |
