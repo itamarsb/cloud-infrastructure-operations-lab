@@ -147,7 +147,7 @@ Os comandos utilizam esse diretório por meio de `-chdir`, no workspace `default
 Os recursos que suportam tags utilizam:
 
 | Tag | Valor |
-|:---|:---|
+|:---:|:---:|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `20` |
