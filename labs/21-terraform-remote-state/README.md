@@ -32,7 +32,7 @@ O laboratório demonstrará:
 O laboratório utilizará duas configurações Terraform independentes.
 
 | Configuração | Diretório | Estado | Responsabilidade |
-|---|---|---|---|
+|:---:|:---:|:---:|:---:|
 | Bootstrap | `bootstrap/` | Local | Provisionar e remover o armazenamento do backend |
 | Exercício | `terraform/` | Local inicialmente; remoto após a migração | Gerenciar um recurso `terraform_data` e validar o backend |
 
