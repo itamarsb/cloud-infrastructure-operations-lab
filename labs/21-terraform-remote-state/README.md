@@ -2,173 +2,372 @@
 
 ## Status
 
-Em desenvolvimento.
+Concluído e validado em 04/10/2026.
 
-A estrutura inicial foi criada. As configurações, os scripts e os procedimentos executáveis serão adicionados nas próximas etapas.
+O laboratório demonstrou a migração de um estado local para Amazon S3, a preservação da identidade do recurso e o bloqueio de operações concorrentes.
 
-Os resultados e as evidências permanecem pendentes.
+O cleanup foi concluído: o recurso do exercício, todas as versões e marcadores de exclusão do bucket e os seis recursos do bootstrap foram removidos. A ausência do bucket foi confirmada por consulta independente à AWS.
 
 ---
 
 ## Objetivo
 
-Implementar armazenamento remoto do estado do Terraform em Amazon S3, com versionamento, proteção de acesso e bloqueio de operações concorrentes.
+Implementar armazenamento remoto do estado do Terraform em Amazon S3, com versionamento, proteção de acesso e bloqueio nativo.
 
-O laboratório demonstrará:
+O laboratório validou:
 
 - provisionamento separado dos recursos do backend;
-- criação de um recurso de exercício com estado local;
-- migração desse estado para o backend S3;
-- preservação da identidade do recurso durante a migração;
-- validação do estado remoto;
-- teste controlado de bloqueio;
-- remoção do recurso de exercício;
-- cleanup separado dos recursos do backend.
+- criação de um recurso com estado local;
+- preservação de uma cópia do estado antes da migração;
+- migração do estado para S3;
+- preservação do identificador e dos outputs do recurso;
+- consulta independente do objeto de estado;
+- recusa de uma operação concorrente por conflito de bloqueio;
+- liberação do bloqueio após cancelamento controlado;
+- remoção do exercício e cleanup separado do backend.
 
 ---
 
 ## Cenário
 
-O laboratório utilizará duas configurações Terraform independentes.
+Foram utilizadas duas configurações Terraform independentes.
 
-| Configuração | Diretório | Estado | Responsabilidade |
-|:---:|:---:|:---:|:---:|
-| Bootstrap | `bootstrap/` | Local | Provisionar e remover o armazenamento do backend |
-| Exercício | `terraform/` | Local inicialmente; remoto após a migração | Gerenciar um recurso `terraform_data` e validar o backend |
+| Configuração | Diretório | Estado utilizado | Responsabilidade |
+|---|---|---|---|
+| Bootstrap | `bootstrap/` | Local durante toda a execução | Provisionar e remover o bucket e suas configurações |
+| Exercício | `terraform/` | Local no baseline; S3 após a migração | Gerenciar `terraform_data.lab21` e testar o backend |
 
-O bootstrap criará um bucket S3 exclusivo para o Lab 21.
+O bootstrap provisionou um bucket exclusivo para o LAB 21.
 
-O exercício utilizará um recurso `terraform_data`, permitindo observar a migração e o bloqueio do estado sem provisionar uma nova aplicação EC2.
+O exercício utilizou o recurso integrado `terraform_data`, sem necessidade de provisionar uma aplicação EC2.
 
-O estado do bootstrap permanecerá local durante todo o laboratório. O bucket não armazenará o estado da configuração responsável por criá-lo.
-
----
-
-## Escopo
-
-### Recursos do backend
-
-- bucket S3 exclusivo;
-- versionamento habilitado;
-- criptografia padrão SSE-S3;
-- bloqueio de acesso público;
-- propriedade dos objetos com `BucketOwnerEnforced`;
-- política de bucket para negar requisições sem transporte seguro;
-- identificação por nomes e tags do laboratório.
-
-### Configuração do exercício
-
-- um recurso `terraform_data`;
-- workspace `default`;
-- estado local antes da migração;
-- backend S3 após a migração;
-- chave exclusiva para o estado;
-- bloqueio nativo do backend S3 com `use_lockfile = true`.
-
-### Fora do escopo
-
-- provisionamento de EC2;
-- implantação de aplicação web;
-- alterações na rede compartilhada do Lab 08;
-- migração dos estados dos Labs 19 ou 20;
-- alteração de recursos de outros projetos;
-- adoção do backend por outros laboratórios;
-- configuração de múltiplos workspaces.
+O bucket não armazenou o estado da configuração responsável por criá-lo. Essa separação permitiu remover o backend mantendo disponível o estado local do bootstrap.
 
 ---
 
-## Ambiente de referência
+## Ambiente validado
 
-| Componente | Referência |
-|:---:|:---:|
+| Componente | Valor utilizado |
+|---|---|
 | Sistema operacional | Windows 11 |
 | Shell | Windows PowerShell 5.1 |
-| Terraform | Versão 1.16.1 utilizada nos laboratórios anteriores |
-| AWS CLI | AWS CLI v2 |
+| Terraform | 1.16.1 |
+| Provider AWS do bootstrap | 6.67.0 |
+| Restrição do provider AWS | `~> 6.0` |
+| Restrição do Terraform | `>= 1.16.1, < 1.17.0` |
+| AWS CLI | v2 |
 | Autenticação | AWS IAM Identity Center |
 | Perfil AWS | `cloud-operations-lab` |
 | Região | `us-east-1` |
 | Workspace | `default` |
-| Provider AWS | Dependência definida e registrada no lock do bootstrap |
-| Recurso do exercício | `terraform_data` |
+| Responsável | `itamarsb` |
 
-A versão efetivamente utilizada do provider será registrada após a inicialização do bootstrap.
+A versão do provider e seus hashes estão registrados em `bootstrap/.terraform.lock.hcl`.
 
 ---
 
 ## Organização
 
 | Caminho | Finalidade |
-|:---:|:---:|
-| `README.md` | Objetivo, cenário, sequência, proteções e resultados |
-| `bootstrap/` | Configuração dos recursos AWS do backend |
-| `terraform/` | Configuração do recurso de exercício |
-| `scripts/` | Pré-validações e verificações independentes |
-| `images/` | Evidências de execução |
+|---|---|
+| `README.md` | Cenário, procedimentos, resultados e evidências |
+| `bootstrap/main.tf` | Bucket S3 e configurações de proteção |
+| `bootstrap/providers.tf` | Perfil, Região, conta autorizada e tags |
+| `bootstrap/variables.tf` | Parâmetros e validações de entrada |
+| `bootstrap/outputs.tf` | Identificação do bucket e parâmetros do backend |
+| `bootstrap/versions.tf` | Versões exigidas e backend local |
+| `bootstrap/.terraform.lock.hcl` | Seleção e hashes do provider AWS |
+| `terraform/main.tf` | Recurso `terraform_data.lab21` |
+| `terraform/outputs.tf` | Identificador e resumo do exercício |
+| `terraform/versions.tf` | Versão exigida e backend S3 |
+| `scripts/test-aws-terraform-remote-state-prerequisites.ps1` | Pré-validação do ambiente |
+| `scripts/test-aws-terraform-state-bucket.ps1` | Validação independente do bucket |
+| `images/` | Evidências publicadas |
+| `local-artifacts/` | Cópias e registros locais fora do versionamento |
 
-Os arquivos Terraform e os scripts serão adicionados durante a implementação.
+---
+
+## Recursos e proteções
+
+O bootstrap gerenciou seis recursos:
+
+1. `aws_s3_bucket.state`
+2. `aws_s3_bucket_public_access_block.state`
+3. `aws_s3_bucket_ownership_controls.state`
+4. `aws_s3_bucket_versioning.state`
+5. `aws_s3_bucket_server_side_encryption_configuration.state`
+6. `aws_s3_bucket_policy.state`
+
+As seguintes proteções foram conferidas:
+
+- quatro bloqueios de acesso público habilitados;
+- política classificada pelo S3 como não pública;
+- propriedade dos objetos com `BucketOwnerEnforced`;
+- versionamento habilitado;
+- criptografia padrão SSE-S3 com `AES256`;
+- política `DenyInsecureTransport` para o bucket e seus objetos;
+- identificação por tags do projeto, laboratório e responsável;
+- restrição de conta no provider;
+- workspace `default`;
+- `force_destroy = false`.
+
+O exercício utilizou uma única instância de `terraform_data.lab21`.
+
+### Caminhos do backend
+
+| Elemento | Padrão |
+|---|---|
+| Bucket | `lab21-terraform-state-<ACCOUNT_ID>-us-east-1` |
+| Estado | `lab21/exercise/terraform.tfstate` |
+| Bloqueio | `lab21/exercise/terraform.tfstate.tflock` |
+
+A configuração do backend incluiu:
+
+- `profile = "cloud-operations-lab"`;
+- `region = "us-east-1"`;
+- `allowed_account_ids` com a conta autorizada;
+- `encrypt = true`;
+- `use_lockfile = true`.
 
 ---
 
 ## Conceitos demonstrados
 
 | Elemento | Função |
-|:---:|:---:|
+|---|---|
 | Configuração `.tf` | Define os recursos e o comportamento desejado |
-| Estado | Registra os recursos gerenciados e seus atributos |
+| Estado | Registra recursos gerenciados e seus atributos |
 | Backend | Define onde o estado é armazenado |
-| Plano salvo | Registra uma proposta de mudanças para aplicação |
-| `.terraform.lock.hcl` | Registra as versões e os hashes dos providers |
-| Objeto `.tflock` | Participa do bloqueio de operações sobre o estado no backend S3 |
-| Versionamento S3 | Mantém versões anteriores dos objetos armazenados |
+| Plano salvo | Registra as ações propostas para aplicação |
+| `.terraform.lock.hcl` | Registra versões e hashes dos providers |
+| Objeto `.tflock` | Coordena operações concorrentes sobre o estado no S3 |
+| Versionamento S3 | Preserva versões anteriores dos objetos |
 
 O lock de dependências e o bloqueio do estado têm finalidades diferentes.
 
-O primeiro controla a seleção dos providers. O segundo coordena operações concorrentes sobre o mesmo estado.
-
-O armazenamento remoto também não implica execução remota: os comandos Terraform deste laboratório serão executados na estação de trabalho.
+O armazenamento remoto do estado também não implica execução remota. Os comandos deste laboratório foram executados na estação Windows.
 
 ---
 
-## Autenticação e acesso
+## Sequência executada
 
-A autenticação utilizará sessões temporárias do perfil AWS SSO.
+### 1. Pré-validação
 
-Credenciais não serão inseridas nos arquivos Terraform, nos parâmetros do backend ou na documentação.
+Foram conferidos o ambiente, a autenticação, a conta, a Região, o workspace, os arquivos necessários e as condições iniciais do laboratório.
 
-O acesso deverá permitir:
+Estados, planos e arquivos locais do backend permaneceram fora do versionamento.
 
-- provisionamento e consulta dos recursos exclusivos do bootstrap;
-- leitura e gravação do estado no caminho definido;
-- criação, leitura e remoção do objeto de bloqueio;
-- consulta das versões dos objetos para validação;
-- remoção dos objetos e de suas versões durante o cleanup autorizado.
+### 2. Provisionamento do bootstrap
 
-As permissões de operação do backend e as permissões de provisionamento serão avaliadas separadamente.
+A configuração foi inicializada, formatada e validada.
 
-A existência de uma sessão SSO válida não comprova, por si só, autorização para todas essas operações.
+O plano salvo foi revisado antes da aplicação:
+
+```text
+Plan: 6 to add, 0 to change, 0 to destroy.
+```
+
+Após o provisionamento, o validador independente conferiu a identidade AWS, as proteções, as tags e a ausência inicial de versões e marcadores de exclusão.
+
+A variável `expected_account_id` é obrigatória nos planos do bootstrap, inclusive nos planos de remoção.
+
+### 3. Baseline com estado local
+
+O exercício foi inicialmente executado com backend local.
+
+O plano salvo propôs:
+
+```text
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
+
+A aplicação criou `terraform_data.lab21`.
+
+O identificador e os outputs foram registrados. Um segundo plano confirmou ausência de mudanças.
+
+A cópia do estado local foi comparada com o original por SHA256.
+
+Registros locais:
+
+- `local-artifacts/lab21-before-migration.tfstate`
+- `local-artifacts/lab21-local-outputs.json`
+
+### 4. Migração para S3
+
+O backend do exercício foi alterado para:
+
+```hcl
+backend "s3" {}
+```
+
+Os parâmetros foram obtidos dos outputs do bootstrap e gravados no arquivo local `terraform/lab21.s3.tfbackend.json`.
+
+A migração utilizou:
+
+```powershell
+terraform "-chdir=$ExercisePath" init `
+    "-migrate-state" `
+    "-backend-config=$BackendPath"
+```
+
+A transferência foi confirmada no prompt do Terraform.
+
+Após a migração, foram conferidos:
+
+- backend S3 inicializado;
+- bucket e chave esperados;
+- workspace `default`;
+- bloqueio nativo habilitado;
+- mesmo recurso e identificador do baseline;
+- mesmos outputs;
+- plano sem mudanças.
+
+Planos criados antes da mudança de backend não foram reutilizados após a migração.
+
+### 5. Validação independente do estado remoto
+
+A consulta `head-object` confirmou que o objeto inicial do estado remoto apresentava:
+
+| Atributo | Resultado |
+|---|---|
+| Chave | `lab21/exercise/terraform.tfstate` |
+| Tamanho | 2.625 bytes |
+| Criptografia | `AES256` |
+| VersionId | Presente e válido |
+
+Também foi confirmada a ausência de um objeto `.tflock` ativo após as operações.
+
+### 6. Teste controlado de bloqueio
+
+O teste foi realizado em dois terminais sobre o mesmo backend.
+
+No terminal A, foi iniciada uma aplicação interativa com substituição proposta do recurso:
+
+```powershell
+terraform "-chdir=.\labs\21-terraform-remote-state\terraform" apply `
+    "-replace=terraform_data.lab21" `
+    "-lock=true" `
+    "-input=true" `
+    "-auto-approve=false"
+```
+
+A operação ficou aguardando resposta no prompt de aprovação.
+
+Enquanto esse prompt permanecia aberto, o terminal B confirmou a existência do objeto `.tflock` no S3 e executou:
+
+```powershell
+terraform "-chdir=.\labs\21-terraform-remote-state\terraform" plan `
+    "-input=false" `
+    "-lock-timeout=5s" `
+    "-no-color"
+```
+
+A segunda operação foi recusada com:
+
+```text
+Error acquiring the state lock
+StatusCode: 412
+PreconditionFailed
+Operation: OperationTypeApply
+```
+
+No terminal A, a resposta `no` cancelou a aplicação e liberou o bloqueio.
+
+Depois da liberação, um novo plano foi executado com sucesso, sem mudanças e com o identificador original preservado.
+
+A substituição proposta não foi aplicada.
+
+Uma tentativa anterior com `terraform console` não apresentou objeto `.tflock` ativo no ambiente observado. Essa tentativa foi tratada como diagnóstico; a comprovação do bloqueio veio da aplicação interativa aguardando aprovação.
+
+O teste não utilizou `-lock=false`, exclusão manual de bloqueio ativo ou `force-unlock`.
+
+### 7. Remoção do exercício
+
+O plano de remoção foi gerado usando o backend remoto:
+
+```text
+Plan: 0 to add, 0 to change, 1 to destroy.
+```
+
+Após a revisão, o plano salvo foi aplicado:
+
+```text
+Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
+```
+
+Foram confirmados:
+
+- ausência de recursos no estado do exercício;
+- remoção dos outputs;
+- preservação da cópia final em `local-artifacts/lab21-after-destroy.tfstate`.
+
+### 8. Limpeza do conteúdo do bucket
+
+O inventário completo identificou:
+
+| Tipo | Quantidade |
+|---|---:|
+| Versões do objeto de estado | 2 |
+| Versões antigas do objeto de bloqueio | 6 |
+| Marcadores de exclusão do bloqueio | 6 |
+| Total | 14 |
+
+Somente as chaves do estado e do bloqueio do LAB 21 estavam presentes.
+
+O inventário e a solicitação de exclusão foram preservados localmente:
+
+- `local-artifacts/lab21-before-bucket-cleanup.json`
+- `local-artifacts/lab21-delete-versions.json`
+
+Os 14 itens foram excluídos por chave e `VersionId`.
+
+A resposta foi conferida quanto a erros individuais. Uma nova consulta confirmou ausência de versões e marcadores de exclusão.
+
+### 9. Remoção do bootstrap
+
+Com o bucket vazio, suas proteções e propriedade foram novamente validadas.
+
+O plano salvo propôs:
+
+```text
+Plan: 0 to add, 0 to change, 6 to destroy.
+```
+
+Após a revisão, a aplicação concluiu:
+
+```text
+Apply complete! Resources: 0 added, 0 changed, 6 destroyed.
+```
+
+A validação final confirmou:
+
+- nenhum recurso gerenciado no estado local do bootstrap;
+- outputs removidos;
+- cópia final preservada em `local-artifacts/lab21-bootstrap-after-destroy.tfstate`;
+- bucket ausente na listagem da conta AWS autenticada.
 
 ---
 
-## Proteções
+## Estado atual e reprodução
 
-- validação da conta e da Região antes das operações AWS;
-- uso exclusivo do workspace `default`;
-- configurações e estados separados para bootstrap e exercício;
-- identificação explícita do bucket e da chave do estado;
-- revisão dos planos antes da aplicação;
-- versionamento e criptografia do bucket;
-- bloqueio de acesso público;
-- exigência de transporte seguro;
-- cópia de segurança local antes da migração;
-- conferência do recurso e de seu identificador após a migração;
-- manutenção do bloqueio durante as operações;
-- inventário de objetos e versões antes do cleanup;
-- remoção do backend somente após encerrar sua utilização.
+Os recursos AWS do LAB 21 foram removidos. Os arquivos de configuração e as evidências permanecem no repositório.
 
-O teste de concorrência não utilizará `-lock=false`.
+A configuração versionada do exercício está com backend S3, representando a etapa posterior à migração.
 
-A remoção manual do objeto de bloqueio e o uso de `force-unlock` não farão parte do fluxo normal do laboratório.
+Para repetir o laboratório desde o baseline:
+
+1. Conferir e separar os estados e artefatos locais da execução anterior.
+2. Provisionar novamente o bootstrap com a conta autorizada.
+3. Configurar o exercício com backend local antes de criar o baseline.
+4. Criar o recurso, registrar os outputs e preservar a cópia do estado.
+5. Alterar o backend do exercício para S3.
+6. Inicializar com `-migrate-state` e conferir a identidade do recurso.
+7. Executar o teste de bloqueio e as validações.
+8. Realizar o cleanup na ordem documentada.
+
+Não utilizar `init -reconfigure` como substituto da migração do estado existente.
+
+A configuração S3 exige um bucket disponível. Após o cleanup, novas operações no exercício dependem da preparação de um novo ciclo do laboratório.
 
 ---
 
@@ -177,194 +376,109 @@ A remoção manual do objeto de bloqueio e o uso de `force-unlock` não farão p
 ### Arquivos versionados
 
 - configurações Terraform;
-- modelos de parâmetros sem credenciais;
 - scripts PowerShell;
 - documentação;
-- `.terraform.lock.hcl` quando gerado para as dependências do bootstrap;
+- lock de dependências do bootstrap;
 - evidências revisadas.
 
 ### Arquivos locais fora do versionamento
 
-- estados e backups de estado;
+- estados e backups;
 - planos salvos;
 - diretórios `.terraform/`;
-- arquivos locais de parâmetros;
+- parâmetros locais;
 - configuração local do backend;
-- cópias do estado obtidas para inspeção;
-- arquivos temporários de diagnóstico.
+- inventários e solicitações de cleanup;
+- registros em `local-artifacts/`.
 
-Antes da execução, as regras do `.gitignore` serão verificadas para os dois diretórios Terraform.
+Estados e planos podem conter informações sensíveis. O conteúdo integral desses arquivos não foi utilizado como evidência publicada.
 
-Estados e planos podem conter informações sensíveis. Sua publicação não será utilizada como evidência.
+Os registros JSON locais foram gravados em UTF-8 sem BOM.
 
----
-
-## Sequência de execução
-
-### 1. Pré-validação
-
-- conferir o estado do repositório;
-- verificar Terraform e AWS CLI;
-- autenticar pelo perfil SSO;
-- validar conta e Região;
-- conferir os diretórios e arquivos necessários;
-- verificar os estados locais existentes;
-- consultar possíveis conflitos com os recursos exclusivos;
-- validar as regras de proteção dos arquivos gerados.
-
-### 2. Provisionamento do bootstrap
-
-- inicializar a configuração;
-- registrar o lock de dependências;
-- conferir formatação e validade;
-- gerar e revisar o plano salvo;
-- aplicar somente o plano analisado;
-- validar o bucket e suas proteções;
-- registrar os outputs necessários ao backend.
-
-### 3. Baseline com estado local
-
-- inicializar a configuração do exercício com backend local;
-- gerar e revisar o plano;
-- criar o recurso `terraform_data`;
-- registrar seu identificador e seus outputs;
-- confirmar ausência de mudanças em um segundo plano;
-- preservar uma cópia do estado local.
-
-### 4. Migração para S3
-
-- configurar o backend S3;
-- definir bucket, chave, Região e bloqueio;
-- executar a inicialização com migração de estado;
-- revisar e confirmar a transferência apresentada pelo Terraform;
-- conferir o recurso e seu identificador no backend remoto;
-- validar os outputs;
-- confirmar ausência de mudanças após a migração;
-- verificar o objeto do estado no bucket.
-
-A migração deverá preservar a identidade do recurso existente.
-
-Planos gerados antes da mudança de backend não serão reutilizados após a migração.
-
-### 5. Teste de bloqueio
-
-O teste utilizará duas sessões sobre o mesmo backend e a mesma chave de estado.
-
-- iniciar uma operação Terraform controlada que mantenha o bloqueio;
-- confirmar que o bloqueio foi adquirido;
-- executar uma segunda operação com tempo de espera limitado;
-- registrar a recusa por impossibilidade de adquirir o bloqueio;
-- permitir que a primeira operação termine normalmente;
-- verificar a liberação do bloqueio;
-- repetir a verificação após a liberação e confirmar sucesso.
-
-Um erro de autenticação, acesso ou configuração não será aceito como evidência de bloqueio.
-
-A conclusão do teste dependerá da observação do conflito e da operação bem-sucedida após a liberação.
-
-### 6. Validação independente
-
-- confirmar o backend utilizado;
-- conferir bucket, chave e workspace;
-- consultar o recurso gerenciado;
-- comparar seu identificador com o baseline;
-- validar os outputs;
-- verificar versionamento e criptografia;
-- conferir as proteções do bucket;
-- confirmar ausência de bloqueio ativo após as operações;
-- gerar um plano sem mudanças.
-
-### 7. Remoção do exercício
-
-- gerar um plano de remoção usando o backend remoto;
-- revisar o recurso e a ação proposta;
-- aplicar o plano salvo;
-- confirmar ausência de recursos gerenciados no estado do exercício;
-- preservar o registro final necessário à validação;
-- encerrar as operações que dependem do backend.
-
-A remoção do recurso de exercício não representa a remoção do bucket ou de todas as versões do estado.
-
-### 8. Cleanup do backend
-
-- confirmar que nenhuma operação Terraform utiliza o backend;
-- validar identidade, propriedade e escopo do bucket;
-- inventariar objetos, versões e marcadores de exclusão;
-- preservar a cópia final necessária antes da exclusão;
-- remover somente o conteúdo autorizado do bucket exclusivo;
-- gerar e revisar o plano de remoção do bootstrap;
-- aplicar o plano analisado;
-- confirmar ausência do bucket;
-- confirmar ausência de recursos gerenciados no estado do bootstrap;
-- preservar os arquivos de configuração.
-
-A ordem de cleanup será: exercício, conteúdo do bucket e recursos do bootstrap.
+Nos comandos PowerShell, os argumentos com `=` foram passados como strings, inclusive por arrays, para evitar problemas de interpretação.
 
 ---
 
 ## Critérios de conclusão
 
-- [ ] Pré-validação concluída.
-- [ ] Bootstrap provisionado e validado.
-- [ ] Lock de dependências do bootstrap registrado.
-- [ ] Bucket privado, versionado e criptografado.
-- [ ] Política de transporte seguro validada.
-- [ ] Recurso do exercício criado com estado local.
-- [ ] Identificador e outputs do baseline registrados.
-- [ ] Cópia do estado local preservada antes da migração.
-- [ ] Migração para S3 concluída.
-- [ ] Identidade do recurso preservada.
-- [ ] Estado remoto validado.
-- [ ] Conflito de bloqueio observado em teste controlado.
-- [ ] Operação bem-sucedida após a liberação do bloqueio.
-- [ ] Plano sem mudanças confirmado.
-- [ ] Recurso do exercício removido pelo Terraform.
-- [ ] Estado final do exercício validado.
-- [ ] Objetos, versões e marcadores exclusivos removidos.
-- [ ] Recursos do bootstrap removidos.
-- [ ] Validação pós-cleanup concluída.
-- [ ] Arquivos de configuração preservados.
-- [ ] Evidências revisadas e publicadas.
+- [x] Pré-validação concluída.
+- [x] Bootstrap provisionado e validado.
+- [x] Lock de dependências do bootstrap registrado.
+- [x] Bucket privado, versionado e criptografado.
+- [x] Política de transporte seguro validada.
+- [x] Recurso do exercício criado com estado local.
+- [x] Identificador e outputs do baseline registrados.
+- [x] Cópia do estado local preservada antes da migração.
+- [x] Migração para S3 concluída.
+- [x] Identidade do recurso preservada.
+- [x] Estado remoto validado.
+- [x] Conflito de bloqueio observado em teste controlado.
+- [x] Operação bem-sucedida após a liberação do bloqueio.
+- [x] Plano sem mudanças confirmado.
+- [x] Recurso do exercício removido pelo Terraform.
+- [x] Estado final do exercício validado.
+- [x] Objetos, versões e marcadores exclusivos removidos.
+- [x] Recursos do bootstrap removidos.
+- [x] Validação pós-cleanup concluída.
+- [x] Arquivos de configuração preservados.
+- [x] Evidências publicadas.
 
 ---
 
-## Evidências previstas
+## Evidências
+
+As evidências estão disponíveis em `images/`. A seleção abaixo apresenta as principais etapas concluídas.
 
 | Etapa | Evidência |
-|:---:|:---:|
-| Pré-validação | Ferramentas, identidade e ausência de conflitos |
-| Bootstrap | Plano, aplicação e proteções do bucket |
-| Baseline local | Recurso, identificador, outputs e plano sem mudanças |
-| Migração | Transferência do estado e identidade preservada |
-| Estado remoto | Consulta pelo Terraform e objeto S3 |
-| Bloqueio | Conflito entre operações e liberação posterior |
-| Validação | Backend, outputs e plano sem mudanças |
-| Cleanup | Remoção do exercício e do bootstrap |
-| Pós-cleanup | Ausência dos recursos exclusivos e configurações preservadas |
+|---|---|
+| Aplicação do bootstrap | [Criação dos recursos](images/Clipboard_10-04-2026_42.png) |
+| Plano do baseline local | [Criação do exercício](images/Clipboard_10-04-2026_44.png) |
+| Baseline local | [Aplicação, identificador e cópia do estado](images/Clipboard_10-04-2026_45.png) |
+| Migração | [Transferência para S3 e validação](images/Clipboard_10-04-2026_46.png) |
+| Objeto remoto | [Versionamento, criptografia e ausência de bloqueio ativo](images/Clipboard_10-04-2026_47.png) |
+| Bloqueio concorrente | [Objeto de bloqueio e recusa da segunda operação](images/Clipboard_10-04-2026_52.png) |
+| Liberação do bloqueio | [Plano sem mudanças e identificador preservado](images/Clipboard_10-04-2026_53.png) |
+| Plano de remoção do exercício | [Uma remoção proposta](images/Clipboard_10-04-2026_54.png) |
+| Remoção do exercício | [Estado final vazio e cópia preservada](images/Clipboard_10-04-2026_55.png) |
+| Inventário do bucket | [Versões e marcadores de exclusão](images/Clipboard_10-04-2026_56.png) |
+| Limpeza do conteúdo | [14 exclusões e bucket vazio](images/Clipboard_10-04-2026_57.png) |
+| Plano de remoção do bootstrap | [Seis remoções propostas](images/Clipboard_10-04-2026_60.png) |
+| Cleanup final | [Seis recursos removidos e bucket ausente](images/Clipboard_10-04-2026_61.png) |
 
-As imagens serão adicionadas ao diretório `images/` após a execução.
-
-Credenciais, URLs de autenticação e conteúdo integral dos estados não deverão aparecer nas evidências publicadas.
+As capturas de tentativas e diagnósticos também permanecem no diretório. Os resultados aceitos como comprovação são os associados às etapas concluídas acima.
 
 ---
 
 ## Custos e limites
 
-Os recursos AWS deste laboratório estarão concentrados no armazenamento S3 e nas requisições relacionadas ao backend.
+Os recursos AWS deste laboratório ficaram concentrados no armazenamento S3 e nas requisições relacionadas ao backend.
 
-O versionamento mantém versões anteriores que também ocupam armazenamento. O cleanup deverá considerar todas as versões e os marcadores de exclusão.
+O versionamento preservou versões anteriores do estado e do bloqueio. Por isso, o cleanup considerou tanto versões de objetos quanto marcadores de exclusão.
 
-O laboratório não estabelecerá uma solução de backend compartilhado para produção. O exercício utilizará um bucket exclusivo e um ciclo de vida limitado à atividade.
+O laboratório utilizou um bucket exclusivo e um ciclo de vida limitado à atividade. Uma adoção em produção exige definição própria de permissões, retenção, recuperação e governança.
 
-A validação do bloqueio demonstrará coordenação entre operações sobre o mesmo estado. Não substituirá controles de acesso, revisão de mudanças ou proteção das credenciais.
+O bloqueio coordena operações sobre o mesmo estado. Ele não substitui controles de acesso ou revisão dos planos.
 
 ---
 
 ## Resultados
 
-Execução pendente.
+| Validação | Resultado |
+|---|---|
+| Bootstrap | Seis recursos provisionados e validados |
+| Baseline | Um recurso criado com estado local |
+| Migração | Estado transferido para S3 |
+| Identidade | Identificador e outputs preservados |
+| Convergência | Planos sem mudanças antes e depois da migração |
+| Objeto remoto | VersionId válido e criptografia AES256 |
+| Concorrência | Segunda operação recusada por conflito de bloqueio |
+| Liberação | Aplicação cancelada e operação seguinte bem-sucedida |
+| Exercício | Recurso removido e estado final preservado |
+| Conteúdo do bucket | 14 versões e marcadores excluídos |
+| Bootstrap | Seis recursos removidos |
+| Pós-cleanup | Bucket ausente na conta AWS |
 
-Os resultados observados, as versões utilizadas, as evidências e a confirmação de cleanup serão registrados após a execução.
+A execução demonstrou a separação entre o ciclo de vida do backend e o ciclo de vida dos recursos que utilizam seu estado.
 
 ---
 
@@ -372,5 +486,9 @@ Os resultados observados, as versões utilizadas, as evidências e a confirmaç�
 
 - [Backend S3 — HashiCorp](https://developer.hashicorp.com/terraform/language/backend/s3)
 - [Comando terraform init — HashiCorp](https://developer.hashicorp.com/terraform/cli/commands/init)
+- [Comando terraform plan — HashiCorp](https://developer.hashicorp.com/terraform/cli/commands/plan)
+- [Comando terraform apply — HashiCorp](https://developer.hashicorp.com/terraform/cli/commands/apply)
 - [Bloqueio de estado — HashiCorp](https://developer.hashicorp.com/terraform/language/state/locking)
 - [Estado do Terraform — HashiCorp](https://developer.hashicorp.com/terraform/language/state)
+- [Listagem de versões — AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/list-object-versions.html)
+- [Exclusão de versões — AWS CLI](https://docs.aws.amazon.com/cli/latest/reference/s3api/delete-objects.html)
