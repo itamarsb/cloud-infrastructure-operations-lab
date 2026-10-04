@@ -80,7 +80,7 @@ O estado do bootstrap permanecerá local durante todo o laboratório. O bucket n
 ## Ambiente de referência
 
 | Componente | Referência |
-|---|---|
+|:---:|:---:|
 | Sistema operacional | Windows 11 |
 | Shell | Windows PowerShell 5.1 |
 | Terraform | Versão 1.16.1 utilizada nos laboratórios anteriores |
