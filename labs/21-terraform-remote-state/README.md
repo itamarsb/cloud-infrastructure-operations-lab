@@ -99,7 +99,7 @@ A versão efetivamente utilizada do provider será registrada após a inicializa
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Objetivo, cenário, sequência, proteções e resultados |
 | `bootstrap/` | Configuração dos recursos AWS do backend |
 | `terraform/` | Configuração do recurso de exercício |
