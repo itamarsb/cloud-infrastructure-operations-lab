@@ -477,7 +477,7 @@ Os identificadores abaixo representam a execução concluída, não recursos atu
 ### Rede compartilhada conferida
 
 | Componente | Identificador |
-|:---|:---|
+|:---:|:---:|
 | VPC | `vpc-0aad44f1f16b804ad` |
 | Sub-rede | `subnet-04048dcc4a1a66b63` |
 | Tabela de rotas | `rtb-066dd13c45a54d908` |
