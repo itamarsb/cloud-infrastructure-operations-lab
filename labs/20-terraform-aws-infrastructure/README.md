@@ -34,7 +34,7 @@ O exercício demonstra:
 ### Recursos gerenciados
 
 | Endereço Terraform | Finalidade |
-|:---|:---|
+|:---:|:---:|
 | `aws_iam_role.ec2` | Identidade assumida pela instância EC2 |
 | `aws_iam_role_policy_attachment.ssm` | Associação da política do Systems Manager |
 | `aws_iam_instance_profile.ec2` | Associação da role à instância |
