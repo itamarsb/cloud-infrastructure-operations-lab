@@ -396,7 +396,7 @@ O volume root é removido junto com a instância por `DeleteOnTermination`.
 Executar `test-aws-terraform-cleanup.ps1`, fornecendo os identificadores registrados antes da remoção.
 
 | Parâmetro | Recurso conferido |
-|:---|:---|
+|:---:|:---:|
 | `InstanceId` | Instância encerrada ou ausente |
 | `RootVolumeId` | Volume root ausente |
 | `SecurityGroupId` | Security Group ausente |
