@@ -463,7 +463,7 @@ Execução concluída em **03/10/2026**, horário de Brasília.
 Os identificadores abaixo representam a execução concluída, não recursos atualmente ativos.
 
 | Recurso | Identificador |
-|:---|:---|
+|:---:|:---:|
 | AMI | `ami-03c3da4cfa8e8943a` |
 | EC2 | `i-0c475d31607b9c8ef` |
 | Volume root | `vol-02959389c8ecdb3d7` |
