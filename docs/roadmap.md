@@ -28,7 +28,7 @@ Os laboratórios priorizam:
 ## Módulo 00 — Preparação e acesso
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Concluído | **Lab 00 — Preparação da estação de trabalho** | Git, VS Code, PowerShell e organização local |
 | Concluído | **Lab 01 — Configuração segura da conta AWS** | Proteção da conta e acesso administrativo |
 | Concluído | **Lab 02 — AWS CLI e autenticação por SSO** | Perfis, sessões temporárias e validação de identidade |
@@ -39,7 +39,7 @@ Os laboratórios priorizam:
 ## Módulo 01 — Operações Linux
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Concluído | **Lab 04 — Arquivos e diretórios** | Navegação, busca, cópia, movimentação e remoção |
 | Concluído | **Lab 05 — Usuários, grupos e permissões** | Identidades, permissões e acesso compartilhado |
 | Concluído | **Lab 06 — Serviços e logs** | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
@@ -49,7 +49,7 @@ Os laboratórios priorizam:
 ## Módulo 02 — Infraestrutura AWS
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Concluído | **Lab 07 — Baseline operacional da conta AWS** | Inventário somente leitura de identidade, rede, recursos, segurança, tags, observabilidade e custos |
 | Concluído | **Lab 08 — Rede da aplicação** | VPC, sub-redes, rotas, Internet Gateway, Security Group, validação e cleanup |
 | Concluído | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role, Session Manager, validação e cleanup |
@@ -62,7 +62,7 @@ Os laboratórios priorizam:
 ## Módulo 03 — Operação e troubleshooting
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Concluído | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
 | Concluído | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
 | Concluído | **Lab 15 — Falha de conectividade** | Security Group, rota, Network ACL, serviço local, diagnóstico por camadas, recuperação e cleanup |
@@ -104,11 +104,11 @@ O módulo de operação e troubleshooting está concluído.
 ## Módulo 04 — Terraform
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Concluído | **Lab 19 — Fluxo essencial do Terraform** | Recurso local `terraform_data`, inicialização, formatação, validação, plano salvo, aplicação, estado, outputs e destroy |
 | Concluído | **Lab 20 — Infraestrutura AWS como código** | Provider AWS, lock de dependências, IAM, Security Group, regras, EC2 com Nginx, validação independente e cleanup |
-| Planejado | **Lab 21 — Estado remoto** | Armazenamento, bloqueio e proteção do estado |
-| Planejado | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização e reutilização |
+| Concluído | **Lab 21 — Estado remoto** | Bootstrap separado, S3 privado e versionado, migração do estado, identidade preservada, bloqueio concorrente e cleanup |
+| Planejado | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização, validação de entradas e reutilização |
 | Planejado | **Lab 23 — Mudanças e drift** | Comparação entre código, estado e ambiente |
 | Planejado | **Lab 24 — Validação automatizada** | Formatação, validação e verificação do código em pipeline |
 
@@ -161,6 +161,31 @@ A validação pós-cleanup confirmou:
 
 Os arquivos Terraform, os scripts de validação e as evidências estão no [README do Lab 20](../labs/20-terraform-aws-infrastructure/README.md).
 
+O **Lab 21** implementou um backend S3 exclusivo utilizando Terraform `1.16.1` e provider AWS `6.67.0`.
+
+O bootstrap manteve seu estado local durante toda a execução e provisionou seis recursos: bucket, bloqueio de acesso público, controle de propriedade dos objetos, versionamento, criptografia e política de transporte seguro.
+
+A validação independente confirmou bucket privado, versionamento habilitado, criptografia SSE-S3 `AES256`, propriedade `BucketOwnerEnforced`, tags esperadas e ausência inicial de versões e marcadores de exclusão.
+
+O exercício criou `terraform_data.lab21` com estado local. O identificador e os outputs foram registrados, um segundo plano confirmou ausência de mudanças, e uma cópia do estado foi conferida por SHA256.
+
+A migração para S3 preservou o identificador e os outputs. O backend utilizou `use_lockfile = true`, e a consulta independente ao objeto confirmou criptografia e identificador de versão.
+
+O teste de concorrência utilizou uma aplicação interativa aguardando aprovação no primeiro terminal. A existência do objeto `.tflock` foi confirmada no S3. Uma segunda operação, com espera limitada a cinco segundos, foi recusada com `Error acquiring the state lock` e `PreconditionFailed`.
+
+A resposta `no` cancelou a aplicação e liberou o bloqueio. Um novo plano foi executado com sucesso, sem mudanças e com o identificador original preservado.
+
+O cleanup seguiu esta ordem:
+
+1. Remoção do recurso do exercício pelo backend remoto.
+2. Preservação de uma cópia do estado final sem recursos e outputs.
+3. Inventário e exclusão de oito versões de objetos e seis marcadores de exclusão.
+4. Confirmação do bucket vazio.
+5. Aplicação do plano de remoção dos seis recursos do bootstrap.
+6. Validação do estado local final e confirmação independente da ausência do bucket na conta AWS.
+
+Os procedimentos, arquivos e evidências estão no [README do Lab 21](../labs/21-terraform-remote-state/README.md).
+
 O módulo de Terraform está em desenvolvimento.
 
 ---
@@ -168,7 +193,7 @@ O módulo de Terraform está em desenvolvimento.
 ## Módulo 05 — Monitoramento e logs
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Planejado | **Lab 25 — Métricas no CloudWatch** | Métricas, consultas e dashboard |
 | Planejado | **Lab 26 — CloudWatch Agent** | Memória, disco e coleta de logs |
 | Planejado | **Lab 27 — Alarmes e notificações** | Thresholds, alarmes e Amazon SNS |
@@ -181,7 +206,7 @@ O módulo de Terraform está em desenvolvimento.
 ## Módulo 06 — Docker
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Planejado | **Lab 31 — Containerização da aplicação** | Imagem, container e publicação |
 | Planejado | **Lab 32 — Configuração e persistência** | Variáveis, volumes e health checks |
 | Planejado | **Lab 33 — Docker Compose** | Administração de serviços relacionados |
@@ -192,7 +217,7 @@ O módulo de Terraform está em desenvolvimento.
 ## Módulo 07 — Segurança, custos e confiabilidade
 
 | Status | Laboratório | Conteúdo |
-|:---:|---|---|
+|---|---|---|
 | Planejado | **Lab 35 — Revisão de segurança** | IAM, credenciais, portas e acesso administrativo |
 | Planejado | **Lab 36 — Custos e recursos ociosos** | Tags, dimensionamento e oportunidades de redução |
 | Planejado | **Lab 37 — Melhoria de confiabilidade** | Análise de falhas e implementação de melhorias |
@@ -220,7 +245,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|:---:|:---:|
+|---|---|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
@@ -234,41 +259,46 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ### Resumo numérico
 
 | Indicador | Quantidade |
-|:---:|:---:|
-| Laboratórios concluídos | `21` |
+|---|---|
+| Laboratórios concluídos | `22` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `17` |
-| Último laboratório concluído | `Lab 20` |
-| Próximo laboratório | `Lab 21` |
+| Laboratórios planejados | `16` |
+| Último laboratório concluído | `Lab 21` |
+| Próximo laboratório | `Lab 22` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
-O módulo de Terraform está em desenvolvimento: os Labs 19 e 20 foram concluídos, enquanto os Labs 21 a 24 permanecem planejados.
+O módulo de Terraform está em desenvolvimento: os Labs 19, 20 e 21 foram concluídos, enquanto os Labs 22 a 24 permanecem planejados.
 
 ---
 
 ## Próxima etapa
 
-**Lab 21 — Estado remoto**
+**Lab 22 — Variáveis, outputs e módulos**
 
-O próximo laboratório amplia o fluxo dos Labs 19 e 20 com armazenamento remoto, bloqueio e proteção do estado do Terraform.
+O próximo laboratório amplia o trabalho com Terraform por meio de organização, parametrização e reutilização de configurações.
 
 O procedimento deverá incluir:
 
-- conferência do ambiente e dos pré-requisitos;
-- autenticação temporária e validação da conta e da Região;
-- definição dos recursos responsáveis pelo armazenamento do estado;
-- configuração de acesso, criptografia e proteção do armazenamento;
-- configuração do backend remoto e do mecanismo de bloqueio;
-- distinção entre arquivos de configuração, estado, planos e lock de dependências;
-- inicialização do backend e migração do estado quando aplicável;
-- validação do armazenamento remoto e do bloqueio;
-- geração e análise de planos;
-- aplicação e remoção dos recursos do exercício;
-- verificação do estado após a remoção;
-- definição da retenção e da remoção dos recursos do backend;
-- registro das evidências.
+- definição do cenário e do escopo;
+- conferência do ambiente e dos estados existentes;
+- separação entre módulo raiz e módulo reutilizável;
+- declaração de variáveis com tipos explícitos;
+- utilização de valores padrão e validação de entradas;
+- passagem de parâmetros do módulo raiz para o módulo filho;
+- exposição de resultados por outputs;
+- utilização dos outputs do módulo no módulo raiz;
+- organização dos arquivos de configuração;
+- conferência de formatação e validade;
+- geração e revisão de planos salvos;
+- aplicação e inspeção dos recursos e outputs;
+- teste de entradas válidas e inválidas;
+- confirmação de ausência de mudanças após a aplicação;
+- remoção dos recursos do exercício;
+- validação final e publicação das evidências.
 
-O ciclo de vida dos recursos que armazenam o estado deverá ser tratado explicitamente, considerando sua utilização durante as operações do Terraform.
+O desenho do laboratório deverá estabelecer explicitamente seu backend e o ciclo de vida dos recursos.
+
+O bucket removido no Lab 21 não estará disponível para reutilização automática.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de remoção.
