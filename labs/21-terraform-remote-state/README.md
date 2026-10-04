@@ -113,7 +113,7 @@ Os arquivos Terraform e os scripts serão adicionados durante a implementação.
 ## Conceitos demonstrados
 
 | Elemento | Função |
-|---|---|
+|:---:|:---:|
 | Configuração `.tf` | Define os recursos e o comportamento desejado |
 | Estado | Registra os recursos gerenciados e seus atributos |
 | Backend | Define onde o estado é armazenado |
