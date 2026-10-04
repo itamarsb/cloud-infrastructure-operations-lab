@@ -4,101 +4,99 @@
 
 Este laboratório aplica o fluxo de trabalho do Terraform ao provisionamento de uma aplicação Nginx na AWS.
 
-O escopo inclui recursos IAM, um Security Group e uma instância EC2 administrada pelo AWS Systems Manager, utilizando a rede compartilhada do Lab 08.
+A configuração gerencia sete recursos exclusivos: IAM Role, associação de política IAM, Instance Profile, Security Group, duas regras de tráfego e uma instância EC2. A VPC e a sub-rede pública do LAB 08 são consultadas como dependências existentes.
 
-O procedimento abrange autenticação temporária, validação da configuração, análise de plano salvo, aplicação, inspeção do estado, testes da aplicação e remoção dos recursos exclusivos.
+A execução contemplou autenticação temporária, validação da configuração, análise e aplicação de planos salvos, inspeção do estado e dos outputs, testes independentes da aplicação e remoção dos recursos exclusivos.
 
-**Estado:** em preparação. Estrutura criada; configuração e execução pendentes.
+**Estado:** concluído em 03/10/2026. Provisionamento, validação da aplicação, plano sem mudanças e cleanup executados. Rede compartilhada preservada.
 
-> **English summary:** AWS infrastructure exercise using Terraform to provision IAM resources, a Security Group and an EC2 instance running Nginx. The instance will use Systems Manager for administration and the shared network from Lab 08. Configuration and execution are pending.
+> **English summary:** Completed AWS infrastructure exercise using Terraform to provision seven managed resources for an EC2 instance running Nginx. Validation covered IAM, networking, encrypted storage, IMDSv2, Systems Manager and local/external HTTP responses. A subsequent plan reported no changes. All exclusive resources were removed, and post-cleanup checks confirmed that the shared network remained available.
 
 ## Objetivo
 
-Provisionar, validar e remover recursos AWS por meio de uma configuração Terraform, com revisão do plano, inspeção do estado e preservação da infraestrutura compartilhada.
+Provisionar, validar e remover recursos AWS por meio de uma configuração Terraform, com revisão dos planos, inspeção do estado e preservação da infraestrutura compartilhada.
 
-O exercício permite:
+O exercício demonstra:
 
-- configurar o provider AWS;
-- utilizar autenticação temporária por IAM Identity Center;
-- distinguir recursos gerenciados de dependências consultadas;
-- definir dependências entre IAM, segurança e EC2;
-- revisar um plano antes do provisionamento;
-- aplicar um plano salvo;
-- consultar recursos e outputs;
-- verificar a aplicação independentemente do resultado do apply;
-- conferir um segundo plano sem mudanças;
-- remover os recursos exclusivos pelo Terraform;
-- validar a preservação da rede compartilhada.
+- configuração do provider AWS;
+- autenticação temporária por IAM Identity Center;
+- distinção entre recursos gerenciados e dependências consultadas;
+- dependências entre IAM, segurança e EC2;
+- análise e aplicação de planos salvos;
+- consulta de estado e outputs;
+- validação operacional independente do resultado do apply;
+- verificação de um segundo plano sem mudanças;
+- remoção dos recursos exclusivos pelo Terraform;
+- validação da rede compartilhada após o cleanup.
 
 ## Escopo
 
-### Recursos exclusivos
+### Recursos gerenciados
 
-A configuração deverá gerenciar:
+| Endereço Terraform | Finalidade |
+|:---|:---|
+| `aws_iam_role.ec2` | Identidade assumida pela instância EC2 |
+| `aws_iam_role_policy_attachment.ssm` | Associação da política do Systems Manager |
+| `aws_iam_instance_profile.ec2` | Associação da role à instância |
+| `aws_security_group.application` | Security Group exclusivo |
+| `aws_vpc_security_group_ingress_rule.http` | Entrada TCP 80 para o IPv4 autorizado |
+| `aws_vpc_security_group_egress_rule.https` | Saída TCP 443 |
+| `aws_instance.application` | Instância EC2 com aplicação Nginx |
 
-| Componente | Finalidade |
-|:---:|:---:|
-| IAM Role | Identidade utilizada pela instância EC2 |
-| Associação de política IAM | Permissões necessárias ao Systems Manager |
-| Instance Profile | Associação da IAM Role à instância |
-| Security Group | Controle do tráfego da instância |
-| Regras do Security Group | Entrada HTTP restrita e saída definida |
-| Instância EC2 | Execução da aplicação Nginx |
-| Volume root da EC2 | Sistema operacional e arquivos da aplicação |
+O volume root é definido no bloco `root_block_device` da instância. Ele não constitui um oitavo recurso Terraform independente.
 
-O volume root será definido na configuração da instância, com criptografia e remoção no encerramento. Ele não deverá ser gerenciado simultaneamente como um volume independente.
+Sua configuração inclui:
 
-### Dependências compartilhadas
+- tipo `gp3`;
+- capacidade de 8 GiB;
+- criptografia;
+- remoção automática no encerramento da instância.
 
-A VPC e a sub-rede pública do Lab 08 serão consultadas como dependências existentes.
+### Dependências consultadas
 
-Esses recursos não serão declarados como recursos gerenciados pelo LAB 20 nem importados para seu estado.
+| Data source | Finalidade |
+|:---|:---|
+| `aws_caller_identity.current` | Consulta da identidade AWS |
+| `aws_vpc.shared` | Consulta da VPC do LAB 08 |
+| `aws_subnet.shared` | Consulta da sub-rede pública do LAB 08 |
+| `aws_ami.amazon_linux_2023` | Seleção da AMI Amazon Linux 2023 |
+
+A VPC e a sub-rede compartilhadas não são declaradas como recursos gerenciados pelo LAB 20 nem importadas para seu estado.
 
 Permanecem fora do escopo de alteração ou remoção:
 
-- VPC do Lab 08;
-- sub-redes compartilhadas;
-- Internet Gateway;
+- VPC e sub-redes do LAB 08;
+- Internet Gateway compartilhado;
 - tabelas de rotas;
 - Network ACLs;
 - recursos de outros laboratórios ou projetos.
 
 ### Fora do escopo
 
-Este laboratório não inclui:
+Este laboratório não inclui criação de VPC, Application Load Balancer, Auto Scaling, banco de dados, bucket de aplicação, estado remoto, módulos reutilizáveis, pipeline ou simulação de drift.
 
-- criação de uma nova rede VPC;
-- Application Load Balancer;
-- Auto Scaling;
-- banco de dados;
-- bucket de aplicação ou backup;
-- estado remoto;
-- módulos Terraform reutilizáveis;
-- pipeline de execução;
-- alterações manuais para simular drift.
-
-Estado remoto, módulos, drift e validação automatizada serão abordados nos próximos laboratórios.
-
-## Ambiente previsto
+## Ambiente utilizado
 
 | Item | Valor |
-|:---:|:---:|
+|:---|:---|
 | Sistema local | Windows |
 | Shell | Windows PowerShell 5.1 |
-| Terraform | Versão compatível com `versions.tf` |
-| Provider | `hashicorp/aws` |
+| Terraform | `1.16.1`, plataforma `windows_amd64` |
+| Provider AWS | `hashicorp/aws` versão `6.67.0` |
+| Restrição do provider | `~> 6.0` |
 | Perfil AWS | `cloud-operations-lab` |
 | Região | `us-east-1` |
+| Zona da instância | `us-east-1a` |
 | Workspace | `default` |
+| Estado Terraform | Local |
 | Sistema da instância | Amazon Linux 2023 |
 | Tipo da instância | `t3.micro` |
 | Aplicação | Nginx |
 | Administração | AWS Systems Manager |
-| Estado Terraform | Local |
 
-A versão do provider será definida na configuração e registrada no arquivo de dependências após a inicialização.
+A seleção do provider está registrada em `.terraform.lock.hcl`, incluindo seus hashes.
 
-A AMI será consultada durante o planejamento. Seu identificador será registrado nos resultados da execução.
+A AMI é consultada durante o planejamento. A execução documentada utilizou `ami-03c3da4cfa8e8943a`.
 
 ## Pré-requisitos
 
@@ -107,130 +105,119 @@ A AMI será consultada durante o planejamento. Seu identificador será registrad
 - Perfil `cloud-operations-lab` configurado para IAM Identity Center.
 - Sessão SSO válida.
 - Permissões para consultar a rede e gerenciar os recursos exclusivos.
-- Rede compartilhada do Lab 08 disponível.
-- Sub-rede pública com rota para o Internet Gateway.
+- Rede compartilhada do LAB 08 disponível.
+- Sub-rede pública com rota ativa para o Internet Gateway.
 - IPv4 público atual do operador identificado.
 - Repositório sincronizado e sem alterações locais antes da atualização.
-- Configuração Terraform e scripts de validação publicados.
 
-A identidade AWS deverá ser conferida antes do planejamento, da aplicação e da remoção.
+A conta AWS deve ser conferida antes do planejamento, da aplicação e da remoção.
 
-## Organização
+## Organização dos arquivos
 
-| Caminho | Finalidade |
-|:---:|:---:|
-| `README.md` | Escopo, procedimento, critérios e resultados |
-| `images/` | Evidências da execução |
-| `terraform/` | Configuração de infraestrutura e inicialização da aplicação |
-| `scripts/` | Verificações operacionais em PowerShell |
+| Arquivo ou diretório | Finalidade |
+|:---|:---|
+| `README.md` | Escopo, procedimento, resultados e evidências |
+| `images/` | Capturas da execução |
+| `terraform/versions.tf` | Restrições de Terraform e provider |
+| `terraform/variables.tf` | Parâmetros e validações |
+| `terraform/providers.tf` | Provider, conta permitida e tags padrão |
+| `terraform/data.tf` | Identidade, rede compartilhada e AMI |
+| `terraform/iam.tf` | Role, política associada e Instance Profile |
+| `terraform/security.tf` | Security Group e regras |
+| `terraform/ec2.tf` | Instância e volume root |
+| `terraform/outputs.tf` | Identificadores e informações da aplicação |
+| `terraform/user-data.sh.tftpl` | Inicialização da aplicação |
+| `terraform/.terraform.lock.hcl` | Versão selecionada e hashes do provider |
+| `scripts/test-aws-terraform-prerequisites.ps1` | Pré-validação AWS |
+| `scripts/test-aws-terraform-infrastructure.ps1` | Validação da infraestrutura e aplicação |
+| `scripts/test-aws-terraform-cleanup.ps1` | Validação pós-cleanup |
 
-Diretório de execução do Terraform:
+Apesar da extensão `.tftpl`, o arquivo de inicialização é carregado com `file()`, preservando as expressões próprias do Bash. A configuração normaliza CRLF para LF antes de fornecer o conteúdo à instância.
+
+Diretório local da configuração:
 
 ```text
 C:\GitHub\cloud-infrastructure-operations-lab\labs\20-terraform-aws-infrastructure\terraform
 ```
 
-Os comandos Terraform deverão ser executados nesse diretório, no workspace `default`.
+Os comandos utilizam esse diretório por meio de `-chdir`, no workspace `default`. O estado do LAB 19 não é reutilizado.
 
-O estado local do LAB 19 não será reutilizado.
+## Identificação e segurança
 
-## Identificação dos recursos
+Os recursos que suportam tags utilizam:
 
-Os recursos exclusivos deverão utilizar nomes associados ao LAB 20 e tags de identificação:
-
-| Tag | Valor previsto |
-|:---:|:---:|
+| Tag | Valor |
+|:---|:---|
 | `Project` | `cloud-infrastructure-operations-lab` |
 | `Environment` | `lab` |
 | `Lab` | `20` |
 | `ManagedBy` | `terraform` |
 | `Owner` | `itamarsb` |
+| `Name` | Nome específico do recurso |
 
-A instância, o volume root e os demais recursos que suportam tags deverão ser identificados.
+O escopo de remoção é determinado pelos recursos gerenciados no estado do laboratório.
 
-As tags auxiliam o inventário e a validação de propriedade. O escopo de remoção do Terraform é determinado pelos recursos gerenciados no estado do laboratório.
+A configuração implementa:
 
-## Configuração de segurança
-
-A configuração deverá incluir:
-
-- autenticação temporária, sem credenciais gravadas nos arquivos;
-- perfil e Região explícitos;
+- autenticação temporária, sem credenciais nos arquivos;
+- perfil e região explícitos;
 - restrição do provider à conta esperada;
-- IAM Role assumida pelo serviço EC2;
-- política do Systems Manager associada à role;
+- role assumida pelo serviço `ec2.amazonaws.com`;
+- associação da política `AmazonSSMManagedInstanceCore`;
 - Instance Profile exclusivo;
-- entrada TCP `80` somente para o IPv4 público autorizado, com máscara `/32`;
-- ausência de regra de entrada SSH;
-- ausência de Key Pair;
+- entrada TCP 80 somente para o IPv4 autorizado, com máscara `/32`;
+- saída TCP 443 para `0.0.0.0/0`;
+- ausência de entrada SSH e de Key Pair;
 - IMDSv2 obrigatório;
 - volume root criptografado;
 - remoção do volume root no encerramento;
-- créditos de CPU em modo `standard`;
-- identificação dos recursos por nomes e tags.
+- créditos de CPU em modo `standard`.
 
-A saída de rede deverá permitir a instalação dos pacotes e a comunicação necessária ao Systems Manager, conforme as regras definidas na configuração.
+O conteúdo HTTP é demonstrativo e não contém credenciais ou dados de aplicação sensíveis.
 
-O acesso HTTP utiliza conteúdo demonstrativo, sem credenciais ou dados sensíveis.
+## Aplicação e verificações
 
-## Aplicação prevista
+A inicialização instala o Nginx, publica os arquivos da aplicação, valida a configuração e habilita o serviço.
 
-A inicialização da instância deverá:
+O marcador `/var/lib/lab20/bootstrap-complete` é gravado com `v1` somente após as verificações locais da página, do health e da versão.
 
-1. instalar o Nginx;
-2. publicar uma página de identificação do LAB 20;
-3. criar o endpoint `/health`;
-4. criar o endpoint `/version`;
-5. validar a configuração do Nginx;
-6. habilitar e iniciar o serviço.
-
-Respostas esperadas:
-
-| Endpoint | Código HTTP | Conteúdo |
-|:---:|:---:|:---:|
+| Endpoint | HTTP esperado | Conteúdo esperado |
+|:---|:---:|:---|
 | `/` | `200` | Página de identificação do LAB 20 |
 | `/health` | `200` | `healthy` |
 | `/version` | `200` | `v1` |
 
-A criação da instância pelo Terraform não comprova que a instalação da aplicação terminou. A conclusão dependerá das verificações do serviço e das respostas HTTP.
+A criação da instância pelo Terraform não comprova a conclusão da inicialização. Essa condição é verificada separadamente pelo script operacional.
 
-## Procedimento previsto
+O validador confere:
 
-### 1. Conferir o repositório
+- sete recursos gerenciados no estado;
+- outputs e relações entre os recursos;
+- nomes e tags;
+- EC2 em execução;
+- volume root `gp3`, criptografado e com 8 GiB;
+- IMDSv2 e créditos de CPU;
+- Security Group e suas duas regras;
+- confiança da role, política SSM e Instance Profile;
+- instância Online no Systems Manager;
+- conclusão do cloud-init e marcador da aplicação;
+- Nginx ativo, habilitado e com configuração válida;
+- respostas HTTP locais e externas;
+- conteúdo da página, health e versão.
 
-Na raiz do repositório:
+Os hashes dos quatro arquivos da aplicação são coletados como registro observado. Essa coleta não constitui comparação automática com um manifesto de hashes esperados.
 
-- consultar o estado do Git;
-- interromper se houver alterações locais;
-- atualizar com `git pull --ff-only`;
-- conferir o código de saída;
-- verificar os arquivos da configuração e dos scripts.
+Os scripts não provisionam recursos nem reparam a aplicação. A validação remota utiliza SSM Run Command para executar verificações.
 
-### 2. Validar identidade e dependências
+## Procedimento
 
-- autenticar pelo AWS SSO;
-- consultar a identidade com AWS STS;
-- confirmar conta e Região;
-- identificar a VPC e a sub-rede do Lab 08;
-- conferir a conectividade pública da sub-rede;
-- identificar o IPv4 público atual;
-- verificar conflitos com nomes e tags do LAB 20.
+### 1. Sincronizar o repositório
 
-Se houver recursos de uma tentativa anterior, conferir o inventário e o estado antes de repetir o provisionamento.
+Consultar o estado do Git, interromper se houver alterações locais e atualizar com `git pull --ff-only`.
 
-### 3. Preparar os parâmetros locais
+Conferir os arquivos e validar a sintaxe dos três scripts PowerShell.
 
-Definir os valores exigidos pela configuração, incluindo:
-
-- perfil AWS;
-- Região;
-- conta esperada;
-- VPC e sub-rede compartilhadas;
-- origem HTTP autorizada.
-
-Os parâmetros locais não deverão conter credenciais.
-
-### 4. Inicializar e validar
+### 2. Inicializar e validar a configuração
 
 Executar:
 
@@ -239,216 +226,364 @@ Executar:
 - `terraform fmt -check -diff`;
 - `terraform validate`.
 
-Conferir o resultado de cada comando.
+Versionar `.terraform.lock.hcl`.
 
-A inicialização deverá instalar o provider AWS e gerar o arquivo de dependências.
+Com o lock publicado, a inicialização pode utilizar `-lockfile=readonly` para exigir a seleção de dependências registrada.
 
-### 5. Gerar e analisar o plano
+### 3. Validar identidade e dependências AWS
 
-Gerar um plano salvo com `-detailed-exitcode`.
+Autenticar com AWS SSO, confirmar a conta e identificar o IPv4 público atual.
 
-No Windows PowerShell, utilizar argumentos como strings em um array, incluindo o argumento completo de saída do plano.
+Executar `test-aws-terraform-prerequisites.ps1` com `-AllowedHttpCidr`.
 
-Conferir:
+A opção `-PassThru` retorna os parâmetros validados, incluindo VPC, sub-rede, tabela de rotas, Internet Gateway e Network ACL.
 
-- somente recursos exclusivos do LAB 20 a criar;
-- perfil, conta e Região corretos;
-- VPC e sub-rede utilizadas como dependências;
-- regras de rede compatíveis com o escopo;
+A pré-validação verifica a rede compartilhada e conflitos com os recursos exclusivos do LAB 20.
+
+### 4. Preparar os parâmetros locais
+
+Criar `terraform/lab20.tfvars.json` com os valores validados:
+
+| Variável | Finalidade |
+|:---|:---|
+| `aws_profile` | Perfil utilizado pelo provider |
+| `aws_region` | Região AWS |
+| `expected_account_id` | Conta permitida |
+| `shared_vpc_id` | VPC compartilhada |
+| `shared_subnet_id` | Sub-rede compartilhada |
+| `allowed_http_cidr` | IPv4 público autorizado com `/32` |
+
+O arquivo não contém credenciais e permanece fora do versionamento.
+
+Confirmar o IPv4 atual antes de gerar o plano e antes da aplicação.
+
+### 5. Gerar e analisar o plano inicial
+
+No Windows PowerShell, fornecer os argumentos como strings em um array:
+
+```powershell
+$Arguments = @(
+    "-chdir=$TerraformPath",
+    "plan",
+    "-input=false",
+    "-no-color",
+    "-detailed-exitcode",
+    "-var-file=lab20.tfvars.json",
+    "-out=lab20-create.tfplan"
+)
+
+& terraform @Arguments
+$PlanExitCode = $LASTEXITCODE
+```
+
+Para o provisionamento inicial, o código esperado é `2`, indicando mudanças propostas.
+
+Inspecionar `lab20-create.tfplan` com `terraform show` e conferir:
+
+- sete criações;
+- nenhuma alteração ou remoção;
+- conta e região;
+- VPC e sub-rede utilizadas;
 - configuração IAM;
-- tipo da instância e AMI;
-- criptografia e remoção do volume root;
-- IMDSv2 obrigatório;
-- nomes e tags;
-- ausência de alterações ou remoções de recursos compartilhados.
-
-O número esperado de recursos será definido após a publicação da configuração, considerando a representação das regras e associações no Terraform.
-
-### 6. Aplicar o plano analisado
-
-Aplicar o arquivo de plano salvo somente após sua revisão.
-
-A aplicação de um plano salvo não solicita nova confirmação interativa.
-
-Registrar o resultado, os recursos criados e os outputs.
-
-### 7. Validar o ambiente
-
-As verificações deverão conferir:
-
-- recursos presentes no estado do LAB 20;
-- nomes, tags e relações entre os recursos;
-- instância EC2 em execução;
-- volume root criptografado;
-- IMDSv2 obrigatório;
-- Instance Profile correto;
-- Security Group e regras esperadas;
-- instância `Online` no Systems Manager;
-- conclusão da inicialização da aplicação;
-- Nginx ativo;
-- configuração válida em `nginx -t`;
-- respostas HTTP locais;
-- respostas HTTP externas;
-- conteúdo de identificação e versão.
-
-Os testes externos deverão ser executados a partir do IPv4 autorizado.
-
-Os scripts de validação não deverão alterar recursos nem reparar automaticamente o ambiente.
-
-### 8. Conferir o segundo plano
-
-Executar um novo plano com a mesma configuração e os mesmos parâmetros.
+- regras de tráfego;
+- AMI e tipo da instância;
+- volume root;
+- IMDSv2;
+- nomes e tags.
 
 Resultado esperado:
 
-- ausência de mudanças;
-- código de saída `0`.
+```text
+Plan: 7 to add, 0 to change, 0 to destroy.
+```
 
-Uma mudança proposta deverá ser analisada antes de qualquer nova aplicação.
+### 6. Aplicar o plano salvo
 
-### 9. Planejar a remoção
+Aplicar somente o arquivo analisado:
 
-Antes da remoção:
+```powershell
+$Arguments = @(
+    "-chdir=$TerraformPath",
+    "apply",
+    "-input=false",
+    "-no-color",
+    "lab20-create.tfplan"
+)
 
-- conferir identidade, Região e workspace;
-- consultar os recursos no estado;
-- confirmar o escopo exclusivo do LAB 20;
-- gerar e inspecionar um plano de destruição salvo;
-- verificar que a rede compartilhada não será removida.
+& terraform @Arguments
+```
+
+A aplicação de um plano salvo não solicita nova confirmação interativa.
+
+Conferir o código de saída e registrar os outputs.
+
+### 7. Validar infraestrutura e aplicação
+
+Executar `test-aws-terraform-infrastructure.ps1` com o CIDR autorizado.
+
+O script aguarda a disponibilidade no Systems Manager e verifica a infraestrutura, a inicialização e os endpoints.
+
+Os testes HTTP externos devem ser executados a partir do IPv4 autorizado.
+
+Registrar o CommandId da validação para consulta em caso de falha.
+
+### 8. Conferir o plano sem mudanças
+
+Executar um novo plano com os mesmos parâmetros, usando `-detailed-exitcode`.
+
+Resultado esperado:
+
+```text
+No changes. Your infrastructure matches the configuration.
+```
+
+O código esperado é `0`.
+
+Qualquer mudança proposta deve ser analisada antes de uma nova aplicação.
+
+### 9. Gerar e analisar o plano de remoção
+
+Conferir conta e workspace. Registrar os identificadores necessários à validação posterior, pois os outputs serão removidos pelo cleanup.
+
+Gerar o plano:
+
+```powershell
+$Arguments = @(
+    "-chdir=$TerraformPath",
+    "plan",
+    "-destroy",
+    "-input=false",
+    "-no-color",
+    "-detailed-exitcode",
+    "-var-file=lab20.tfvars.json",
+    "-out=lab20-destroy.tfplan"
+)
+
+& terraform @Arguments
+$PlanExitCode = $LASTEXITCODE
+```
+
+Inspecionar o arquivo salvo.
+
+Resultado esperado:
+
+```text
+Plan: 0 to add, 0 to change, 7 to destroy.
+```
+
+Conferir que somente os recursos exclusivos estão incluídos.
 
 ### 10. Aplicar a remoção
 
-Aplicar somente o plano de destruição analisado.
+Aplicar o plano de remoção analisado:
 
-Se a operação falhar ou ficar parcial, registrar a saída e consultar o estado e o inventário antes de continuar.
+```powershell
+$Arguments = @(
+    "-chdir=$TerraformPath",
+    "apply",
+    "-input=false",
+    "-no-color",
+    "lab20-destroy.tfplan"
+)
 
-A remoção deverá ser concluída pelo Terraform, mantendo o registro dos recursos sob seu gerenciamento.
+& terraform @Arguments
+```
 
-### 11. Validar após a remoção
+O volume root é removido junto com a instância por `DeleteOnTermination`.
 
-Conferir:
+### 11. Validar o cleanup
 
-- ausência de recursos gerenciados ativos no estado;
-- instância encerrada;
-- volume root removido;
-- Security Group exclusivo ausente;
-- Instance Profile exclusivo ausente;
-- IAM Role exclusiva ausente;
-- VPC e sub-rede compartilhadas preservadas;
-- arquivos de configuração preservados.
+Executar `test-aws-terraform-cleanup.ps1`, fornecendo os identificadores registrados antes da remoção.
 
-Consultas de data sources podem continuar presentes no estado. A validação deverá distinguir essas consultas dos recursos gerenciados.
+| Parâmetro | Recurso conferido |
+|:---|:---|
+| `InstanceId` | Instância encerrada ou ausente |
+| `RootVolumeId` | Volume root ausente |
+| `SecurityGroupId` | Security Group ausente |
+| `SharedVpcId` | VPC compartilhada |
+| `SharedSubnetId` | Sub-rede compartilhada |
+| `SharedRouteTableId` | Tabela de rotas efetiva |
+| `SharedInternetGatewayId` | Internet Gateway |
+| `SharedNetworkAclId` | Network ACL associada |
+
+O script também verifica recursos exclusivos por nomes e tags, ausência dos recursos IAM, estado local e arquivos de configuração.
+
+A verificação da rede confere os identificadores, DNS, associação da sub-rede, rota pública e perfil IPv4 da ACL. Ela não representa uma comparação integral de todas as propriedades da rede.
 
 ## Estado e versionamento
 
 | Arquivo ou diretório | Tratamento |
-|:---:|:---:|
+|:---|:---|
 | Configuração `.tf` | Versionar |
-| Template de inicialização | Versionar |
-| Scripts de validação | Versionar |
-| README e evidências | Versionar |
+| Inicialização da aplicação | Versionar |
+| Scripts, README e evidências | Versionar |
 | `.terraform.lock.hcl` | Versionar |
 | `.terraform/` | Não versionar |
-| Arquivos de estado e backups | Não versionar |
-| Planos salvos | Não versionar |
-| Parâmetros locais de execução | Manter fora do versionamento |
+| Estado e backups do estado | Não versionar |
+| Planos `.tfplan` | Não versionar |
+| `lab20.tfvars.json` | Não versionar |
 
-O estado e os planos podem conter dados da infraestrutura e conteúdo da inicialização da instância. Eles não devem ser publicados como evidência.
+Estado e planos podem conter informações da infraestrutura e conteúdo de inicialização. Não são publicados como evidências.
 
-Não excluir o estado para simular cleanup.
+Preservar o estado durante todo o ciclo de vida dos recursos. Excluir o arquivo de estado ou remover entradas com `state rm` não equivale a remover os recursos AWS.
 
-Não remover recursos manualmente apenas para fazer o estado parecer vazio.
+Após o cleanup, o critério é a ausência de recursos gerenciados restantes. Data sources eventualmente presentes no estado são consultas, não infraestrutura sob gerenciamento.
 
-Enquanto houver recursos gerenciados ativos, preservar o estado utilizado no provisionamento.
+Um plano normal após o cleanup pode propor novamente as sete criações, pois a configuração continua presente.
+
+## Resultados obtidos
+
+Execução concluída em **03/10/2026**, horário de Brasília.
+
+| Etapa | Resultado |
+|:---|:---|
+| Sintaxe PowerShell | Três scripts validados |
+| Inicialização | Provider AWS `6.67.0` instalado |
+| Lock | Versionado e reutilizado com `-lockfile=readonly` |
+| Formatação | Sem diferenças |
+| Validação Terraform | Configuração válida |
+| Pré-validação AWS | Identidade, rede e ausência de conflitos conferidas |
+| Plano inicial | `7 to add, 0 to change, 0 to destroy` |
+| Apply inicial | `7 added, 0 changed, 0 destroyed` |
+| Estado e outputs | Sete recursos gerenciados e informações conferidas |
+| Systems Manager | Online |
+| Cloud-init | `status: done` |
+| Nginx | Serviço e configuração validados |
+| HTTP local e externo | Três endpoints com HTTP 200 |
+| Aplicação | Página correta, `healthy` e `v1` |
+| Segundo plano | Sem mudanças; código `0` |
+| Plano de remoção | `0 to add, 0 to change, 7 to destroy` |
+| Aplicação da remoção | `0 added, 0 changed, 7 destroyed` |
+| Pós-cleanup | Recursos exclusivos removidos |
+| Rede compartilhada | Identificadores e condições verificadas preservados |
+| Configuração e estado | Arquivos preservados; nenhum recurso gerenciado restante |
+
+### Recursos da execução
+
+Os identificadores abaixo representam a execução concluída, não recursos atualmente ativos.
+
+| Recurso | Identificador |
+|:---|:---|
+| AMI | `ami-03c3da4cfa8e8943a` |
+| EC2 | `i-0c475d31607b9c8ef` |
+| Volume root | `vol-02959389c8ecdb3d7` |
+| Security Group | `sg-0c1fb3ae1f929b2f1` |
+| Regra HTTP | `sgr-0cf85bd92ad588977` |
+| Regra HTTPS | `sgr-0a366d00549fc9934` |
+| IAM Role | `lab20-ec2-terraform-role` |
+| Instance Profile | `lab20-ec2-terraform-instance-profile` |
+| CommandId da validação | `38968ec5-a2b2-44f0-94dd-32bb93afe596` |
+
+### Rede compartilhada conferida
+
+| Componente | Identificador |
+|:---|:---|
+| VPC | `vpc-0aad44f1f16b804ad` |
+| Sub-rede | `subnet-04048dcc4a1a66b63` |
+| Tabela de rotas | `rtb-066dd13c45a54d908` |
+| Internet Gateway | `igw-0d50bb88468386abc` |
+| Network ACL | `acl-0535ec68170362eab` |
+
+## Observações da execução
+
+### Finais de linha do lock
+
+A comparação SHA-256 entre a cópia original do lock e a cópia obtida pelo Git apresentou diferença.
+
+Após normalizar CRLF para LF, o conteúdo foi confirmado como idêntico. A inicialização com `-lockfile=readonly` reutilizou o provider registrado, e o repositório permaneceu limpo.
+
+### Validação após o apply
+
+O sucesso do apply foi seguido por verificações independentes de EC2, EBS, IAM, rede, Systems Manager e aplicação.
+
+A conclusão operacional foi registrada somente após a validação local e externa dos três endpoints.
 
 ## Tratamento de falhas
 
 Uma falha no apply pode ocorrer após a criação de parte dos recursos.
 
-Nessa situação:
+Nesse caso:
 
 - registrar a saída completa;
-- consultar o estado;
-- conferir o inventário AWS;
-- identificar quais operações foram concluídas;
+- consultar o estado e o inventário AWS;
+- identificar as operações concluídas;
 - corrigir a causa;
 - gerar e analisar um novo plano antes de continuar.
 
-Uma falha nos testes da aplicação também não significa que nenhum recurso foi criado.
+Uma falha no validador não significa que o provisionamento foi desfeito. Conferir o CommandId, a inicialização, o serviço e a conectividade antes de repetir qualquer operação.
 
-Problemas de acesso HTTP deverão ser investigados considerando o IPv4 autorizado, as regras do Security Group, a rede, a inicialização da instância e o serviço local.
+Para problemas HTTP, verificar o IPv4 autorizado, as regras do Security Group, a rede e o Nginx.
 
-## Custos e remoção
+Se o cleanup falhar parcialmente, consultar o estado e os recursos remanescentes antes de gerar um novo plano de remoção.
 
-A instância EC2, o volume EBS e o IPv4 público podem gerar cobrança.
+## Custos e encerramento
 
-Os recursos exclusivos deverão permanecer ativos somente durante a execução do laboratório.
+A execução utiliza EC2, EBS e IPv4 público. O cleanup removeu os recursos exclusivos provisionados para o exercício.
 
-O cleanup será executado pelo Terraform e validado por consultas independentes.
-
-## Resultados esperados
-
-| Etapa | Critério |
-|:---:|:---:|
-| Identidade | Conta, perfil e Região conferidos |
-| Rede compartilhada | Dependências identificadas e preservadas |
-| Inicialização | Provider instalado |
-| Formatação | Sem diferenças |
-| Validação | Configuração válida |
-| Plano inicial | Somente criações dentro do escopo |
-| Aplicação | Recursos exclusivos provisionados |
-| Systems Manager | Instância `Online` |
-| Nginx | Serviço ativo e configuração válida |
-| HTTP | Página, health e versão corretos |
-| Segundo plano | Sem mudanças; código `0` |
-| Remoção | Recursos exclusivos removidos |
-| Pós-cleanup | Nenhum recurso gerenciado ativo; rede preservada |
+A rede do LAB 08 permanece disponível como dependência compartilhada.
 
 ## Evidências
 
-As capturas da execução serão publicadas em `images/`.
+### Inicialização, formatação e validação
 
-As evidências deverão demonstrar:
+![Inicialização e validação Terraform](images/Clipboard_10-03-2026_29.png)
 
-- inicialização e validação;
-- plano de provisionamento;
-- aplicação e outputs;
-- recursos gerenciados no estado;
-- validação AWS, Systems Manager e aplicação;
-- plano sem mudanças;
-- plano de destruição;
-- remoção concluída;
-- validação após o cleanup.
+### Arquivo de dependências
 
-Arquivos de estado, planos e credenciais não serão utilizados como evidências públicas.
+![Versão e hashes do provider AWS](images/Clipboard_10-03-2026_30.png)
 
-## Resultados obtidos
+### Lock versionado e reutilizado
 
-Execução pendente.
+![Inicialização com lock versionado](images/Clipboard_10-03-2026_31.png)
 
-Os resultados serão registrados após o provisionamento, as validações e a remoção.
+### Pré-validação AWS
+
+![Identidade, rede compartilhada e conflitos](images/Clipboard_10-03-2026_32.png)
+
+### Plano inicial
+
+![Plano de criação dos sete recursos](images/Clipboard_10-03-2026_33.png)
+
+### Validação da infraestrutura e aplicação
+
+![Validação AWS, Systems Manager, Nginx e endpoints](images/Clipboard_10-03-2026_34.png)
+
+### Plano sem mudanças
+
+![Segundo plano sem mudanças](images/Clipboard_10-03-2026_35.png)
+
+### Plano de remoção
+
+![Plano de remoção dos recursos exclusivos](images/Clipboard_10-03-2026_36.png)
+
+### Cleanup e validação final
+
+![Remoção concluída e rede compartilhada preservada](images/Clipboard_10-03-2026_37.png)
 
 ## Critérios de conclusão
 
-- [x] Estrutura inicial criada.
-- [ ] Configuração Terraform publicada.
-- [ ] Scripts de validação publicados.
-- [ ] Identidade AWS conferida.
-- [ ] Dependências compartilhadas validadas.
-- [ ] Inicialização concluída.
-- [ ] Formatação e configuração validadas.
-- [ ] Plano de provisionamento analisado.
-- [ ] Plano aplicado.
-- [ ] Estado e outputs conferidos.
-- [ ] Systems Manager `Online`.
-- [ ] Nginx e endpoints validados.
-- [ ] Segundo plano sem mudanças.
-- [ ] Plano de destruição analisado.
-- [ ] Recursos exclusivos removidos.
-- [ ] Validação pós-cleanup concluída.
-- [ ] Rede compartilhada preservada.
-- [ ] Evidências publicadas.
-- [ ] Resultados documentados.
+- [x] Estrutura criada.
+- [x] Configuração Terraform publicada.
+- [x] Scripts de validação publicados.
+- [x] Sintaxe PowerShell validada.
+- [x] Identidade AWS conferida.
+- [x] Dependências compartilhadas validadas.
+- [x] Inicialização concluída.
+- [x] Lock versionado.
+- [x] Formatação e configuração validadas.
+- [x] Plano de provisionamento analisado.
+- [x] Plano salvo aplicado.
+- [x] Estado e outputs conferidos.
+- [x] Systems Manager Online.
+- [x] Inicialização da aplicação concluída.
+- [x] Nginx e endpoints validados.
+- [x] Segundo plano sem mudanças.
+- [x] Plano de remoção analisado.
+- [x] Recursos exclusivos removidos.
+- [x] Validação pós-cleanup concluída.
+- [x] Rede compartilhada preservada.
+- [x] Evidências publicadas.
+- [x] Resultados documentados.
 
 ## Referências
 
@@ -456,6 +591,5 @@ Os resultados serão registrados após o provisionamento, as validações e a re
 - [Data sources do Terraform](https://developer.hashicorp.com/terraform/language/data-sources)
 - [Comando terraform plan](https://developer.hashicorp.com/terraform/cli/commands/plan)
 - [Comando terraform apply](https://developer.hashicorp.com/terraform/cli/commands/apply)
-- [Comando terraform destroy](https://developer.hashicorp.com/terraform/cli/commands/destroy)
 - [Arquivo de dependências](https://developer.hashicorp.com/terraform/language/files/dependency-lock)
 - [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html)
