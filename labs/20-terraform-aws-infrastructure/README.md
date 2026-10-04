@@ -245,7 +245,7 @@ A pré-validação verifica a rede compartilhada e conflitos com os recursos exc
 Criar `terraform/lab20.tfvars.json` com os valores validados:
 
 | Variável | Finalidade |
-|:---|:---|
+|:---:|:---:|
 | `aws_profile` | Perfil utilizado pelo provider |
 | `aws_region` | Região AWS |
 | `expected_account_id` | Conta permitida |
