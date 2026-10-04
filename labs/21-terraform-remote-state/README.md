@@ -11,7 +11,7 @@ Implementar armazenamento remoto, bloqueio e proteção do estado do Terraform, 
 ## Organização
 
 | Diretório | Finalidade |
-|---|---|
+|:---:|---|
 | `bootstrap/` | Configuração Terraform responsável pela criação dos recursos do backend |
 | `terraform/` | Configuração do exercício que utilizará o estado remoto |
 | `scripts/` | Scripts PowerShell de pré-validação e verificação |
