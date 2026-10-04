@@ -55,7 +55,7 @@ Sua configuração inclui:
 ### Dependências consultadas
 
 | Data source | Finalidade |
-|:---|:---|
+|:---:|:---:|
 | `aws_caller_identity.current` | Consulta da identidade AWS |
 | `aws_vpc.shared` | Consulta da VPC do LAB 08 |
 | `aws_subnet.shared` | Consulta da sub-rede pública do LAB 08 |
