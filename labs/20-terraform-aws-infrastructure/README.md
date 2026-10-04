@@ -182,7 +182,7 @@ A inicialização instala o Nginx, publica os arquivos da aplicação, valida a 
 O marcador `/var/lib/lab20/bootstrap-complete` é gravado com `v1` somente após as verificações locais da página, do health e da versão.
 
 | Endpoint | HTTP esperado | Conteúdo esperado |
-|:---|:---:|:---|
+|:---:|:---:|:---:|
 | `/` | `200` | Página de identificação do LAB 20 |
 | `/health` | `200` | `healthy` |
 | `/version` | `200` | `v1` |
