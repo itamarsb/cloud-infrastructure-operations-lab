@@ -6,7 +6,7 @@ O projeto documenta a construção e a operação de um ambiente de aplicação 
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–19 are complete; the latest exercise verified the local Terraform lifecycle from initialization and saved-plan application to state inspection and destruction.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–20 are complete; the latest exercise provisioned seven AWS resources with Terraform, independently validated the application, verified a plan with no changes and removed the exclusive resources while preserving the shared network.
 
 ---
 
@@ -67,14 +67,33 @@ O repositório prioriza:
 | Concluído | [Lab 17 — Atualização controlada de aplicação](labs/17-aws-controlled-update/) | Baseline v1, falha de configuração, diagnóstico, rollback, atualização v2, confirmação e cleanup |
 | Concluído | [Lab 18 — Backup e restauração de aplicação](labs/18-aws-application-backup-restore/) | S3 versionado, SHA-256, perda controlada, diagnóstico, restauração por VersionId e cleanup |
 | Concluído | [Lab 19 — Fluxo essencial do Terraform](labs/19-terraform-essential-workflow/) | Recurso local `terraform_data`, plano salvo, aplicação, estado, outputs, plano sem mudanças e destroy |
+| Concluído | [Lab 20 — Infraestrutura AWS como código](labs/20-terraform-aws-infrastructure/) | Provider AWS, lock de dependências, sete recursos, EC2 com Nginx, validação independente, plano sem mudanças e cleanup |
 
-**20 laboratórios concluídos**, considerando a numeração de 00 a 19.
+**21 laboratórios concluídos**, considerando a numeração de 00 a 20.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
 ## Resultado mais recente
+
+O **Lab 20 — Infraestrutura AWS como código** executou o ciclo de provisionamento e remoção de uma aplicação Nginx na AWS utilizando Terraform `1.16.1`, provider AWS `6.67.0`, Windows PowerShell e estado local no workspace `default`.
+
+O arquivo `.terraform.lock.hcl` foi versionado e a inicialização com `-lockfile=readonly` confirmou a reutilização da versão registrada do provider. A formatação e a configuração passaram pelas verificações do Terraform.
+
+O plano salvo propôs sete recursos exclusivos: IAM Role, associação com a política do Systems Manager, Instance Profile, Security Group, regra de entrada HTTP, regra de saída HTTPS e instância EC2. A VPC e a sub-rede compartilhadas do Lab 08 foram consultadas como fontes de dados.
+
+A aplicação do plano criou os sete recursos. Uma validação independente conferiu o estado, os outputs, a configuração AWS, o Systems Manager, a inicialização da instância e o Nginx. Os endpoints `/`, `/health` e `/version` responderam HTTP 200 local e externamente, com a aplicação na versão v1.
+
+Um segundo plano confirmou ausência de mudanças, com código de saída `0`.
+
+O plano de remoção foi salvo, revisado e aplicado, destruindo os sete recursos gerenciados. A validação pós-cleanup confirmou a ausência dos recursos exclusivos, incluindo o volume root, e a preservação das condições verificadas da rede compartilhada. O estado local e os arquivos de configuração foram mantidos.
+
+Consulte o [Lab 20](labs/20-terraform-aws-infrastructure/) para os arquivos Terraform, os scripts de validação, os resultados e as evidências.
+
+---
+
+## Resultados anteriores
 
 O **Lab 19 — Fluxo essencial do Terraform** executou o ciclo completo de um recurso local `terraform_data`, utilizando Terraform `1.16.1`, Windows PowerShell e o workspace `default`.
 
@@ -85,10 +104,6 @@ Após a aplicação, o estado continha um único recurso, os outputs correspondi
 O destroy removeu o recurso. A validação final confirmou estado sem recursos e preservação dos três arquivos `.tf`. O exercício foi inteiramente local, sem provisionamento AWS.
 
 Consulte o [Lab 19](labs/19-terraform-essential-workflow/) para o procedimento, os resultados e as evidências.
-
----
-
-## Resultados anteriores
 
 O **Lab 18 — Backup e restauração de aplicação na AWS** criou um backup verificável de quatro arquivos de uma aplicação Nginx em um bucket S3 privado e versionado. O pacote foi recuperado pelo `VersionId` registrado e conferido por SHA-256 e manifesto antes da simulação de perda.
 
@@ -210,6 +225,7 @@ Consulte o [Lab 14 — Utilização de disco e crescimento de logs](labs/14-aws-
 - infraestrutura reproduzível e mudanças rastreáveis;
 - preservação de recursos compartilhados;
 - proteção do estado e dos planos do Terraform;
+- versionamento do arquivo de dependências do Terraform;
 - análise do plano antes da aplicação;
 - scripts de cleanup idempotentes;
 - controle de custos e cleanup documentado.
@@ -248,12 +264,16 @@ Os laboratórios concluídos até esta etapa demonstram:
 - diagnóstico de perda parcial com comparação de arquivos e respostas HTTP;
 - registro dos intervalos observados de recuperação e da idade do backup;
 - inicialização, formatação e validação de configuração Terraform;
+- configuração do provider AWS e versionamento de `.terraform.lock.hcl`;
+- consulta de infraestrutura compartilhada por fontes de dados;
+- provisionamento de IAM, Security Group, regras e EC2 pelo Terraform;
 - análise e aplicação de plano salvo;
 - inspeção de estado local e outputs;
+- validação independente dos recursos AWS e da aplicação;
 - verificação de plano sem mudanças após a aplicação;
-- remoção pelo Terraform e confirmação de estado sem recursos;
+- remoção pelo Terraform e validação do estado após o cleanup;
+- confirmação da ausência de recursos exclusivos na AWS;
 - automação com PowerShell e Bash;
-- validação independente;
 - cleanup seguro e preservação de infraestrutura compartilhada.
 
 ---
@@ -276,17 +296,16 @@ Os laboratórios de preparação, operações Linux e infraestrutura AWS foram c
 
 O módulo de operação e troubleshooting foi concluído. Os Labs 13 a 18 demonstraram aplicação indisponível, utilização elevada de disco, falha de conectividade, Systems Manager indisponível, atualização controlada e recuperação de aplicação a partir de backup versionado.
 
-O módulo de Terraform foi iniciado com o Lab 19, que demonstrou o ciclo de vida de um recurso local, a aplicação de um plano salvo, a inspeção do estado e a remoção validada.
+O módulo de Terraform está em andamento. O Lab 19 demonstrou o ciclo de vida de um recurso local, a aplicação de um plano salvo, a inspeção do estado e a remoção validada. O Lab 20 aplicou esse fluxo à AWS, com sete recursos gerenciados, validação independente, plano sem mudanças e cleanup verificado.
 
-A próxima etapa prevista é o **Lab 20 — Infraestrutura AWS como código**, com foco em:
+A próxima etapa prevista é o **Lab 21 — Estado remoto**, com foco em:
 
-- configuração do provider AWS e validação da identidade utilizada;
-- definição do escopo de rede, IAM, segurança e EC2;
-- planejamento e revisão dos recursos antes do provisionamento;
-- aplicação e validação do ambiente;
-- consulta aos outputs e ao estado;
-- remoção dos recursos exclusivos pelo Terraform;
-- preservação da infraestrutura compartilhada e dos recursos de outros projetos.
+- configuração de armazenamento remoto para o estado do Terraform;
+- controle de acesso e proteção das informações do estado;
+- bloqueio para evitar operações concorrentes;
+- distinção entre configuração, estado e planos;
+- validação do uso do backend remoto;
+- definição do ciclo de vida dos recursos que armazenam o estado.
 
 ---
 
