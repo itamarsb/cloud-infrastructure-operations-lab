@@ -78,7 +78,7 @@ Este laboratório não inclui criação de VPC, Application Load Balancer, Auto 
 ## Ambiente utilizado
 
 | Item | Valor |
-|:---|:---|
+|:---:|:---:|
 | Sistema local | Windows |
 | Shell | Windows PowerShell 5.1 |
 | Terraform | `1.16.1`, plataforma `windows_amd64` |
