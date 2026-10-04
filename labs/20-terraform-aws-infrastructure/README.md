@@ -115,7 +115,7 @@ A conta AWS deve ser conferida antes do planejamento, da aplicação e da remoç
 ## Organização dos arquivos
 
 | Arquivo ou diretório | Finalidade |
-|:---|:---|
+|:---:|:---:|
 | `README.md` | Escopo, procedimento, resultados e evidências |
 | `images/` | Capturas da execução |
 | `terraform/versions.tf` | Restrições de Terraform e provider |
