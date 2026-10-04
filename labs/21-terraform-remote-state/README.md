@@ -331,7 +331,7 @@ A ordem de cleanup será: exercício, conteúdo do bucket e recursos do bootstra
 ## Evidências previstas
 
 | Etapa | Evidência |
-|---|---|
+|:---:|:---:|
 | Pré-validação | Ferramentas, identidade e ausência de conflitos |
 | Bootstrap | Plano, aplicação e proteções do bucket |
 | Baseline local | Recurso, identificador, outputs e plano sem mudanças |
