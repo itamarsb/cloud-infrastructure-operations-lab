@@ -413,7 +413,7 @@ A verificação da rede confere os identificadores, DNS, associação da sub-red
 ## Estado e versionamento
 
 | Arquivo ou diretório | Tratamento |
-|:---|:---|
+|:---:|:---:|
 | Configuração `.tf` | Versionar |
 | Inicialização da aplicação | Versionar |
 | Scripts, README e evidências | Versionar |
