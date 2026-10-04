@@ -106,7 +106,7 @@ O módulo de operação e troubleshooting está concluído.
 | Status | Laboratório | Conteúdo |
 |:---:|---|---|
 | Concluído | **Lab 19 — Fluxo essencial do Terraform** | Recurso local `terraform_data`, inicialização, formatação, validação, plano salvo, aplicação, estado, outputs e destroy |
-| Planejado | **Lab 20 — Infraestrutura AWS como código** | Rede, IAM, segurança e EC2 |
+| Concluído | **Lab 20 — Infraestrutura AWS como código** | Provider AWS, lock de dependências, IAM, Security Group, regras, EC2 com Nginx, validação independente e cleanup |
 | Planejado | **Lab 21 — Estado remoto** | Armazenamento, bloqueio e proteção do estado |
 | Planejado | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização e reutilização |
 | Planejado | **Lab 23 — Mudanças e drift** | Comparação entre código, estado e ambiente |
@@ -123,6 +123,43 @@ A consulta ao estado confirmou somente `terraform_data.lab19`. Os outputs corres
 O destroy removeu o recurso. A validação final confirmou estado sem recursos e preservação dos arquivos `versions.tf`, `main.tf` e `outputs.tf`.
 
 O exercício foi inteiramente local, sem provisionamento AWS. O procedimento e as evidências estão no [README do Lab 19](../labs/19-terraform-essential-workflow/README.md).
+
+O **Lab 20** provisionou uma aplicação Nginx na AWS utilizando Terraform `1.16.1`, provider AWS `6.67.0` e estado local no workspace `default`.
+
+O arquivo `.terraform.lock.hcl` foi versionado. A comparação entre a cópia local e a publicada confirmou conteúdo idêntico após normalizar os finais de linha LF e CRLF. A inicialização com `-lockfile=readonly` reutilizou a versão registrada do provider.
+
+A pré-validação conferiu identidade AWS, estado local, rede compartilhada e conflitos de recursos exclusivos, sem alterar recursos AWS.
+
+O plano salvo propôs a criação de sete recursos gerenciados:
+
+- IAM Role para a instância EC2;
+- associação com a política `AmazonSSMManagedInstanceCore`;
+- Instance Profile;
+- Security Group;
+- regra de entrada HTTP restrita ao IPv4 autorizado;
+- regra de saída HTTPS;
+- instância EC2 com aplicação Nginx.
+
+A VPC e a sub-rede compartilhadas do Lab 08 foram consultadas como fontes de dados e permaneceram fora do conjunto de recursos gerenciados.
+
+A aplicação do plano criou os sete recursos. A validação independente conferiu estado, outputs, EC2, volume root, Security Group, IAM, Systems Manager e aplicação. A instância apresentou IMDSv2 obrigatório, volume root `gp3` criptografado e administração pelo Systems Manager, sem entrada SSH.
+
+A inicialização da instância foi concluída, a configuração do Nginx passou na validação e os endpoints `/`, `/health` e `/version` responderam HTTP 200 local e externamente, com o conteúdo esperado da versão v1.
+
+Um segundo plano confirmou ausência de mudanças, com código de saída `0`.
+
+O plano de remoção foi salvo e revisado, incluindo a conferência das ações e dos identificadores dos sete recursos. Sua aplicação destruiu os sete recursos gerenciados.
+
+A validação pós-cleanup confirmou:
+
+- estado local preservado, sem recursos gerenciados restantes;
+- instância EC2 encerrada ou ausente;
+- volume root, Security Group e recursos IAM exclusivos ausentes;
+- nenhuma EC2 ativa identificada pelos nomes ou tags do Lab 20;
+- preservação das condições verificadas da VPC, sub-rede, rotas, Internet Gateway, Network ACL e DNS compartilhados;
+- arquivos de configuração preservados.
+
+Os arquivos Terraform, os scripts de validação e as evidências estão no [README do Lab 20](../labs/20-terraform-aws-infrastructure/README.md).
 
 O módulo de Terraform está em desenvolvimento.
 
@@ -198,38 +235,40 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `20` |
+| Laboratórios concluídos | `21` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `18` |
-| Último laboratório concluído | `Lab 19` |
-| Próximo laboratório | `Lab 20` |
+| Laboratórios planejados | `17` |
+| Último laboratório concluído | `Lab 20` |
+| Próximo laboratório | `Lab 21` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
-O módulo de Terraform está em desenvolvimento porque sua primeira etapa foi concluída e os demais laboratórios permanecem planejados.
+O módulo de Terraform está em desenvolvimento: os Labs 19 e 20 foram concluídos, enquanto os Labs 21 a 24 permanecem planejados.
 
 ---
 
 ## Próxima etapa
 
-**Lab 20 — Infraestrutura AWS como código**
+**Lab 21 — Estado remoto**
 
-O próximo laboratório aplica o fluxo aprendido no Lab 19 ao provisionamento de infraestrutura AWS com Terraform.
+O próximo laboratório amplia o fluxo dos Labs 19 e 20 com armazenamento remoto, bloqueio e proteção do estado do Terraform.
 
 O procedimento deverá incluir:
 
 - conferência do ambiente e dos pré-requisitos;
-- configuração do provider AWS;
 - autenticação temporária e validação da conta e da Região;
-- definição dos recursos gerenciados e das dependências compartilhadas;
-- configuração de rede, IAM, segurança e EC2 conforme o escopo;
-- inicialização, formatação e validação da configuração;
-- geração, salvamento e análise do plano;
-- aplicação do plano analisado;
-- verificação dos recursos, do estado e dos outputs;
-- proteção do estado e dos arquivos gerados;
-- remoção dos recursos exclusivos pelo Terraform;
-- validação após a remoção;
+- definição dos recursos responsáveis pelo armazenamento do estado;
+- configuração de acesso, criptografia e proteção do armazenamento;
+- configuração do backend remoto e do mecanismo de bloqueio;
+- distinção entre arquivos de configuração, estado, planos e lock de dependências;
+- inicialização do backend e migração do estado quando aplicável;
+- validação do armazenamento remoto e do bloqueio;
+- geração e análise de planos;
+- aplicação e remoção dos recursos do exercício;
+- verificação do estado após a remoção;
+- definição da retenção e da remoção dos recursos do backend;
 - registro das evidências.
+
+O ciclo de vida dos recursos que armazenam o estado deverá ser tratado explicitamente, considerando sua utilização durante as operações do Terraform.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de remoção.
