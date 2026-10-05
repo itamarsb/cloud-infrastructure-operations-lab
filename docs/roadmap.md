@@ -108,7 +108,7 @@ O módulo de operação e troubleshooting está concluído.
 | Concluído | **Lab 19 — Fluxo essencial do Terraform** | Recurso local `terraform_data`, inicialização, formatação, validação, plano salvo, aplicação, estado, outputs e destroy |
 | Concluído | **Lab 20 — Infraestrutura AWS como código** | Provider AWS, lock de dependências, IAM, Security Group, regras, EC2 com Nginx, validação independente e cleanup |
 | Concluído | **Lab 21 — Estado remoto** | Bootstrap separado, S3 privado e versionado, migração do estado, identidade preservada, bloqueio concorrente e cleanup |
-| Planejado | **Lab 22 — Variáveis, outputs e módulos** | Organização, parametrização, validação de entradas e reutilização |
+| Concluído | **Lab 22 — Variáveis, outputs e módulos** | Variáveis tipadas, entrada inválida rejeitada, módulo reutilizável, outputs, plano sem mudanças e remoção local |
 | Planejado | **Lab 23 — Mudanças e drift** | Comparação entre código, estado e ambiente |
 | Planejado | **Lab 24 — Validação automatizada** | Formatação, validação e verificação do código em pipeline |
 
@@ -186,6 +186,19 @@ O cleanup seguiu esta ordem:
 
 Os procedimentos, arquivos e evidências estão no [README do Lab 21](../labs/21-terraform-remote-state/README.md).
 
+O **Lab 22** demonstrou parametrização e reutilização de configuração com Terraform `1.16.1`, Windows PowerShell, estado local e workspace `default`.
+
+O módulo raiz chamou o mesmo módulo filho como `application` e `worker`. Cada chamada gerenciou um recurso integrado `terraform_data`, recebendo entradas tipadas e retornando identificador e dados para os outputs da raiz.
+
+A inicialização, a formatação recursiva e a validação foram concluídas. Uma entrada com `replica_count = 0` foi rejeitada pela regra de número inteiro entre 1 e 5, com código de saída `1`. A comparação SHA256 confirmou que `terraform.tfvars` permaneceu inalterado durante o teste.
+
+O plano salvo de criação propôs somente dois recursos. A aplicação, o estado e os outputs confirmaram os componentes, com valores de réplica `2` para `application` e `1` para `worker`. Esses parâmetros são dados didáticos, sem criação de serviços ou monitoramento real.
+
+Um segundo plano confirmou ausência de mudanças, com código de saída `0`. O plano salvo de remoção foi revisado e aplicado, destruindo os dois recursos. A verificação final confirmou estado vazio e presença dos nove arquivos de configuração.
+
+A execução foi inteiramente local, sem provisionamento AWS ou utilização do backend S3 removido no Lab 21. O procedimento, os resultados e as sete evidências estão no [README do Lab 22](../labs/22-terraform-variables-outputs-modules/README.md).
+
+
 O módulo de Terraform está em desenvolvimento.
 
 ---
@@ -260,45 +273,40 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `22` |
+| Laboratórios concluídos | `23` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `16` |
-| Último laboratório concluído | `Lab 21` |
-| Próximo laboratório | `Lab 22` |
+| Laboratórios planejados | `15` |
+| Último laboratório concluído | `Lab 22` |
+| Próximo laboratório | `Lab 23` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
-O módulo de Terraform está em desenvolvimento: os Labs 19, 20 e 21 foram concluídos, enquanto os Labs 22 a 24 permanecem planejados.
+O módulo de Terraform está em desenvolvimento: os Labs 19 a 22 foram concluídos, enquanto os Labs 23 e 24 permanecem planejados.
 
 ---
 
 ## Próxima etapa
 
-**Lab 22 — Variáveis, outputs e módulos**
+**Lab 23 — Mudanças e drift**
 
-O próximo laboratório amplia o trabalho com Terraform por meio de organização, parametrização e reutilização de configurações.
+O próximo laboratório abordará a comparação entre a configuração declarada, o estado do Terraform e o ambiente observado, incluindo mudanças intencionais e divergências introduzidas fora do Terraform.
 
 O procedimento deverá incluir:
 
-- definição do cenário e do escopo;
-- conferência do ambiente e dos estados existentes;
-- separação entre módulo raiz e módulo reutilizável;
-- declaração de variáveis com tipos explícitos;
-- utilização de valores padrão e validação de entradas;
-- passagem de parâmetros do módulo raiz para o módulo filho;
-- exposição de resultados por outputs;
-- utilização dos outputs do módulo no módulo raiz;
-- organização dos arquivos de configuração;
-- conferência de formatação e validade;
-- geração e revisão de planos salvos;
-- aplicação e inspeção dos recursos e outputs;
-- teste de entradas válidas e inválidas;
-- confirmação de ausência de mudanças após a aplicação;
-- remoção dos recursos do exercício;
+- definição do cenário, backend e recursos exclusivos;
+- conferência do ambiente e do estado inicial;
+- criação de um baseline e confirmação de plano sem mudanças;
+- alteração intencional da configuração e revisão do plano resultante;
+- aplicação do plano salvo e inspeção do estado e dos outputs;
+- introdução de uma divergência controlada fora do Terraform;
+- identificação da divergência pelo plano;
+- revisão das ações propostas para reconciliar o ambiente com a configuração;
+- aplicação da correção e confirmação de plano sem mudanças;
+- remoção dos recursos exclusivos;
 - validação final e publicação das evidências.
 
-O desenho do laboratório deverá estabelecer explicitamente seu backend e o ciclo de vida dos recursos.
+O cenário deverá distinguir mudanças de configuração e alterações externas, com resultados verificáveis em cada etapa.
 
-O bucket removido no Lab 21 não estará disponível para reutilização automática.
+O bucket removido no Lab 21 não estará disponível para reutilização automática. O estado final do Lab 22 está vazio, e seus arquivos de configuração foram mantidos.
 
-A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de remoção.
+A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de alteração e remoção.
