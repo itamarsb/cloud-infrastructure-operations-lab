@@ -201,7 +201,7 @@ A remoção ocorreu pelo Terraform, sem excluir o estado para simular limpeza. C
 ## Interpretação dos códigos de saída
 
 | Código de `plan -detailed-exitcode` | Significado | Resultado neste laboratório |
-|---|---|---|
+|:---:|:---:|:---:|
 | `0` | Plano concluído sem mudanças | Segundo plano |
 | `1` | Erro | Entrada inválida rejeitada |
 | `2` | Plano concluído com mudanças propostas | Planos de criação e remoção |
