@@ -225,7 +225,7 @@ A aplicação de um plano salvo executa as operações sem uma nova confirmaçã
 ## Versionamento
 
 | Item | Tratamento |
-|---|---|
+|:---:|:---:|
 | Arquivos `.tf` e `terraform.tfvars.example` | Versionar |
 | README e evidências selecionadas | Versionar |
 | `terraform.tfvars` e outros valores locais `*.tfvars` | Não versionar |
