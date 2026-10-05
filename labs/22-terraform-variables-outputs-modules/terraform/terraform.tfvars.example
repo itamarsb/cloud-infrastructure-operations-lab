@@ -1,1 +1,9 @@
+project_name       = "cloud-infrastructure-operations-lab"
+environment        = "dev"
+replica_count      = 2
+monitoring_enabled = true
 
+common_tags = {
+  Owner   = "itamarsb"
+  Purpose = "terraform-learning"
+}
