@@ -72,7 +72,7 @@ common_tags = {
 ```
 
 | Entrada da raiz | Tipo | Regra ou finalidade |
-|---|---|---|
+|:---:|:---:|:---:|
 | `project_name` | `string` | De 3 a 50 caracteres; letras minúsculas, números e hífens; início com letra |
 | `environment` | `string` | Aceita `dev`, `staging` ou `prod` |
 | `replica_count` | `number` | Número inteiro entre 1 e 5 |
