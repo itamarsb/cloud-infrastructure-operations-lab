@@ -145,7 +145,7 @@ terraform output -json
 Dois recursos criados. O estado e os outputs foram conferidos: `component_ids` expôs os identificadores, e `lab_summary` apresentou os dados retornados pelo módulo filho.
 
 | Componente | Réplicas registradas | Identificador observado |
-|---|---|---|
+|:---:|:---:|:---:|
 | `application` | `2` | `9c19ca55-1571-c531-8e7f-c75ba220d24e` |
 | `worker` | `1` | `4e7e9a83-1e42-84e9-2141-6077e51fb0d6` |
 
