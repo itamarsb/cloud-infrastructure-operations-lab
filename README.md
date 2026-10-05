@@ -6,7 +6,7 @@ O projeto documenta a construção e a operação de um ambiente de aplicação 
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–21 are complete; the latest exercise migrated Terraform state from a local backend to a private, versioned S3 bucket, preserved resource identity and outputs, verified concurrent operation locking and completed cleanup of the exercise and backend resources.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–22 are complete; the latest exercise demonstrated typed variables, input validation, reusable child modules and root outputs using two local terraform_data resources. An invalid input was rejected, a subsequent plan confirmed no changes, and cleanup left the state empty.
 
 ---
 
@@ -69,14 +69,33 @@ O repositório prioriza:
 | Concluído | [Lab 19 — Fluxo essencial do Terraform](labs/19-terraform-essential-workflow/) | Recurso local `terraform_data`, plano salvo, aplicação, estado, outputs, plano sem mudanças e destroy |
 | Concluído | [Lab 20 — Infraestrutura AWS como código](labs/20-terraform-aws-infrastructure/) | Provider AWS, lock de dependências, sete recursos, EC2 com Nginx, validação independente, plano sem mudanças e cleanup |
 | Concluído | [Lab 21 — Estado remoto](labs/21-terraform-remote-state/) | Bootstrap independente, S3 privado e versionado, migração de estado, bloqueio concorrente e cleanup |
+| Concluído | [Lab 22 — Variáveis, outputs e módulos](labs/22-terraform-variables-outputs-modules/) | Variáveis tipadas, validação de entradas, módulo reutilizável, outputs, plano sem mudanças e remoção local |
 
-**22 laboratórios concluídos**, considerando a numeração de 00 a 21.
+**23 laboratórios concluídos**, considerando a numeração de 00 a 22.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
 ## Resultado mais recente
+
+O **Lab 22 — Variáveis, outputs e módulos** executou um exercício local com Terraform `1.16.1`, Windows PowerShell e estado local no workspace `default`.
+
+O módulo raiz reutilizou o mesmo módulo filho em duas chamadas, `application` e `worker`. Cada chamada criou um recurso integrado `terraform_data`, com parâmetros próprios, validações e outputs expostos pela raiz.
+
+A inicialização, a formatação recursiva e a validação foram concluídas. O teste com `replica_count = 0` foi rejeitado pela regra de número inteiro entre 1 e 5, com código de saída `1`, preservando o arquivo local `terraform.tfvars`.
+
+O plano salvo propôs dois recursos e foi revisado antes da aplicação. Após a criação, o estado e os outputs confirmaram os dois componentes, com `replica_count` igual a `2` para `application` e `1` para `worker`. Esses valores são dados didáticos; não representam serviços em execução.
+
+Um segundo plano confirmou ausência de mudanças, com código de saída `0`. O plano salvo de remoção foi conferido e aplicado, destruindo os dois recursos. A verificação final confirmou estado vazio e presença dos nove arquivos de configuração.
+
+O laboratório foi inteiramente local, sem provisionamento AWS ou reutilização do backend S3 removido no Lab 21. Sete capturas documentam as etapas executadas.
+
+Consulte o [Lab 22](labs/22-terraform-variables-outputs-modules/) para os arquivos Terraform, o procedimento, os resultados e as evidências.
+
+---
+
+## Resultados anteriores
 
 O **Lab 21 — Estado remoto** executou a migração de um estado local do Terraform para um bucket S3 privado e versionado, utilizando Terraform `1.16.1`, provider AWS `6.67.0`, Windows PowerShell e o workspace `default`.
 
@@ -89,10 +108,6 @@ A validação pela API do S3 confirmou o objeto de estado criptografado e com id
 O cleanup removeu o recurso do exercício e preservou uma cópia do estado final vazio. Em seguida, foram excluídas oito versões de objetos e seis marcadores de exclusão, com confirmação de bucket vazio. O plano do bootstrap removeu os seis recursos gerenciados, e uma consulta independente à AWS confirmou a ausência do bucket.
 
 Consulte o [Lab 21](labs/21-terraform-remote-state/) para os arquivos Terraform, os procedimentos de migração e bloqueio, os resultados e as evidências.
-
----
-
-## Resultados anteriores
 
 O **Lab 20 — Infraestrutura AWS como código** executou o ciclo de provisionamento e remoção de uma aplicação Nginx na AWS utilizando Terraform `1.16.1`, provider AWS `6.67.0`, Windows PowerShell e estado local no workspace `default`.
 
@@ -284,6 +299,10 @@ Os laboratórios concluídos até esta etapa demonstram:
 - provisionamento de IAM, Security Group, regras e EC2 pelo Terraform;
 - análise e aplicação de plano salvo;
 - inspeção de estado local e outputs;
+- variáveis tipadas, valores padrão e validação de entradas;
+- teste de entrada inválida com preservação do arquivo de parâmetros;
+- reutilização de módulo filho com parâmetros distintos;
+- exposição de outputs do módulo filho pelo módulo raiz;
 - bootstrap independente para armazenamento do estado;
 - configuração de backend S3 privado, versionado e criptografado;
 - migração de estado com preservação do identificador do recurso e dos outputs;
@@ -316,16 +335,18 @@ Os laboratórios de preparação, operações Linux e infraestrutura AWS foram c
 
 O módulo de operação e troubleshooting foi concluído. Os Labs 13 a 18 demonstraram aplicação indisponível, utilização elevada de disco, falha de conectividade, Systems Manager indisponível, atualização controlada e recuperação de aplicação a partir de backup versionado.
 
-O módulo de Terraform está em andamento. O Lab 19 demonstrou o ciclo de vida de um recurso local, a aplicação de um plano salvo, a inspeção do estado e a remoção validada. O Lab 20 aplicou esse fluxo à AWS, com sete recursos gerenciados, validação independente, plano sem mudanças e cleanup verificado. O Lab 21 acrescentou estado remoto em S3, migração com preservação do recurso e dos outputs, teste de bloqueio concorrente e remoção validada do exercício e do bootstrap.
+O módulo de Terraform está em andamento. O Lab 19 demonstrou o ciclo de vida de um recurso local, a aplicação de um plano salvo, a inspeção do estado e a remoção validada. O Lab 20 aplicou esse fluxo à AWS, com sete recursos gerenciados, validação independente, plano sem mudanças e cleanup verificado. O Lab 21 acrescentou estado remoto em S3, migração com preservação do recurso e dos outputs, teste de bloqueio concorrente e remoção validada do exercício e do bootstrap. O Lab 22 demonstrou variáveis tipadas, validação de entradas, reutilização de um módulo filho em duas chamadas, outputs da raiz e ciclo de criação e remoção com estado local.
 
-A próxima etapa prevista é o **Lab 22 — Variáveis, outputs e módulos**, com foco em:
+A próxima etapa prevista é o **Lab 23 — Mudanças e drift**, com foco em:
 
-- parametrização da configuração Terraform;
-- definição de tipos e validações de variáveis;
-- exposição de resultados por outputs;
-- organização de recursos em módulos reutilizáveis;
-- comunicação entre o módulo raiz e os módulos filhos;
-- análise de planos e validação do ciclo de vida da configuração.
+- comparação entre configuração, estado e ambiente observado;
+- interpretação de planos após mudanças intencionais;
+- introdução de uma divergência controlada fora do Terraform;
+- identificação da divergência e revisão da correção proposta;
+- aplicação do plano revisado e confirmação de ausência de mudanças;
+- remoção dos recursos exclusivos e publicação das evidências.
+
+O cenário, o backend e os recursos do Lab 23 serão definidos antes da execução.
 
 ---
 
