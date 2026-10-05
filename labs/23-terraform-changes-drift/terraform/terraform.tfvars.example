@@ -1,1 +1,4 @@
-
+project_name        = "cloud-infrastructure-operations-lab"
+environment         = "dev"
+application_version = "v1"
+log_level           = "info"
