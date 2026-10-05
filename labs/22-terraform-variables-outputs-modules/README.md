@@ -213,7 +213,7 @@ A aplicação de um plano salvo executa as operações sem uma nova confirmaçã
 ## Evidências
 
 | Etapa | Captura |
-|---|---|
+|:---:|:---:|
 | Inicialização, formatação e validação | [Evidência 62](images/Clipboard_10-04-2026_62.png) |
 | Entrada inválida rejeitada | [Evidência 63](images/Clipboard_10-04-2026_63.png) |
 | Plano salvo de criação | [Evidência 64](images/Clipboard_10-04-2026_64.png) |
