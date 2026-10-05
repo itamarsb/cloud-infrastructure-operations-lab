@@ -40,7 +40,7 @@ Os comandos Terraform são executados no módulo raiz.
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Procedimento, resultados e evidências |
 | `images/` | Capturas da execução |
 | `terraform/versions.tf` | Restrição de versão da raiz |
