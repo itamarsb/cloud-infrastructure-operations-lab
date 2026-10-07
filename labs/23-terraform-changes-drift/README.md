@@ -89,7 +89,7 @@ O arquivo versionado `terraform.tfvars.example` mantém o exemplo inicial com `v
 ## Conceitos demonstrados
 
 | Conceito | Aplicação no laboratório |
-|---|---|
+|:---:|:---:|
 | Configuração declarada | Conteúdo definido pelo código e pelos parâmetros Terraform |
 | Estado | Registro dos atributos conhecidos do recurso gerenciado |
 | Recurso observado | Arquivo presente no sistema de arquivos |
