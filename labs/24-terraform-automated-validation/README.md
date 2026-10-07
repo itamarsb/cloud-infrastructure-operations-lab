@@ -53,7 +53,7 @@ Os estados e arquivos `terraform.tfvars` locais não serão enviados ao pipeline
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Escopo, procedimento, resultados e evidências |
 | `images/` | Capturas selecionadas das execuções |
 | `../../.github/workflows/lab24-terraform-validation.yml` | Workflow a ser implementado |
