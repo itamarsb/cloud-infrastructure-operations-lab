@@ -4,11 +4,11 @@
 
 Laboratório local de Terraform para comparar mudanças intencionais na configuração com alterações realizadas diretamente em um recurso gerenciado.
 
-O exercício utilizará o provider `hashicorp/local` e um recurso `local_file` para gerenciar um arquivo JSON. A execução incluirá criação de um baseline, mudança controlada, introdução de drift, diagnóstico, recuperação e remoção.
+O exercício utilizou o provider `hashicorp/local` e um recurso `local_file` para gerenciar um arquivo JSON. A execução incluiu criação de um baseline, mudança controlada, introdução de drift, diagnóstico, recuperação e remoção.
 
-**Estado:** em desenvolvimento. Estrutura inicial criada; configuração e execução pendentes.
+**Estado:** concluído. Recurso removido, estado final sem recursos e arquivo gerenciado ausente. Configuração, parâmetros e registros locais preservados.
 
-> **English summary:** Local Terraform exercise focused on planned configuration changes and resource drift. A managed JSON file will be used to establish a baseline, apply an intentional change, introduce an external modification, inspect the resulting plan, restore the declared configuration and complete cleanup. Implementation and execution are pending.
+> **English summary:** Completed local Terraform exercise comparing intentional configuration changes with external resource drift. A managed JSON file was created, updated from v1 to v2, modified outside Terraform, inspected and restored to its declared configuration. A subsequent plan reported no changes. Cleanup removed the managed resource and file while preserving configuration and local records.
 
 ## Objetivos
 
@@ -22,248 +22,431 @@ O exercício utilizará o provider `hashicorp/local` e um recurso `local_file` p
 - Confirmar ausência de mudanças após a recuperação.
 - Remover o recurso pelo Terraform e verificar o resultado.
 
-## Escopo
+## Ambiente e escopo
 
-O laboratório utilizará:
+| Item | Utilizado na execução |
+|---|---|
+| Terminal | Windows PowerShell 5.1 |
+| Terraform | 1.16.1 — windows_amd64 |
+| Provider | `hashicorp/local` 2.9.1 |
+| Backend | Estado local |
+| Workspace | `default` |
+| Recurso | `local_file.application_config` |
+| Arquivo gerenciado | `local-artifacts/application-config.json` |
 
-- Windows PowerShell 5.1;
-- Terraform CLI;
-- provider `hashicorp/local`;
-- estado local;
-- workspace `default`;
-- um recurso `local_file`;
-- um arquivo JSON exclusivo em `local-artifacts/`.
+O laboratório não provisionou recursos AWS nem utilizou autenticação por SSO ou o backend S3 do Lab 21.
 
-Não haverá provisionamento AWS, autenticação por SSO ou utilização do backend S3 do Lab 21.
+O arquivo representou uma configuração didática de aplicação. Nenhum serviço foi iniciado a partir dele.
 
-O arquivo representará uma configuração didática de aplicação. Nenhum serviço será iniciado a partir dele.
-
-A alteração externa ficará restrita ao arquivo gerenciado pelo LAB 23. O arquivo de estado não será editado manualmente.
+A alteração externa ficou restrita ao arquivo gerenciado pelo LAB 23. O arquivo de estado não foi editado manualmente.
 
 ## Organização
 
 | Caminho | Finalidade |
-|:---:|:---:|
-| `README.md` | Roteiro, resultados e evidências |
+|---|---|
+| `README.md` | Procedimento, resultados e evidências |
 | `.gitignore` | Exclusão dos artefatos locais do laboratório |
-| `images/` | Capturas selecionadas da execução |
+| `images/` | Capturas da execução |
 | `terraform/versions.tf` | Restrições de versão e declaração do provider |
 | `terraform/variables.tf` | Entradas e validações |
 | `terraform/main.tf` | Conteúdo declarado e recurso gerenciado |
-| `terraform/outputs.tf` | Caminho e informações do recurso |
+| `terraform/outputs.tf` | Caminho, hash esperado e configuração registrada |
 | `terraform/terraform.tfvars.example` | Exemplo de parâmetros |
 | `terraform/.terraform.lock.hcl` | Versão selecionada e hashes do provider |
-| `local-artifacts/` | Arquivo gerenciado e registros locais |
+| `local-artifacts/` | Arquivo gerenciado e registros locais, excluídos do Git |
 
-Os arquivos Terraform serão adicionados na etapa de implementação.
-
-O arquivo `.terraform.lock.hcl` será gerado durante a inicialização e deverá ser versionado.
-
-Diretório de execução:
+Diretório utilizado para os comandos Terraform:
 
 ```text
 C:\GitHub\cloud-infrastructure-operations-lab\labs\23-terraform-changes-drift\terraform
 ```
 
-## Conceitos
+Destino do recurso:
+
+```text
+C:\GitHub\cloud-infrastructure-operations-lab\labs\23-terraform-changes-drift\local-artifacts\application-config.json
+```
+
+## Configuração utilizada
+
+O conteúdo do arquivo foi construído com `jsonencode`, seguido de uma quebra de linha, e declarado no recurso `local_file.application_config`.
+
+| Campo | Baseline inicial | Após a mudança intencional | Durante o drift |
+|---|---|---|---|
+| `project_name` | `cloud-infrastructure-operations-lab` | Mesmo valor | Mesmo valor |
+| `environment` | `dev` | `dev` | `dev` |
+| `application_version` | `v1` | `v2` | `v2` |
+| `log_level` | `info` | `info` | `debug` |
+| `managed_by` | `terraform` | `terraform` | `terraform` |
+| `lab` | `23` | `23` | `23` |
+
+A mudança intencional alterou `application_version` nos parâmetros locais do Terraform.
+
+O drift alterou somente `log_level` no arquivo existente, preservando a configuração Terraform e seus parâmetros.
+
+O arquivo versionado `terraform.tfvars.example` mantém o exemplo inicial com `v1 / info / dev`. O arquivo local `terraform.tfvars` terminou a execução com `v2 / info / dev` e permaneceu excluído do Git.
+
+## Conceitos demonstrados
 
 | Conceito | Aplicação no laboratório |
-|:---:|:---:|
-| Configuração declarada | Conteúdo que o Terraform deverá manter no arquivo |
+|---|---|
+| Configuração declarada | Conteúdo definido pelo código e pelos parâmetros Terraform |
 | Estado | Registro dos atributos conhecidos do recurso gerenciado |
-| Recurso observado | Arquivo que existe no sistema de arquivos |
-| Baseline | Situação inicial validada e sem mudanças pendentes |
-| Mudança intencional | Alteração dos parâmetros ou do código seguida de plano e aplicação |
-| Drift | Alteração externa no recurso gerenciado |
-| Reconciliação | Aplicação das ações necessárias para atingir a configuração declarada |
-| Validação independente | Leitura do arquivo e conferência de conteúdo e hash pelo PowerShell |
+| Recurso observado | Arquivo presente no sistema de arquivos |
+| Baseline | Conteúdo validado e confirmado por um plano sem mudanças |
+| Mudança intencional | Alteração dos parâmetros seguida de plano e aplicação |
+| Drift | Alteração externa no arquivo gerenciado |
+| Reconciliação | Aplicação do plano para restaurar o conteúdo declarado |
+| Validação independente | Leitura do arquivo e comparação de conteúdo e SHA256 pelo PowerShell |
 
-Os outputs e o estado não substituem a leitura direta do arquivo. Após uma alteração externa, eles podem continuar apresentando valores registrados anteriormente.
+Os outputs e o estado não substituíram a leitura direta do arquivo. Após a alteração externa, eles ainda apresentavam `log_level = info`, enquanto o arquivo observado continha `log_level = debug`.
 
-As ações propostas dependem do comportamento do provider. Uma alteração de conteúdo poderá resultar em substituição ou recriação do recurso, conforme o cenário. A interpretação será feita a partir do plano efetivamente gerado.
+A interpretação das ações foi feita a partir dos planos efetivamente gerados.
 
-## Pré-requisitos
+## Procedimento executado
 
-- Git e Terraform disponíveis no PATH.
-- Repositório local sincronizado.
-- Configuração do laboratório publicada antes da execução.
-- Acesso à internet para a instalação inicial do provider.
-- Diretório e workspace conferidos.
-- Ausência de recursos anteriores não identificados no estado do laboratório.
-- Caminho exclusivo do arquivo gerenciado conferido antes da primeira aplicação.
+### 1. Preparação, inicialização e validação
 
-## Procedimento planejado
+O repositório foi sincronizado e os cinco arquivos de configuração foram conferidos.
 
-Os comandos completos e as verificações serão fornecidos durante a execução de cada etapa.
+Antes da criação, o destino gerenciado estava ausente e não havia recursos no estado.
 
-### 1. Preparar o ambiente
+Foram executados:
 
-Conferir o estado do repositório e sincronizar os arquivos.
+```powershell
+terraform init -input=false -no-color
+terraform workspace show
+terraform fmt -check -diff -recursive -no-color
+terraform validate -no-color
+```
 
-Verificar a versão do Terraform, a presença dos arquivos de configuração e o caminho reservado ao recurso.
+Resultados:
 
-O arquivo de destino deverá estar ausente na primeira execução. Caso já exista, investigar sua origem antes de aplicar o plano.
+- Provider `hashicorp/local` 2.9.1 instalado.
+- Workspace `default` confirmado.
+- Formatação aprovada.
+- Configuração válida.
+- Arquivo `.terraform.lock.hcl` gerado.
 
-### 2. Inicializar e validar
+Após a publicação do arquivo de dependências, suas cópias local e remota foram comparadas. A sincronização preservou o conteúdo e uma nova inicialização utilizou:
 
-Inicializar o diretório Terraform e confirmar o workspace `default`.
+```powershell
+terraform init -input=false -no-color -lockfile=readonly
+```
 
-Registrar a versão selecionada do provider no arquivo de dependências.
+O arquivo de dependências permaneceu inalterado e o repositório terminou essa etapa sem alterações locais.
 
-Conferir a formatação e validar a configuração.
+### 2. Criação do baseline v1
 
-### 3. Criar o baseline
+O plano `lab23-baseline-create.tfplan` foi salvo e revisado.
 
-Preparar os parâmetros iniciais e gerar um plano salvo.
+Foram conferidos o endereço do recurso, o provider, a ação de criação, o destino e o conteúdo JSON.
 
-Conferir que o plano contém somente o recurso esperado e que seu destino pertence ao laboratório.
+Resultado do plano:
 
-Aplicar o plano revisado.
+```text
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
 
-Consultar o estado e os outputs, ler o arquivo JSON e registrar seu conteúdo e hash SHA256.
+Após a aplicação, o arquivo foi lido diretamente e comparado com o conteúdo planejado. Estado, outputs e SHA256 também foram conferidos.
 
-Executar um segundo plano e confirmar ausência de mudanças.
+Foi preservada uma cópia local em `baseline-v1.json`.
 
-### 4. Aplicar uma mudança intencional
+Um segundo plano confirmou:
 
-Alterar um parâmetro que componha o conteúdo declarado do arquivo.
+```text
+No changes. Your infrastructure matches the configuration.
+```
 
-Gerar e revisar um novo plano salvo, identificando os atributos alterados e as ações propostas.
+Código de saída: `0`.
 
-Aplicar o plano e conferir o novo conteúdo diretamente no sistema de arquivos.
+### 3. Mudança intencional para v2
 
-Registrar o novo baseline e confirmar novamente um plano sem mudanças.
+O parâmetro local `application_version` foi alterado de `v1` para `v2`, mantendo `log_level = info` e `environment = dev`.
 
-### 5. Introduzir drift
+O plano `lab23-change-v2.tfplan` apresentou substituição do recurso:
 
-Alterar um campo do arquivo JSON diretamente pelo PowerShell.
+```text
+Plan: 1 to add, 0 to change, 1 to destroy.
+```
 
-Preservar os arquivos Terraform e os parâmetros usados na última aplicação.
+Após a aplicação, o arquivo, o estado e os outputs foram conferidos. O novo conteúdo foi preservado em `baseline-v2.json`.
 
-Conferir que o arquivo continua sendo um JSON válido e que seu conteúdo e hash diferem do baseline.
+Um novo plano confirmou ausência de mudanças e código de saída `0`.
 
-Essa etapa representa uma alteração externa ao fluxo do Terraform.
+### 4. Introdução do drift
 
-### 6. Diagnosticar a divergência
+O arquivo `application-config.json` foi alterado diretamente pelo PowerShell:
 
-Comparar:
+```text
+log_level: info → debug
+```
 
-- conteúdo declarado;
-- valores registrados no estado e nos outputs;
-- conteúdo efetivamente presente no arquivo;
-- hash anterior e hash após a alteração externa.
+A gravação utilizou UTF-8 sem BOM e o conteúdo permaneceu um JSON válido.
 
-Gerar um plano para identificar como o provider representa a divergência e quais ações o Terraform propõe.
+Foram preservados:
 
-O plano deverá ser analisado antes de qualquer correção.
+- Arquivos `.tf`.
+- Parâmetros em `terraform.tfvars`.
+- Arquivo de dependências.
+- Estado Terraform.
+- Baseline v2.
 
-### 7. Restaurar a configuração declarada
+O arquivo observado passou a apresentar um SHA256 diferente. Uma cópia foi preservada em `drift-observed.json`.
 
-Salvar e revisar o plano de recuperação.
+Nesse momento:
 
-Confirmar o endereço do recurso e o caminho do arquivo envolvido.
+| Fonte consultada | `log_level` |
+|---|---|
+| Configuração declarada | `info` |
+| Estado e outputs registrados | `info` |
+| Arquivo observado | `debug` |
 
-Aplicar o plano para restaurar o conteúdo declarado.
+### 5. Diagnóstico e plano de recuperação
 
-Ler novamente o JSON e comparar seu conteúdo e hash com o baseline registrado após a mudança intencional.
+A comparação identificou a divergência entre o arquivo observado e o baseline v2.
 
-### 8. Confirmar ausência de mudanças
+O plano de recuperação foi salvo em `lab23-recover.tfplan`.
 
-Executar um novo plano com os mesmos parâmetros.
+Neste cenário, o plano apresentou uma ação de criação para `local_file.application_config`:
 
-Confirmar ausência de mudanças, código de saída `0` e consistência entre configuração, estado e arquivo observado.
+```text
+Plan: 1 to add, 0 to change, 0 to destroy.
+```
 
-### 9. Remover e validar
+A ação foi conferida no JSON do plano, juntamente com o provider, o destino e o conteúdo a restaurar.
 
-Gerar um plano salvo de remoção e conferir seu escopo.
+O arquivo com `debug` continuava presente após o planejamento. Portanto, a ação `create` do plano não foi interpretada como evidência de que o arquivo físico já havia sido removido.
 
-Aplicar o plano revisado.
+### 6. Recuperação e validação
 
-Confirmar que o estado não contém recursos e que o arquivo gerenciado está ausente.
+O plano revisado foi aplicado:
 
-Preservar os arquivos de configuração e os registros selecionados da execução.
+```text
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+```
 
-## Interpretação dos planos
+Após a aplicação:
+
+- O arquivo voltou a apresentar `v2 / info / dev`.
+- Seu conteúdo correspondeu exatamente ao baseline v2.
+- O SHA256 foi restaurado.
+- O estado continha somente o recurso esperado.
+- Os outputs corresponderam ao conteúdo restaurado.
+- Baselines, registro de drift, configuração e parâmetros foram preservados.
+
+### 7. Plano sem mudanças após a recuperação
+
+Um novo plano foi executado com os mesmos parâmetros:
+
+```powershell
+terraform plan -input=false -no-color -detailed-exitcode -var-file=terraform.tfvars
+```
+
+Resultado:
+
+```text
+No changes. Your infrastructure matches the configuration.
+```
+
+Código de saída: `0`.
+
+O arquivo gerenciado continuou correspondente ao baseline v2. O registro de drift permaneceu preservado com seu conteúdo divergente.
+
+### 8. Planejamento da remoção
+
+Foi gerado o plano `lab23-destroy.tfplan` com `-destroy`.
+
+Resultado:
+
+```text
+Plan: 0 to add, 0 to change, 1 to destroy.
+```
+
+A revisão confirmou uma única ação de remoção para `local_file.application_config`, no destino esperado e com o conteúdo do baseline v2.
+
+O planejamento preservou o arquivo gerenciado, a configuração, os parâmetros, o estado e os registros locais.
+
+### 9. Remoção e verificação final
+
+O plano salvo e revisado foi aplicado:
+
+```powershell
+terraform apply -input=false -no-color lab23-destroy.tfplan
+```
+
+Resultado:
+
+```text
+Apply complete! Resources: 0 added, 0 changed, 1 destroyed.
+```
+
+As verificações finais confirmaram:
+
+- Zero recursos em `terraform state list`.
+- Arquivo `application-config.json` ausente.
+- Sete arquivos de configuração e parâmetros preservados.
+- Quatro registros locais preservados.
+- Repositório sem alterações locais.
+
+O plano sem mudanças foi confirmado antes da remoção. Após a remoção, a configuração foi preservada para permitir uma futura recriação.
+
+## Comparação dos resultados
+
+| Etapa | Ações observadas | Código do plano |
+|---|---|---|
+| Criação do baseline v1 | 1 criação | `2` |
+| Verificação do baseline v1 | Sem mudanças | `0` |
+| Mudança intencional para v2 | 1 criação e 1 remoção | `2` |
+| Verificação do baseline v2 | Sem mudanças | `0` |
+| Recuperação após drift | 1 criação | `2` |
+| Verificação após recuperação | Sem mudanças | `0` |
+| Remoção | 1 remoção | `2` |
+
+A mudança intencional e o drift produziram planos diferentes neste laboratório. A primeira apresentou substituição; a recuperação do drift apresentou criação.
+
+## Hashes registrados
+
+| Situação | SHA256 |
+|---|---|
+| Baseline v1 — `v1 / info / dev` | `99eae7313d4b6efc9526d8405fc8598aa09fd137992d65dd78d11fc2f6a8c40a` |
+| Baseline v2 — `v2 / info / dev` | `de6d87ba8c1239b81669c4782a631479f62b2e997c4fe10bab88ec91c1f8029d` |
+| Drift — `v2 / debug / dev` | `587652d481ed560636443dfdd4a5cc3c2b60be012560f2b4e3ff2a738e631e6a` |
+| Arquivo recuperado — `v2 / info / dev` | `de6d87ba8c1239b81669c4782a631479f62b2e997c4fe10bab88ec91c1f8029d` |
+
+O hash restaurado correspondeu ao baseline v2. A validação também comparou o conteúdo completo do arquivo.
+
+## Registros locais preservados
+
+| Arquivo | Finalidade |
+|---|---|
+| `baseline-v1.json` | Conteúdo inicial validado |
+| `baseline-v2.json` | Conteúdo após a mudança intencional |
+| `drift-observed.json` | Conteúdo observado após a alteração externa |
+| `terraform-v1.tfvars` | Cópia dos parâmetros iniciais |
+
+Esses quatro arquivos permaneceram em `local-artifacts/`, excluídos do Git.
+
+## Interpretação dos códigos de saída
 
 | Código de `plan -detailed-exitcode` | Significado |
-|:---:|:---:|
+|---|---|
 | `0` | Plano concluído sem mudanças |
 | `1` | Erro |
 | `2` | Plano concluído com mudanças propostas |
 
-O código `2` será esperado quando houver ações propostas para criação, mudança, recuperação ou remoção.
+Durante a execução, `$LASTEXITCODE` foi consultado imediatamente após os comandos externos.
 
-No PowerShell, `$LASTEXITCODE` deverá ser consultado imediatamente após cada comando externo.
-
-A aplicação de um plano salvo executa suas ações sem uma nova confirmação interativa. Por isso, cada plano será revisado antes da aplicação.
-
-Um plano com `-refresh-only` pode ajudar a inspecionar diferenças entre o estado registrado e o recurso observado. Aplicá-lo atualiza o estado; essa operação, por si só, não restaura o conteúdo declarado no arquivo.
+Os planos salvos foram revisados antes da aplicação, incluindo endereço, ações, provider, caminho e conteúdo do recurso.
 
 ## Versionamento
 
 | Item | Tratamento |
-|:---:|:---:|
-| Arquivos `.tf` | Versionar |
-| `terraform.tfvars.example` | Versionar |
-| `.terraform.lock.hcl` | Versionar |
-| README, `.gitignore` e evidências selecionadas | Versionar |
-| `terraform.tfvars` | Não versionar |
-| `.terraform/` | Não versionar |
-| Estados e cópias de estado | Não versionar |
-| Planos salvos | Não versionar |
-| Conteúdo de `local-artifacts/` | Não versionar |
+|---|---|
+| Arquivos `.tf` | Versionados |
+| `terraform.tfvars.example` | Versionado |
+| `.terraform.lock.hcl` | Versionado |
+| README, `.gitignore` e evidências | Versionados |
+| `terraform.tfvars` | Excluído do Git |
+| `.terraform/` | Excluído do Git |
+| Estados e cópias de estado | Excluídos do Git |
+| Planos salvos | Excluídos do Git |
+| Conteúdo de `local-artifacts/` | Excluído do Git |
 
 O `.gitignore` da raiz cobre os arquivos locais do Terraform. O `.gitignore` deste laboratório exclui seu diretório `local-artifacts/`.
 
-## Resultados esperados
+## Evidências
 
-| Etapa | Critério | Situação |
-|:---:|:---:|:---:|
-| Inicialização | Provider instalado e workspace conferido | Pendente |
-| Formatação e validação | Configuração válida e sem diferenças de formatação | Pendente |
-| Baseline | Um recurso criado e arquivo conferido | Pendente |
-| Plano inicial de verificação | Ausência de mudanças | Pendente |
-| Mudança intencional | Novo conteúdo aplicado e validado | Pendente |
-| Drift | Alteração externa registrada | Pendente |
-| Diagnóstico | Divergência identificada e plano interpretado | Pendente |
-| Recuperação | Conteúdo declarado restaurado | Pendente |
-| Plano final de verificação | Ausência de mudanças | Pendente |
-| Remoção | Estado vazio e arquivo gerenciado ausente | Pendente |
+### Inicialização e dependências
 
-## Evidências previstas
+Provider instalado, formatação aprovada e configuração válida.
 
-- Inicialização, versão do provider, formatação e validação.
-- Criação do baseline e conferência do arquivo.
-- Plano e aplicação da mudança intencional.
-- Alteração externa e comparação de conteúdo e hash.
-- Diagnóstico da divergência pelo Terraform.
-- Recuperação e verificação do conteúdo restaurado.
-- Plano sem mudanças após a recuperação.
-- Remoção e validação final.
+![Inicialização e validação](images/Clipboard_10-05-2026_69.png)
 
-Os links serão adicionados após a execução e a publicação das capturas.
+Sincronização do arquivo de dependências e inicialização com `-lockfile=readonly`.
+
+![Dependências sincronizadas](images/Clipboard_10-05-2026_70.png)
+
+### Baseline v1
+
+Plano de criação salvo e conferido.
+
+![Plano do baseline v1](images/Clipboard_10-05-2026_71.png)
+
+Aplicação e validação independente do arquivo.
+
+![Baseline v1 aplicado](images/Clipboard_10-06-2026_72.png)
+
+Segundo plano sem mudanças.
+
+![Baseline v1 sem mudanças](images/Clipboard_10-06-2026_73.png)
+
+### Mudança intencional
+
+Plano da mudança de `v1` para `v2`.
+
+![Plano da mudança para v2](images/Clipboard_10-06-2026_74.png)
+
+Aplicação e validação do novo conteúdo.
+
+![Baseline v2 aplicado](images/Clipboard_10-06-2026_75.png)
+
+Plano sem mudanças após a atualização.
+
+![Baseline v2 sem mudanças](images/Clipboard_10-06-2026_76.png)
+
+### Drift e recuperação
+
+Alteração externa de `log_level` para `debug`.
+
+![Drift introduzido](images/Clipboard_10-07-2026_77.png)
+
+Comparação dos valores registrados e observados, seguida do plano de recuperação.
+
+![Diagnóstico e plano de recuperação](images/Clipboard_10-07-2026_78.png)
+
+Conteúdo declarado restaurado e validado.
+
+![Recuperação aplicada](images/Clipboard_10-07-2026_79.png)
+
+Plano sem mudanças após a recuperação.
+
+![Verificação após recuperação](images/Clipboard_10-07-2026_80.png)
+
+### Remoção
+
+Plano de remoção salvo e conferido.
+
+![Plano de remoção](images/Clipboard_10-07-2026_81.png)
+
+Recurso removido, estado vazio, arquivo ausente e registros preservados.
+
+![Remoção concluída](images/Clipboard_10-07-2026_82.png)
 
 ## Critérios de conclusão
 
-- [x] Estrutura inicial criada.
+- [x] Estrutura e configuração Terraform publicadas.
 - [x] Diretório de artefatos locais excluído do Git.
-- [ ] Configuração Terraform publicada.
-- [ ] Provider inicializado e arquivo de dependências versionado.
-- [ ] Formatação e validação concluídas.
-- [ ] Baseline criado e validado.
-- [ ] Mudança intencional planejada, aplicada e conferida.
-- [ ] Drift introduzido no arquivo exclusivo.
-- [ ] Divergência diagnosticada.
-- [ ] Plano de recuperação salvo e revisado.
-- [ ] Conteúdo declarado restaurado e validado.
-- [ ] Plano sem mudanças após a recuperação.
-- [ ] Recurso removido e arquivo ausente.
-- [ ] Estado final sem recursos.
-- [ ] Evidências e resultados publicados.
+- [x] Provider inicializado e arquivo de dependências versionado.
+- [x] Formatação e validação concluídas.
+- [x] Baseline v1 criado e validado.
+- [x] Plano sem mudanças confirmado no baseline v1.
+- [x] Mudança intencional planejada, aplicada e conferida.
+- [x] Baseline v2 registrado e confirmado sem mudanças.
+- [x] Drift introduzido no arquivo exclusivo.
+- [x] Divergência diagnosticada.
+- [x] Plano de recuperação salvo e revisado.
+- [x] Conteúdo declarado restaurado e validado.
+- [x] Plano sem mudanças após a recuperação.
+- [x] Plano de remoção salvo e revisado.
+- [x] Recurso removido e arquivo ausente.
+- [x] Estado final sem recursos.
+- [x] Configuração e registros locais preservados.
+- [x] Evidências registradas.
 
 ## Referências
 
 - [Gerenciamento de resource drift](https://developer.hashicorp.com/terraform/tutorials/state/resource-drift)
-- [Recurso local_file](https://registry.terraform.io/providers/hashicorp/local/latest/docs/resources/file)
+- [Recurso local_file — provider 2.9.1](https://registry.terraform.io/providers/hashicorp/local/2.9.1/docs/resources/file)
 - [Comando terraform plan](https://developer.hashicorp.com/terraform/cli/commands/plan)
 - [Arquivo de dependências](https://developer.hashicorp.com/terraform/language/files/dependency-lock)
