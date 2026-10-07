@@ -154,7 +154,7 @@ Publicar os resultados e as evidências.
 ## Resultados esperados
 
 | Etapa | Critério | Situação |
-|---|---|---|
+|:---:|:---:|:---:|
 | Workflow | Eventos e diretórios definidos | Pendente |
 | Execução válida | Labs 22 e 23 aprovados | Pendente |
 | Formatação incorreta | Falha detectada na etapa de formatação | Pendente |
