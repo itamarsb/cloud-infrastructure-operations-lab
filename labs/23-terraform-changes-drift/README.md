@@ -342,7 +342,7 @@ Os planos salvos foram revisados antes da aplicação, incluindo endereço, aç�
 ## Versionamento
 
 | Item | Tratamento |
-|---|---|
+|:---:|:---:|
 | Arquivos `.tf` | Versionados |
 | `terraform.tfvars.example` | Versionado |
 | `.terraform.lock.hcl` | Versionado |
