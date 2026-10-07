@@ -197,7 +197,7 @@ O arquivo observado passou a apresentar um SHA256 diferente. Uma cópia foi pres
 Nesse momento:
 
 | Fonte consultada | `log_level` |
-|---|---|
+|:---:|:---:|
 | Configuração declarada | `info` |
 | Estado e outputs registrados | `info` |
 | Arquivo observado | `debug` |
