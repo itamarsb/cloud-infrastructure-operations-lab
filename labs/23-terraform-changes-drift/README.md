@@ -25,7 +25,7 @@ O exercício utilizou o provider `hashicorp/local` e um recurso `local_file` par
 ## Ambiente e escopo
 
 | Item | Utilizado na execução |
-|---|---|
+|:---:|:---:|
 | Terminal | Windows PowerShell 5.1 |
 | Terraform | 1.16.1 — windows_amd64 |
 | Provider | `hashicorp/local` 2.9.1 |
