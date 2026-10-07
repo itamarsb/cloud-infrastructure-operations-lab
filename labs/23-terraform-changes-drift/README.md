@@ -72,7 +72,7 @@ C:\GitHub\cloud-infrastructure-operations-lab\labs\23-terraform-changes-drift\lo
 O conteúdo do arquivo foi construído com `jsonencode`, seguido de uma quebra de linha, e declarado no recurso `local_file.application_config`.
 
 | Campo | Baseline inicial | Após a mudança intencional | Durante o drift |
-|---|---|---|---|
+|:---:|:---:|:---:|:---:|
 | `project_name` | `cloud-infrastructure-operations-lab` | Mesmo valor | Mesmo valor |
 | `environment` | `dev` | `dev` | `dev` |
 | `application_version` | `v1` | `v2` | `v2` |
