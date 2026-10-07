@@ -65,7 +65,7 @@ O workflow deverá ficar em `.github/workflows/`, na raiz do repositório.
 ## Conceitos
 
 | Conceito | Aplicação no laboratório |
-|---|---|
+|:---:|:---:|
 | Integração contínua | Verificação automática das alterações no repositório |
 | Workflow | Definição dos eventos, jobs e etapas |
 | Job | Unidade de execução das verificações |
