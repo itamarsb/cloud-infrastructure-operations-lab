@@ -72,30 +72,30 @@ Os laboratórios priorizam:
 
 ### Resultados concluídos no módulo
 
-O **Lab 13** reproduziu uma aplicação Nginx indisponível, separou diagnóstico e recuperação, identificou uma configuração inválida e restaurou o serviço antes do cleanup.
+O **Lab 13** reproduziu uma aplicação Nginx indisponível, identificou uma configuração inválida e restaurou o serviço antes do cleanup.
 
-O **Lab 14** reproduziu utilização elevada em um volume EBS dedicado, identificou os arquivos responsáveis, analisou capacidade e inodes, aplicou rotação e compressão controladas e restaurou a utilização saudável.
+O **Lab 14** reproduziu utilização elevada em um volume EBS dedicado. A utilização chegou a `85%`, com `24` arquivos de pressão e aproximadamente `1,50 GiB` de dados recuperáveis. A utilização de inodes permaneceu em `1%`, e nenhum arquivo removido ainda aberto foi encontrado. A mitigação por compressão e retenção reduziu a utilização para `57%`.
 
-No Lab 14:
+O **Lab 15** revogou a regra HTTP de um Security Group exclusivo. O Nginx permaneceu saudável localmente, enquanto o acesso externo falhou. O diagnóstico identificou a regra ausente, e a recuperação restaurou somente TCP `80` para o CIDR autorizado.
 
-- a utilização elevada chegou a `85%`;
-- `24` arquivos de pressão foram identificados;
-- aproximadamente `1,50 GiB` de espaço recuperável foi localizado;
-- a utilização de inodes permaneceu em `1%`;
-- nenhum arquivo removido ainda aberto foi encontrado;
-- a mitigação reduziu a utilização para `57%`;
-- todos os recursos exclusivos foram removidos;
-- a rede compartilhada do Lab 08 foi preservada.
+O **Lab 16** investigou a perda de conectividade do Systems Manager após a revogação da saída HTTPS. A primeira tentativa não produziu `ConnectionLost` no prazo e restaurou a regra. A segunda, após ajustar o procedimento para reiniciar somente a instância exclusiva, confirmou SSM `ConnectionLost` com EC2 `running`. A recuperação utilizou a API do EC2.
 
-O **Lab 15** revogou de forma controlada a regra HTTP de um Security Group exclusivo. O Nginx e o endpoint local permaneceram saudáveis, enquanto o acesso externo falhou. O diagnóstico identificou a regra ausente, a recuperação restaurou somente TCP `80` para o CIDR autorizado, e a validação independente confirmou novamente `Healthy`. O cleanup removeu os recursos exclusivos e preservou a VPC e a sub-rede do Lab 08.
+O **Lab 17** registrou o baseline v1 e o backup de quatro arquivos da aplicação. Uma candidata inválida foi rejeitada por `nginx -t`, mantendo o serviço em v1. O rollback restaurou os hashes do baseline; depois, a candidata v2 foi validada local e externamente e confirmada.
 
-O **Lab 16** revogou a saída HTTPS de um Security Group exclusivo. A primeira tentativa não produziu `ConnectionLost` no prazo e restaurou a regra. Após ajustar o procedimento para reiniciar somente a instância do laboratório, a segunda tentativa confirmou SSM `ConnectionLost` com EC2 `running`. O diagnóstico verificou rede e IAM, a recuperação restaurou a saída pela API do EC2, e a validação voltou a `Healthy`. O cleanup removeu os recursos exclusivos e preservou a rede compartilhada do Lab 08.
+O **Lab 18** criou um backup de quatro arquivos em S3 privado e versionado. A perda de `index.html` e `version` produziu HTTP 404 em `/` e `/version`, mantendo `/health` saudável. A restauração recuperou a versão registrada, verificou SHA-256 e manifesto e restabeleceu os quatro hashes do baseline.
 
-O **Lab 17** registrou o baseline v1 e o backup de quatro arquivos da aplicação Nginx. Uma candidata com diretiva inválida foi rejeitada por `nginx -t`, enquanto o serviço continuou respondendo em v1. O diagnóstico identificou o arquivo de configuração divergente. O rollback restaurou os hashes do baseline; depois, a candidata v2 foi validada local e externamente e confirmada. O cleanup removeu somente a instância, o Security Group, o Instance Profile e a IAM Role exclusivos, preservando a rede compartilhada do Lab 08. As etapas e evidências estão no [README do Lab 17](../labs/17-aws-controlled-update/README.md).
+O intervalo observado entre perda e recuperação local no Lab 18 foi de **5 min 56,294 s**, incluindo diagnóstico e espera do operador. Essa medição não estabelece um objetivo de RTO para produção.
 
-O **Lab 18** criou um backup de quatro arquivos da aplicação Nginx em um bucket S3 privado e versionado. A perda controlada removeu `index.html` e `version`, produzindo HTTP 404 em `/` e `/version`, enquanto `/health` permaneceu saudável. O diagnóstico identificou os arquivos ausentes. A restauração recuperou a versão S3 registrada, verificou SHA-256 e manifesto e restabeleceu os quatro hashes do baseline, com HTTP 200 local e externo.
+Os laboratórios concluíram o cleanup dos recursos exclusivos e preservaram a rede compartilhada do Lab 08.
 
-O intervalo entre a perda e a recuperação observada localmente foi de **5 min 56,294 s**, incluindo diagnóstico e espera do operador. Essa medição não estabelece um objetivo de RTO para produção. O cleanup removeu EC2, volume root, Security Group, bucket, Instance Profile e IAM Role exclusivos, preservando a rede compartilhada do Lab 08. Os resultados e os limites das medições estão no [README do Lab 18](../labs/18-aws-application-backup-restore/README.md).
+| Laboratório | Documentação |
+|---|---|
+| Lab 13 | [Procedimento e evidências](../labs/13-aws-application-troubleshooting/README.md) |
+| Lab 14 | [Procedimento e evidências](../labs/14-aws-disk-utilization/README.md) |
+| Lab 15 | [Procedimento e evidências](../labs/15-aws-connectivity-troubleshooting/README.md) |
+| Lab 16 | [Procedimento e evidências](../labs/16-aws-systems-manager-troubleshooting/README.md) |
+| Lab 17 | [Procedimento e evidências](../labs/17-aws-controlled-update/README.md) |
+| Lab 18 | [Procedimento, medições e evidências](../labs/18-aws-application-backup-restore/README.md) |
 
 O módulo de operação e troubleshooting está concluído.
 
@@ -109,97 +109,105 @@ O módulo de operação e troubleshooting está concluído.
 | Concluído | **Lab 20 — Infraestrutura AWS como código** | Provider AWS, lock de dependências, IAM, Security Group, regras, EC2 com Nginx, validação independente e cleanup |
 | Concluído | **Lab 21 — Estado remoto** | Bootstrap separado, S3 privado e versionado, migração do estado, identidade preservada, bloqueio concorrente e cleanup |
 | Concluído | **Lab 22 — Variáveis, outputs e módulos** | Variáveis tipadas, entrada inválida rejeitada, módulo reutilizável, outputs, plano sem mudanças e remoção local |
-| Planejado | **Lab 23 — Mudanças e drift** | Comparação entre código, estado e ambiente |
+| Concluído | **Lab 23 — Mudanças e drift** | Mudança intencional, alteração externa, diagnóstico, recuperação, validação de conteúdo e SHA256 e remoção local |
 | Planejado | **Lab 24 — Validação automatizada** | Formatação, validação e verificação do código em pipeline |
 
 ### Resultados concluídos no módulo
 
-O **Lab 19** executou o ciclo completo de um recurso local `terraform_data`, utilizando Terraform `1.16.1` e o workspace `default`.
+#### Lab 19 — Fluxo essencial do Terraform
 
-A inicialização foi concluída, a formatação não apresentou diferenças e a configuração passou pela validação. O plano inicial propôs a criação de um único recurso e foi salvo, inspecionado e aplicado.
+O exercício executou o ciclo completo de um recurso local `terraform_data`, utilizando Terraform `1.16.1` e workspace `default`.
 
-A consulta ao estado confirmou somente `terraform_data.lab19`. Os outputs corresponderam aos valores definidos na configuração, e um segundo plano confirmou ausência de mudanças, com código de saída `0`.
+A inicialização, a formatação e a validação foram concluídas. O plano inicial propôs um único recurso e foi salvo, inspecionado e aplicado.
 
-O destroy removeu o recurso. A validação final confirmou estado sem recursos e preservação dos arquivos `versions.tf`, `main.tf` e `outputs.tf`.
+Estado e outputs foram conferidos. Um segundo plano confirmou ausência de mudanças, com código de saída `0`.
 
-O exercício foi inteiramente local, sem provisionamento AWS. O procedimento e as evidências estão no [README do Lab 19](../labs/19-terraform-essential-workflow/README.md).
+O destroy deixou o estado vazio e preservou os três arquivos `.tf`.
 
-O **Lab 20** provisionou uma aplicação Nginx na AWS utilizando Terraform `1.16.1`, provider AWS `6.67.0` e estado local no workspace `default`.
+[Procedimento e evidências do Lab 19](../labs/19-terraform-essential-workflow/README.md).
 
-O arquivo `.terraform.lock.hcl` foi versionado. A comparação entre a cópia local e a publicada confirmou conteúdo idêntico após normalizar os finais de linha LF e CRLF. A inicialização com `-lockfile=readonly` reutilizou a versão registrada do provider.
+#### Lab 20 — Infraestrutura AWS como código
 
-A pré-validação conferiu identidade AWS, estado local, rede compartilhada e conflitos de recursos exclusivos, sem alterar recursos AWS.
+O exercício utilizou Terraform `1.16.1`, provider AWS `6.67.0` e estado local.
 
-O plano salvo propôs a criação de sete recursos gerenciados:
+O arquivo de dependências foi versionado e conferido com `-lockfile=readonly`. A pré-validação verificou identidade AWS, estado, rede compartilhada e conflitos de recursos exclusivos.
 
-- IAM Role para a instância EC2;
-- associação com a política `AmazonSSMManagedInstanceCore`;
+O plano criou sete recursos gerenciados:
+
+- IAM Role;
+- associação com a política do Systems Manager;
 - Instance Profile;
 - Security Group;
-- regra de entrada HTTP restrita ao IPv4 autorizado;
+- regra de entrada HTTP;
 - regra de saída HTTPS;
-- instância EC2 com aplicação Nginx.
+- instância EC2 com Nginx.
 
-A VPC e a sub-rede compartilhadas do Lab 08 foram consultadas como fontes de dados e permaneceram fora do conjunto de recursos gerenciados.
+A VPC e a sub-rede compartilhadas foram consultadas como fontes de dados.
 
-A aplicação do plano criou os sete recursos. A validação independente conferiu estado, outputs, EC2, volume root, Security Group, IAM, Systems Manager e aplicação. A instância apresentou IMDSv2 obrigatório, volume root `gp3` criptografado e administração pelo Systems Manager, sem entrada SSH.
+A validação independente conferiu estado, outputs, EC2, volume root, Security Group, IAM, Systems Manager e aplicação. Os endpoints `/`, `/health` e `/version` responderam HTTP 200 local e externamente.
 
-A inicialização da instância foi concluída, a configuração do Nginx passou na validação e os endpoints `/`, `/health` e `/version` responderam HTTP 200 local e externamente, com o conteúdo esperado da versão v1.
+Um segundo plano confirmou ausência de mudanças. O cleanup removeu os sete recursos gerenciados, e a validação confirmou a ausência dos recursos exclusivos, incluindo o volume root, preservando as condições verificadas da rede compartilhada.
 
-Um segundo plano confirmou ausência de mudanças, com código de saída `0`.
+[Procedimento e evidências do Lab 20](../labs/20-terraform-aws-infrastructure/README.md).
 
-O plano de remoção foi salvo e revisado, incluindo a conferência das ações e dos identificadores dos sete recursos. Sua aplicação destruiu os sete recursos gerenciados.
+#### Lab 21 — Estado remoto
 
-A validação pós-cleanup confirmou:
+Um bootstrap independente criou seis recursos para um backend S3 privado, versionado e criptografado. O estado do bootstrap permaneceu local.
 
-- estado local preservado, sem recursos gerenciados restantes;
-- instância EC2 encerrada ou ausente;
-- volume root, Security Group e recursos IAM exclusivos ausentes;
-- nenhuma EC2 ativa identificada pelos nomes ou tags do Lab 20;
-- preservação das condições verificadas da VPC, sub-rede, rotas, Internet Gateway, Network ACL e DNS compartilhados;
-- arquivos de configuração preservados.
+O exercício criou `terraform_data.lab21` e migrou seu estado para S3, preservando identificador e outputs. A consulta independente confirmou criptografia e identificador de versão do objeto.
 
-Os arquivos Terraform, os scripts de validação e as evidências estão no [README do Lab 20](../labs/20-terraform-aws-infrastructure/README.md).
+O backend utilizou `use_lockfile = true`. O teste de concorrência confirmou a existência de `.tflock` e a recusa da segunda operação com `Error acquiring the state lock` e `PreconditionFailed`.
 
-O **Lab 21** implementou um backend S3 exclusivo utilizando Terraform `1.16.1` e provider AWS `6.67.0`.
-
-O bootstrap manteve seu estado local durante toda a execução e provisionou seis recursos: bucket, bloqueio de acesso público, controle de propriedade dos objetos, versionamento, criptografia e política de transporte seguro.
-
-A validação independente confirmou bucket privado, versionamento habilitado, criptografia SSE-S3 `AES256`, propriedade `BucketOwnerEnforced`, tags esperadas e ausência inicial de versões e marcadores de exclusão.
-
-O exercício criou `terraform_data.lab21` com estado local. O identificador e os outputs foram registrados, um segundo plano confirmou ausência de mudanças, e uma cópia do estado foi conferida por SHA256.
-
-A migração para S3 preservou o identificador e os outputs. O backend utilizou `use_lockfile = true`, e a consulta independente ao objeto confirmou criptografia e identificador de versão.
-
-O teste de concorrência utilizou uma aplicação interativa aguardando aprovação no primeiro terminal. A existência do objeto `.tflock` foi confirmada no S3. Uma segunda operação, com espera limitada a cinco segundos, foi recusada com `Error acquiring the state lock` e `PreconditionFailed`.
-
-A resposta `no` cancelou a aplicação e liberou o bloqueio. Um novo plano foi executado com sucesso, sem mudanças e com o identificador original preservado.
+A operação interativa foi cancelada, liberando o bloqueio. Um novo plano confirmou ausência de mudanças.
 
 O cleanup seguiu esta ordem:
 
 1. Remoção do recurso do exercício pelo backend remoto.
-2. Preservação de uma cópia do estado final sem recursos e outputs.
-3. Inventário e exclusão de oito versões de objetos e seis marcadores de exclusão.
+2. Preservação de uma cópia do estado final vazio.
+3. Exclusão de oito versões de objetos e seis marcadores de exclusão.
 4. Confirmação do bucket vazio.
-5. Aplicação do plano de remoção dos seis recursos do bootstrap.
-6. Validação do estado local final e confirmação independente da ausência do bucket na conta AWS.
+5. Remoção dos seis recursos do bootstrap.
+6. Confirmação independente da ausência do bucket.
 
-Os procedimentos, arquivos e evidências estão no [README do Lab 21](../labs/21-terraform-remote-state/README.md).
+[Procedimento e evidências do Lab 21](../labs/21-terraform-remote-state/README.md).
 
-O **Lab 22** demonstrou parametrização e reutilização de configuração com Terraform `1.16.1`, Windows PowerShell, estado local e workspace `default`.
+#### Lab 22 — Variáveis, outputs e módulos
 
-O módulo raiz chamou o mesmo módulo filho como `application` e `worker`. Cada chamada gerenciou um recurso integrado `terraform_data`, recebendo entradas tipadas e retornando identificador e dados para os outputs da raiz.
+O módulo raiz chamou o mesmo módulo filho como `application` e `worker`. Cada chamada gerenciou um recurso local `terraform_data`.
 
-A inicialização, a formatação recursiva e a validação foram concluídas. Uma entrada com `replica_count = 0` foi rejeitada pela regra de número inteiro entre 1 e 5, com código de saída `1`. A comparação SHA256 confirmou que `terraform.tfvars` permaneceu inalterado durante o teste.
+A inicialização, a formatação e a validação foram concluídas. A entrada `replica_count = 0` foi rejeitada, com código de saída `1`, preservando `terraform.tfvars`.
 
-O plano salvo de criação propôs somente dois recursos. A aplicação, o estado e os outputs confirmaram os componentes, com valores de réplica `2` para `application` e `1` para `worker`. Esses parâmetros são dados didáticos, sem criação de serviços ou monitoramento real.
+Estado e outputs confirmaram os componentes com parâmetros de réplica `2` e `1`. Esses valores são dados didáticos, sem serviços em execução.
 
-Um segundo plano confirmou ausência de mudanças, com código de saída `0`. O plano salvo de remoção foi revisado e aplicado, destruindo os dois recursos. A verificação final confirmou estado vazio e presença dos nove arquivos de configuração.
+Um segundo plano confirmou ausência de mudanças. A remoção destruiu os dois recursos, deixando o estado vazio e os nove arquivos de configuração presentes.
 
-A execução foi inteiramente local, sem provisionamento AWS ou utilização do backend S3 removido no Lab 21. O procedimento, os resultados e as sete evidências estão no [README do Lab 22](../labs/22-terraform-variables-outputs-modules/README.md).
+[Procedimento e evidências do Lab 22](../labs/22-terraform-variables-outputs-modules/README.md).
 
+#### Lab 23 — Mudanças e drift
 
-O módulo de Terraform está em desenvolvimento.
+O exercício utilizou Terraform `1.16.1`, provider `hashicorp/local` `2.9.1`, estado local e workspace `default`.
+
+Um recurso `local_file.application_config` gerenciou um JSON exclusivo. O baseline inicial utilizou `v1 / info / dev`. Conteúdo, SHA256, estado e outputs foram validados, e um segundo plano confirmou ausência de mudanças.
+
+A mudança intencional para `v2` apresentou uma criação e uma remoção. Após a aplicação, o baseline v2 foi registrado e confirmado por um plano sem mudanças.
+
+O drift alterou diretamente `log_level` para `debug`, preservando configuração, parâmetros e estado. O arquivo observado diferiu dos valores registrados e do baseline v2.
+
+O plano de recuperação apresentou uma criação. Sua aplicação restaurou exatamente o conteúdo e o SHA256 do baseline v2. Um novo plano confirmou ausência de mudanças, com código de saída `0`.
+
+O plano de remoção foi revisado e aplicado. A verificação final confirmou:
+
+- zero recursos no estado;
+- arquivo gerenciado ausente;
+- sete arquivos de configuração e parâmetros preservados;
+- quatro registros locais preservados;
+- repositório sem alterações locais.
+
+Quatorze capturas documentam a execução.
+
+[Procedimento, comparação dos planos e evidências do Lab 23](../labs/23-terraform-changes-drift/README.md).
+
+O módulo de Terraform está em desenvolvimento. Os Labs 19 a 23 estão concluídos; o Lab 24 permanece planejado.
 
 ---
 
@@ -258,7 +266,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|:---:|:---:|
+|---|---|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
@@ -272,41 +280,40 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ### Resumo numérico
 
 | Indicador | Quantidade |
-|:---:|:---:|
-| Laboratórios concluídos | `23` |
+|---|---|
+| Laboratórios concluídos | `24` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `15` |
-| Último laboratório concluído | `Lab 22` |
-| Próximo laboratório | `Lab 23` |
+| Laboratórios planejados | `14` |
+| Último laboratório concluído | `Lab 23` |
+| Próximo laboratório | `Lab 24` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
-O módulo de Terraform está em desenvolvimento: os Labs 19 a 22 foram concluídos, enquanto os Labs 23 e 24 permanecem planejados.
+O módulo de Terraform está em desenvolvimento: os Labs 19 a 23 foram concluídos, enquanto o Lab 24 permanece planejado.
 
 ---
 
 ## Próxima etapa
 
-**Lab 23 — Mudanças e drift**
+**Lab 24 — Validação automatizada**
 
-O próximo laboratório abordará a comparação entre a configuração declarada, o estado do Terraform e o ambiente observado, incluindo mudanças intencionais e divergências introduzidas fora do Terraform.
+O próximo laboratório abordará a verificação automatizada do código Terraform em pipeline.
 
 O procedimento deverá incluir:
 
-- definição do cenário, backend e recursos exclusivos;
-- conferência do ambiente e do estado inicial;
-- criação de um baseline e confirmação de plano sem mudanças;
-- alteração intencional da configuração e revisão do plano resultante;
-- aplicação do plano salvo e inspeção do estado e dos outputs;
-- introdução de uma divergência controlada fora do Terraform;
-- identificação da divergência pelo plano;
-- revisão das ações propostas para reconciliar o ambiente com a configuração;
-- aplicação da correção e confirmação de plano sem mudanças;
-- remoção dos recursos exclusivos;
-- validação final e publicação das evidências.
+- definição dos diretórios e arquivos verificados;
+- configuração de um workflow no GitHub Actions;
+- conferência da formatação com `terraform fmt -check`;
+- inicialização necessária para validação, sem aplicação de recursos;
+- utilização do arquivo de dependências versionado;
+- validação da configuração com `terraform validate`;
+- definição dos eventos que executam o workflow;
+- introdução de uma falha controlada para comprovar a detecção;
+- correção da falha e confirmação de execução bem-sucedida;
+- documentação do escopo, dos resultados e das evidências.
 
-O cenário deverá distinguir mudanças de configuração e alterações externas, com resultados verificáveis em cada etapa.
+O workflow será definido antes da implementação. O cenário deverá produzir resultados verificáveis sem depender dos estados locais, dos parâmetros não versionados ou dos recursos removidos nos laboratórios anteriores.
 
-O bucket removido no Lab 21 não estará disponível para reutilização automática. O estado final do Lab 22 está vazio, e seus arquivos de configuração foram mantidos.
+O bucket do Lab 21 foi removido. Os estados finais dos Labs 22 e 23 estão sem recursos, e seus arquivos de configuração foram preservados.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de alteração e remoção.
