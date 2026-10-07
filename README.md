@@ -314,7 +314,7 @@ Os módulos de preparação, operações Linux, infraestrutura AWS e operação 
 O módulo de Terraform está em andamento:
 
 | Laboratório | Resultado |
-|---|---|
+|:---:|:---:|
 | Lab 19 | Ciclo de vida de um recurso local e aplicação de plano salvo |
 | Lab 20 | Infraestrutura AWS, validação independente e cleanup |
 | Lab 21 | Estado remoto em S3, migração e bloqueio concorrente |
