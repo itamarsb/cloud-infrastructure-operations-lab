@@ -330,7 +330,7 @@ Esses quatro arquivos permaneceram em `local-artifacts/`, excluídos do Git.
 ## Interpretação dos códigos de saída
 
 | Código de `plan -detailed-exitcode` | Significado |
-|---|---|
+|:---:|:---:|
 | `0` | Plano concluído sem mudanças |
 | `1` | Erro |
 | `2` | Plano concluído com mudanças propostas |
