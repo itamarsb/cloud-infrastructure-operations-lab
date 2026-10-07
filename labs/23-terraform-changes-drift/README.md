@@ -43,7 +43,7 @@ A alteração externa ficou restrita ao arquivo gerenciado pelo LAB 23. O arquiv
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Procedimento, resultados e evidências |
 | `.gitignore` | Exclusão dos artefatos locais do laboratório |
 | `images/` | Capturas da execução |
