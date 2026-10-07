@@ -294,7 +294,7 @@ O plano sem mudanças foi confirmado antes da remoção. Após a remoção, a co
 ## Comparação dos resultados
 
 | Etapa | Ações observadas | Código do plano |
-|---|---|---|
+|:---:|:---:|:---:|
 | Criação do baseline v1 | 1 criação | `2` |
 | Verificação do baseline v1 | Sem mudanças | `0` |
 | Mudança intencional para v2 | 1 criação e 1 remoção | `2` |
