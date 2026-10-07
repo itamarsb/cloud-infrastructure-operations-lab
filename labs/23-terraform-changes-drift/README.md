@@ -308,7 +308,7 @@ A mudança intencional e o drift produziram planos diferentes neste laboratório
 ## Hashes registrados
 
 | Situação | SHA256 |
-|---|---|
+|:---:|:---:|
 | Baseline v1 — `v1 / info / dev` | `99eae7313d4b6efc9526d8405fc8598aa09fd137992d65dd78d11fc2f6a8c40a` |
 | Baseline v2 — `v2 / info / dev` | `de6d87ba8c1239b81669c4782a631479f62b2e997c4fe10bab88ec91c1f8029d` |
 | Drift — `v2 / debug / dev` | `587652d481ed560636443dfdd4a5cc3c2b60be012560f2b4e3ff2a738e631e6a` |
