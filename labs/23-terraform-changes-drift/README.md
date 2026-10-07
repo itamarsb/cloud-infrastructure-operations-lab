@@ -319,7 +319,7 @@ O hash restaurado correspondeu ao baseline v2. A validação também comparou o 
 ## Registros locais preservados
 
 | Arquivo | Finalidade |
-|---|---|
+|:---:|:---:|
 | `baseline-v1.json` | Conteúdo inicial validado |
 | `baseline-v2.json` | Conteúdo após a mudança intencional |
 | `drift-observed.json` | Conteúdo observado após a alteração externa |
