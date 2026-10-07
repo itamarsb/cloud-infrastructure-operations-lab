@@ -29,7 +29,7 @@ A execução incluirá uma configuração válida, falhas controladas em uma bra
 ## Escopo
 
 | Item | Definição |
-|---|---|
+|:---:|:---:|
 | Plataforma | GitHub Actions |
 | Ferramenta | Terraform CLI |
 | Configuração do Lab 22 | Variáveis, outputs e módulo filho local |
