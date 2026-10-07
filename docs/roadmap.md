@@ -266,7 +266,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|---|---|
+|:---:|:---:|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
