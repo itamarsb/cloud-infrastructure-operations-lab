@@ -94,7 +94,7 @@ O arquivo de dependências do Lab 23 foi preparado para `windows_amd64` e `linux
 Os testes controlados foram realizados em uma branch temporária e no pull request #1:
 
 | Teste | Resultado |
-|---|---|
+|:---:|:---:|
 | Configurações válidas | Dois jobs aprovados |
 | Formatação incorreta no Lab 22 | Falha em `terraform fmt`, com código de saída `3` |
 | Formatação corrigida | Dois jobs aprovados |
