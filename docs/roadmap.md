@@ -227,7 +227,7 @@ O workflow utilizou lockfile somente leitura no Lab 23 e verificou sua preserva�
 Os testes foram executados em branch temporária e pull request:
 
 | Cenário | Resultado |
-|---|---|
+|:---:|:---:|
 | Configurações válidas | Dois jobs aprovados |
 | Formatação incorreta no Lab 22 | Falha em `fmt`, código de saída `3` |
 | Formatação corrigida | Dois jobs aprovados |
