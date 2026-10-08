@@ -350,7 +350,7 @@ A trilha está dividida em nove etapas:
 Os cinco primeiros módulos foram concluídos.
 
 | Laboratório do módulo Terraform | Resultado |
-|---|---|
+|:---:|:---:|
 | Lab 19 | Ciclo de vida de um recurso local e aplicação de plano salvo |
 | Lab 20 | Infraestrutura AWS, validação independente e cleanup |
 | Lab 21 | Estado remoto em S3, migração e bloqueio concorrente |
