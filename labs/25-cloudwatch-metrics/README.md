@@ -72,7 +72,7 @@ A carga será encerrada antes do cleanup.
 ## Infraestrutura exclusiva
 
 | Recurso | Nome previsto |
-|---|---|
+|:---:|:---:|
 | VPC | `lab25-cloudwatch-vpc` |
 | Subnet pública | `lab25-cloudwatch-public-subnet-a` |
 | Internet Gateway | `lab25-cloudwatch-igw` |
