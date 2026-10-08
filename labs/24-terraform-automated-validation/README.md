@@ -188,7 +188,7 @@ Após a correção, o pull request apresentou dois checks aprovados.
 ## Resultados
 
 | Cenário | LAB 22 | LAB 23 |
-|---|---|---|
+|:---|:---:|:---:|
 | Configurações válidas com dependências preparadas | Aprovado | Aprovado |
 | Formatação incorreta no arquivo de teste | Falha em `fmt` | Aprovado |
 | Formatação corrigida | Aprovado | Aprovado |
