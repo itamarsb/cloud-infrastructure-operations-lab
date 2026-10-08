@@ -1,1 +1,98 @@
+name: LAB 24 - Terraform Validation
 
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/lab24-terraform-validation.yml"
+      - "labs/22-terraform-variables-outputs-modules/terraform/**"
+      - "labs/23-terraform-changes-drift/terraform/**"
+      - ".gitattributes"
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/lab24-terraform-validation.yml"
+      - "labs/22-terraform-variables-outputs-modules/terraform/**"
+      - "labs/23-terraform-changes-drift/terraform/**"
+      - ".gitattributes"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  TF_VERSION: "1.16.1"
+
+jobs:
+  terraform-validation:
+    name: Terraform - ${{ matrix.lab }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - lab: LAB 22
+            directory: labs/22-terraform-variables-outputs-modules/terraform
+            require_lockfile: "false"
+
+          - lab: LAB 23
+            directory: labs/23-terraform-changes-drift/terraform
+            require_lockfile: "true"
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ${{ matrix.directory }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          terraform_wrapper: false
+
+      - name: Show Terraform version
+        run: terraform version
+
+      - name: Check Terraform formatting
+        run: terraform fmt -check -diff -recursive -no-color
+
+      - name: Initialize Terraform for validation
+        env:
+          REQUIRE_LOCKFILE: ${{ matrix.require_lockfile }}
+        run: |
+          if [[ "$REQUIRE_LOCKFILE" == "true" ]]; then
+            if [[ ! -f ".terraform.lock.hcl" ]]; then
+              echo "::error::Arquivo .terraform.lock.hcl obrigatorio ausente."
+              exit 1
+            fi
+
+            terraform init \
+              -backend=false \
+              -input=false \
+              -no-color \
+              -lockfile=readonly
+
+            git diff --exit-code -- .terraform.lock.hcl
+          else
+            terraform init \
+              -backend=false \
+              -input=false \
+              -no-color
+          fi
+
+      - name: Validate Terraform configuration
+        run: terraform validate -no-color
