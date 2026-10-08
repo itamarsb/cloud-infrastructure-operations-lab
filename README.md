@@ -212,7 +212,7 @@ A validação confirmou o retorno a `Healthy`. O cleanup removeu os recursos exc
 ## Estrutura do repositório
 
 | Diretório | Finalidade |
-|---|---|
+|:---:|:---:|
 | `.github/workflows/` | Workflows de integração contínua |
 | `labs/` | Laboratórios, scripts e evidências de execução |
 | `docs/` | Roadmap e documentação geral |
