@@ -23,7 +23,7 @@ O exercício deverá demonstrar:
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Procedimento, resultados e evidências |
 | `scripts/` | Scripts PowerShell de preparação, consulta, validação e cleanup |
 | `config/` | Configurações versionadas das consultas e do dashboard |
