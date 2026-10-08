@@ -1,193 +1,260 @@
-# Lab 24 — Validação automatizada
+# LAB 24 — Validação automatizada do Terraform
 
-## Resumo
+## Status
 
-Laboratório de integração contínua para verificar automaticamente configurações Terraform por meio do GitHub Actions.
+Concluído.
 
-O pipeline verificará a formatação, inicializará as dependências necessárias e validará as configurações dos Labs 22 e 23.
+Workflow executado com sucesso no GitHub Actions para os LABs 22 e 23. Testes controlados comprovaram a detecção de falhas de formatação e de configuração, seguida da aprovação após as correções.
 
-A execução incluirá uma configuração válida, falhas controladas em uma branch de teste, análise dos resultados e confirmação de sucesso após a correção.
+O pull request de teste foi fechado sem merge e a branch temporária foi excluída.
 
-**Estado:** em desenvolvimento. Estrutura inicial criada; workflow e execução pendentes.
+## Objetivo
 
-> **English summary:** Terraform continuous integration exercise using GitHub Actions. The workflow will check formatting, initialize required dependencies and validate the configurations from Labs 22 and 23. Controlled failures will demonstrate detection and recovery. Workflow implementation and execution are pending.
+Automatizar a verificação das configurações Terraform do repositório, utilizando integração contínua para:
 
-## Objetivos
-
-- Automatizar verificações de configuração Terraform.
-- Definir explicitamente os diretórios verificados.
-- Conferir formatação com `terraform fmt -check`.
-- Preparar dependências para `terraform validate`.
-- Utilizar o arquivo de dependências versionado quando presente.
-- Executar as verificações em um ambiente independente da estação local.
-- Identificar a etapa responsável por uma falha.
-- Demonstrar detecção de formatação incorreta.
-- Demonstrar detecção de configuração inválida.
-- Corrigir as falhas e confirmar o retorno ao sucesso.
-- Registrar resultados e evidências do pipeline.
-
-## Escopo
-
-| Item | Definição |
-|:---:|:---:|
-| Plataforma | GitHub Actions |
-| Ferramenta | Terraform CLI |
-| Configuração do Lab 22 | Variáveis, outputs e módulo filho local |
-| Configuração do Lab 23 | Recurso `local_file` e provider `hashicorp/local` |
-| Verificações | Formatação, inicialização e validação |
-| Provisionamento | Fora do escopo |
-| Credenciais AWS | Não necessárias |
-| Estado local dos laboratórios | Não utilizado pelo pipeline |
-
-Os diretórios verificados serão:
-
-```text
-labs/22-terraform-variables-outputs-modules/terraform
-labs/23-terraform-changes-drift/terraform
-```
-
-O workflow não executará `terraform apply` ou `terraform destroy`.
-
-Os estados e arquivos `terraform.tfvars` locais não serão enviados ao pipeline.
+- Conferir a formatação dos arquivos.
+- Inicializar os módulos e providers necessários à validação.
+- Validar a consistência das configurações.
+- Identificar erros antes da aplicação de mudanças.
+- Registrar os resultados nos checks de um pull request.
 
 ## Organização
 
-| Caminho | Finalidade |
-|:---:|:---:|
-| `README.md` | Escopo, procedimento, resultados e evidências |
-| `images/` | Capturas selecionadas das execuções |
-| `../../.github/workflows/lab24-terraform-validation.yml` | Workflow a ser implementado |
+| Item | Caminho |
+|---|---|
+| Workflow | `.github/workflows/lab24-terraform-validation.yml` |
+| Configuração do LAB 22 | `labs/22-terraform-variables-outputs-modules/terraform/` |
+| Configuração do LAB 23 | `labs/23-terraform-changes-drift/terraform/` |
+| Documentação | `labs/24-terraform-automated-validation/README.md` |
+| Evidências | `labs/24-terraform-automated-validation/images/` |
 
-As configurações Terraform permanecerão nos diretórios dos Labs 22 e 23. Não haverá duplicação desses arquivos no LAB 24.
+[Consultar o workflow](../../.github/workflows/lab24-terraform-validation.yml).
 
-O workflow deverá ficar em `.github/workflows/`, na raiz do repositório.
+## Ambiente
 
-## Conceitos
+| Componente | Configuração |
+|---|---|
+| Plataforma de CI | GitHub Actions |
+| Runner | Ubuntu 24.04 |
+| Terraform | 1.16.1 |
+| Checkout | `actions/checkout@v6` |
+| Instalação do Terraform | `hashicorp/setup-terraform@v4` |
+| Provider do LAB 22 | Provider integrado `terraform` |
+| Provider do LAB 23 | `hashicorp/local` 2.9.1 |
+| Permissão do workflow | `contents: read` |
 
-| Conceito | Aplicação no laboratório |
-|:---:|:---:|
-| Integração contínua | Verificação automática das alterações no repositório |
-| Workflow | Definição dos eventos, jobs e etapas |
-| Job | Unidade de execução das verificações |
-| Matriz | Execução das mesmas verificações em diretórios distintos |
-| Formatação | Conferência do padrão de escrita dos arquivos Terraform |
-| Inicialização | Preparação dos módulos e providers necessários |
-| Validação | Verificação da consistência da configuração |
-| Falha controlada | Alteração temporária para comprovar a detecção |
-| Evidência | Registro da execução e da etapa que aprovou ou rejeitou a alteração |
+A matriz executa um job para cada laboratório. A configuração `fail-fast: false` permite que o outro job continue quando um deles falha.
 
-A aprovação dessas verificações não demonstra que uma infraestrutura foi provisionada ou que uma aplicação está saudável.
+## Acionamento do workflow
 
-Os resultados representarão o escopo dos comandos executados pelo workflow.
+O workflow pode ser executado por:
 
-## Pré-requisitos
+- Push na branch `main`.
+- Pull request com destino à branch `main`.
+- Acionamento manual pela aba Actions.
 
-- Configurações dos Labs 22 e 23 publicadas.
-- Arquivo de dependências do Lab 23 versionado.
-- GitHub Actions disponível no repositório.
-- Permissão para criar uma branch e um pull request de teste.
-- Arquivos de estado, planos e parâmetros locais excluídos do Git.
+Os eventos de push e pull request possuem filtros para alterações nos seguintes caminhos:
 
-## Procedimento planejado
+- O próprio arquivo do workflow.
+- O diretório Terraform do LAB 22.
+- O diretório Terraform do LAB 23.
+- O arquivo `.gitattributes`.
 
-### 1. Implementar o workflow
+Alterações apenas na documentação ou nas imagens deste laboratório não acionam automaticamente o workflow.
 
-Definir:
+## Etapas da validação
 
-- eventos de execução;
-- filtros de caminhos;
-- permissões necessárias;
-- versão do Terraform;
-- diretórios da matriz;
-- comandos e ordem das verificações.
+### 1. Conferir a versão
 
-A execução manual também será prevista para facilitar a demonstração.
+```bash
+terraform version
+```
 
 ### 2. Verificar a formatação
 
-Executar `terraform fmt -check -diff -recursive` em cada diretório selecionado.
+```bash
+terraform fmt -check -diff -recursive -no-color
+```
 
-Uma diferença de formatação deverá produzir falha na etapa correspondente.
+O comando verifica os arquivos e apresenta diferenças de formatação. O workflow não corrige os arquivos automaticamente.
 
-O pipeline deverá conferir os arquivos sem reformatá-los automaticamente.
+### 3. Inicializar para validação
 
-### 3. Inicializar e validar
+No LAB 22:
 
-Inicializar os diretórios sem configurar um backend operacional.
+```bash
+terraform init -backend=false -input=false -no-color
+```
 
-No Lab 23, utilizar o arquivo de dependências versionado e impedir sua alteração durante a inicialização.
+No LAB 23:
 
-Executar `terraform validate` após preparar módulos e providers.
+```bash
+terraform init \
+  -backend=false \
+  -input=false \
+  -no-color \
+  -lockfile=readonly
+```
 
-### 4. Registrar uma execução válida
+O LAB 23 exige a presença do arquivo `.terraform.lock.hcl`. Após a inicialização, o workflow também verifica se esse arquivo permaneceu sem alterações:
 
-Executar o workflow com as configurações válidas.
+```bash
+git diff --exit-code -- .terraform.lock.hcl
+```
 
-Conferir os resultados dos dois diretórios e registrar as etapas concluídas.
+### 4. Validar a configuração
 
-### 5. Demonstrar falha de formatação
+```bash
+terraform validate -no-color
+```
 
-Criar uma branch de teste e introduzir uma diferença controlada de formatação.
+A validação verifica a consistência interna da configuração, incluindo referências a variáveis e compatibilidade com os providers inicializados.
 
-Abrir um pull request e conferir a rejeição pelo pipeline.
+## Preparação das dependências para Windows e Linux
 
-Registrar o arquivo alterado, a etapa responsável e a mensagem apresentada.
+A primeira execução identificou uma incompatibilidade entre o pacote do provider instalado no runner Linux e os checksums disponíveis no arquivo de dependências.
 
-Corrigir a formatação e confirmar nova execução bem-sucedida.
+A preparação foi realizada no ambiente local com:
 
-### 6. Demonstrar falha de validação
+```powershell
+terraform providers lock `
+    -platform=windows_amd64 `
+    -platform=linux_amd64
+```
 
-Na branch de teste, introduzir uma configuração inválida que permaneça corretamente formatada.
+O Terraform acrescentou o checksum necessário para Linux, preservando a versão `2.9.1` do provider `hashicorp/local`.
 
-Conferir que a formatação passa e que a validação rejeita a configuração.
+Depois da atualização, foram executados:
 
-Registrar a mensagem e corrigir a alteração.
+```powershell
+terraform init -backend=false -input=false -no-color -lockfile=readonly
+terraform validate -no-color
+```
 
-### 7. Confirmar o resultado final
+O arquivo atualizado foi versionado no LAB 23. A execução seguinte no GitHub Actions aprovou os dois jobs.
 
-Confirmar sucesso nos dois diretórios após as correções.
+## Testes controlados
 
-Encerrar o pull request de teste e remover a branch temporária após conferir que as configurações originais foram restauradas.
+Os testes foram realizados na branch temporária `lab24-validation-test`, por meio do pull request #1.
 
-Publicar os resultados e as evidências.
+### Falha de formatação
 
-## Resultados esperados
+Foi criado o arquivo `lab24-format-test.tf` no diretório Terraform do LAB 22, com uma atribuição sem a indentação esperada:
 
-| Etapa | Critério | Situação |
-|:---:|:---:|:---:|
-| Workflow | Eventos e diretórios definidos | Pendente |
-| Execução válida | Labs 22 e 23 aprovados | Pendente |
-| Formatação incorreta | Falha detectada na etapa de formatação | Pendente |
-| Correção da formatação | Retorno ao sucesso | Pendente |
-| Configuração inválida | Falha detectada na etapa de validação | Pendente |
-| Correção da configuração | Retorno ao sucesso | Pendente |
-| Encerramento | Branch de teste removida e configurações preservadas | Pendente |
+```hcl
+locals {
+lab24_format_probe = "format-check"
+}
+```
 
-## Evidências previstas
+Resultados observados:
 
-- Workflow publicado.
-- Execução válida nos dois diretórios.
-- Falha controlada de formatação.
-- Execução após a correção da formatação.
-- Falha controlada de validação.
-- Execução final bem-sucedida.
-- Encerramento do pull request de teste.
+- O check de formatação do LAB 22 falhou com código de saída `3`.
+- As etapas de inicialização e validação desse job não foram executadas.
+- O job do LAB 23 foi aprovado.
 
-Os links serão adicionados após a execução e a publicação das capturas.
+A indentação foi corrigida:
+
+```hcl
+locals {
+  lab24_format_probe = "format-check"
+}
+```
+
+Após o commit de correção, os dois checks foram aprovados.
+
+### Falha de validação
+
+Foi criado o arquivo `lab24-validation-test.tf` no diretório Terraform do LAB 22:
+
+```hcl
+locals {
+  lab24_validation_probe = var.lab24_undeclared_variable
+}
+```
+
+Resultados observados:
+
+- A formatação foi aprovada.
+- A inicialização foi concluída.
+- A validação falhou com a mensagem `Reference to undeclared input variable`.
+- O comando encerrou com código de saída `1`.
+- O job do LAB 23 foi aprovado.
+
+O arquivo de teste inválido foi excluído no commit `fix: remove referencia invalida`.
+
+Após a correção, o pull request apresentou dois checks aprovados.
+
+## Resultados
+
+| Cenário | LAB 22 | LAB 23 |
+|---|---|---|
+| Configurações válidas com dependências preparadas | Aprovado | Aprovado |
+| Formatação incorreta no arquivo de teste | Falha em `fmt` | Aprovado |
+| Formatação corrigida | Aprovado | Aprovado |
+| Referência a variável não declarada | Falha em `validate` | Aprovado |
+| Referência inválida removida | Aprovado | Aprovado |
+
+Os checks demonstraram a detecção dos erros introduzidos e a recuperação após as correções.
+
+A execução dos checks, por si só, não comprova a existência de uma regra de proteção que impeça o merge de um pull request com falhas.
+
+## Encerramento do teste
+
+Após a aprovação final:
+
+1. O pull request #1 foi fechado sem merge.
+2. A branch `lab24-validation-test` foi excluída.
+3. Foi conferida a ausência dos dois arquivos de teste na branch `main`.
+4. O workflow permaneceu publicado na branch `main`.
+5. As evidências foram armazenadas neste laboratório.
+
+[Consultar o pull request de teste](https://github.com/itamarsb/cloud-infrastructure-operations-lab/pull/1).
+
+## Escopo
+
+O workflow executa verificações de formatação, inicialização e validação.
+
+Não executa `terraform plan`, `terraform apply` ou `terraform destroy`, nem utiliza credenciais AWS.
+
+Os resultados demonstram a validade das configurações para essas verificações. Não substituem a revisão de um plano de execução ou os testes de comportamento dos recursos.
+
+## Evidências
+
+Capturas registradas durante a preparação, execução e encerramento dos testes:
+
+![Evidência 83](images/Clipboard_10-07-2026_83.png)
+
+![Evidência 84](images/Clipboard_10-07-2026_84.png)
+
+![Evidência 85](images/Clipboard_10-07-2026_85.png)
+
+![Evidência 86](images/Clipboard_10-07-2026_86.png)
+
+![Evidência 87](images/Clipboard_10-07-2026_87.png)
 
 ## Critérios de conclusão
 
-- [x] Estrutura inicial criada.
-- [x] Escopo dos diretórios definido.
-- [ ] Workflow implementado e publicado.
-- [ ] Formatação verificada automaticamente.
-- [ ] Dependências inicializadas.
-- [ ] Configurações validadas.
-- [ ] Execução válida registrada nos dois diretórios.
-- [ ] Falha de formatação detectada e corrigida.
-- [ ] Falha de validação detectada e corrigida.
-- [ ] Execução final bem-sucedida.
-- [ ] Configurações originais preservadas.
-- [ ] Pull request de teste encerrado.
-- [ ] Branch temporária removida.
-- [ ] Resultados e evidências publicados.
+- [x] Workflow publicado no diretório `.github/workflows/`.
+- [x] Terraform com versão definida no workflow.
+- [x] LABs 22 e 23 incluídos na matriz de validação.
+- [x] Checksums do provider preparados para Windows e Linux.
+- [x] Execução válida com os dois jobs aprovados.
+- [x] Falha de formatação detectada.
+- [x] Aprovação após a correção da formatação.
+- [x] Referência a variável não declarada detectada.
+- [x] Aprovação após a remoção da referência inválida.
+- [x] Pull request de teste fechado sem merge.
+- [x] Branch temporária excluída.
+- [x] Arquivos de teste ausentes na branch `main`.
+- [x] Evidências publicadas.
+
+## Aprendizados
+
+- Diferenciar verificação de formatação e validação da configuração.
+- Preparar dependências para ambientes com sistemas operacionais diferentes.
+- Utilizar um lockfile versionado em uma execução de CI.
+- Interpretar a etapa e o código de saída de uma falha.
+- Executar verificações independentes com uma matriz de jobs.
+- Testar o pipeline em uma branch temporária.
+- Encerrar experimentos sem incorporar seus arquivos à branch principal.
