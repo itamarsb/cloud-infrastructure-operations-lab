@@ -113,7 +113,7 @@ Os IDs e ARNs dos recursos criados serão registrados para validação e cleanup
 Todas as consultas utilizarão o namespace `AWS/EC2` e a dimensão `InstanceId` da instância exclusiva.
 
 | Métrica | Estatística | Período | Interpretação |
-|---|---|---|---|
+|:---:|:---:|:---:|:---:|
 | `CPUUtilization` | `Average` e `Maximum` | 300 segundos | Utilização de CPU no intervalo |
 | `NetworkIn` | `Sum` | 300 segundos | Bytes recebidos no intervalo |
 | `NetworkOut` | `Sum` | 300 segundos | Bytes enviados no intervalo |
