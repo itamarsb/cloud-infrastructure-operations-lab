@@ -1,12 +1,12 @@
 # Cloud Infrastructure Operations Lab
 
-Laboratório progressivo de infraestrutura e operações em nuvem, com atividades práticas em **AWS, Linux, Terraform, Docker, CloudWatch, Zabbix, Bash e PowerShell**.
+Laboratório progressivo de infraestrutura e operações em nuvem, com atividades práticas em **AWS, Linux, Terraform, GitHub Actions, Docker, CloudWatch, Zabbix, Bash e PowerShell**.
 
 O projeto documenta a construção e a operação de um ambiente de aplicação ao longo de uma trilha evolutiva: preparação da estação de trabalho, acesso seguro à nuvem, administração Linux, infraestrutura AWS, automação, observabilidade, troubleshooting, segurança, custos e confiabilidade.
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–23 are complete. The latest exercise compared intentional configuration changes with external drift in a managed JSON file, restored the declared content and confirmed a subsequent plan with no changes. Cleanup removed the managed resource and file while preserving configuration and local records.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–24 are complete. The latest exercise implemented Terraform validation in GitHub Actions for two configurations, demonstrated formatting and undeclared-variable failures, and confirmed successful checks after correction. The temporary pull request was closed without merging, and its branch was deleted.
 
 ---
 
@@ -21,6 +21,7 @@ O repositório prioriza:
 - diagnóstico antes de alterações;
 - automação com escopo controlado;
 - infraestrutura reproduzível;
+- verificação automatizada do código;
 - monitoramento, logs e resposta a falhas;
 - controle de custos e remoção de recursos temporários;
 - documentação técnica clara e rastreável.
@@ -30,16 +31,19 @@ O repositório prioriza:
 ## Tecnologias
 
 | Categoria | Tecnologias e práticas |
-|:---:|:---:|
+|---|---|
 | Cloud | AWS |
 | Sistemas | Linux, Windows 11 e WSL |
 | Infraestrutura como código | Terraform |
+| Integração contínua | GitHub Actions |
 | Containers | Docker e Docker Compose |
 | Observabilidade | Amazon CloudWatch e Zabbix |
 | Automação | Bash e PowerShell |
 | Acesso e identidade | AWS IAM Identity Center e AWS Systems Manager |
 | Versionamento | Git e GitHub |
 | Documentação | Markdown e Mermaid |
+
+As tecnologias de etapas futuras estão identificadas no roadmap. A inclusão nesta tabela não significa que todos os respectivos laboratórios já foram executados.
 
 ---
 
@@ -71,8 +75,9 @@ O repositório prioriza:
 | Concluído | [Lab 21 — Estado remoto](labs/21-terraform-remote-state/) | Bootstrap independente, S3 privado e versionado, migração de estado, bloqueio concorrente e cleanup. |
 | Concluído | [Lab 22 — Variáveis, outputs e módulos](labs/22-terraform-variables-outputs-modules/) | Variáveis tipadas, validação de entradas, módulo reutilizável, outputs e remoção local. |
 | Concluído | [Lab 23 — Mudanças e drift](labs/23-terraform-changes-drift/) | Mudança intencional, alteração externa, diagnóstico, recuperação, validação por SHA256 e remoção local. |
+| Concluído | [Lab 24 — Validação automatizada](labs/24-terraform-automated-validation/) | GitHub Actions, matriz de jobs, dependências para Windows e Linux, falhas controladas e recuperação dos checks. |
 
-**24 laboratórios concluídos**, considerando a numeração de 00 a 23.
+**25 laboratórios concluídos**, considerando a numeração de 00 a 24.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -80,27 +85,47 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 23 — Mudanças e drift** executou um exercício local com Terraform `1.16.1`, provider `hashicorp/local` `2.9.1`, Windows PowerShell e estado local no workspace `default`.
+O **Lab 24 — Validação automatizada** implementou um workflow no GitHub Actions para verificar as configurações Terraform dos Labs 22 e 23.
 
-Um recurso `local_file.application_config` gerenciou um arquivo JSON exclusivo do laboratório. A inicialização, a formatação e a validação foram concluídas, e o arquivo de dependências foi versionado e conferido com `-lockfile=readonly`.
+A execução utilizou Terraform `1.16.1`, runner Ubuntu `24.04` e uma matriz com dois jobs independentes. Cada job verificou a formatação, inicializou as dependências sem configurar o backend e validou a configuração.
 
-O baseline inicial utilizou `v1 / info / dev`. Após sua aplicação, o conteúdo, o SHA256, o estado e os outputs foram validados, e um segundo plano confirmou ausência de mudanças.
+O arquivo de dependências do Lab 23 foi preparado para `windows_amd64` e `linux_amd64`, preservando o provider `hashicorp/local` na versão `2.9.1`. A execução em Linux utilizou `-lockfile=readonly` e conferiu que o lockfile permaneceu sem alterações.
 
-A mudança intencional alterou `application_version` para `v2`. O plano apresentou uma criação e uma remoção. Após a aplicação, o novo baseline foi registrado e confirmado por outro plano sem mudanças.
+Os testes controlados foram realizados em uma branch temporária e no pull request #1:
 
-O drift foi introduzido diretamente no arquivo gerenciado, alterando `log_level` de `info` para `debug`. A configuração Terraform, os parâmetros e o estado foram preservados. A leitura independente do arquivo identificou a divergência, enquanto os valores registrados ainda apresentavam `info`.
+| Teste | Resultado |
+|---|---|
+| Configurações válidas | Dois jobs aprovados |
+| Formatação incorreta no Lab 22 | Falha em `terraform fmt`, com código de saída `3` |
+| Formatação corrigida | Dois jobs aprovados |
+| Referência a variável não declarada no Lab 22 | Falha em `terraform validate`, com código de saída `1` |
+| Referência inválida removida | Dois jobs aprovados |
 
-O plano de recuperação apresentou uma ação de criação. Sua aplicação restaurou exatamente o conteúdo e o SHA256 do baseline v2. Um novo plano confirmou ausência de mudanças, com código de saída `0`.
+O job do Lab 23 continuou e foi aprovado durante as falhas introduzidas no Lab 22.
 
-O plano de remoção foi salvo, revisado e aplicado. A verificação final confirmou estado sem recursos, arquivo gerenciado ausente, sete arquivos de configuração e parâmetros preservados, quatro registros locais preservados e repositório sem alterações locais.
+Após a aprovação final, o pull request foi fechado sem merge e a branch temporária foi excluída. Os arquivos de teste ficaram fora da branch `main`, que manteve o workflow publicado.
 
-O exercício foi inteiramente local, sem provisionamento AWS. Quatorze capturas documentam as etapas executadas.
+O pipeline não executou plano, aplicação ou remoção de recursos e não utilizou credenciais AWS.
 
-Consulte o [Lab 23](labs/23-terraform-changes-drift/) para os arquivos Terraform, os resultados, a comparação dos planos e as evidências.
+[Workflow de validação](.github/workflows/lab24-terraform-validation.yml).
+
+[Procedimento, resultados e evidências do Lab 24](labs/24-terraform-automated-validation/).
 
 ---
 
 ## Resultados anteriores
+
+### Lab 23 — Mudanças e drift
+
+Um recurso `local_file.application_config` gerenciou um JSON exclusivo do laboratório. Conteúdo, SHA256, estado e outputs foram comparados ao longo do exercício.
+
+A mudança intencional de `v1` para `v2` foi aplicada e confirmada por um plano sem mudanças.
+
+O drift alterou diretamente `log_level` de `info` para `debug`, preservando a configuração Terraform, os parâmetros e o estado. A recuperação restaurou exatamente o conteúdo e o SHA256 do baseline v2. Outro plano confirmou ausência de mudanças.
+
+O cleanup deixou o estado sem recursos e o arquivo gerenciado ausente, preservando sete arquivos de configuração e parâmetros e quatro registros locais.
+
+[Procedimento, comparação dos planos e evidências do Lab 23](labs/23-terraform-changes-drift/).
 
 ### Lab 22 — Variáveis, outputs e módulos
 
@@ -187,7 +212,8 @@ A validação confirmou o retorno a `Healthy`. O cleanup removeu os recursos exc
 ## Estrutura do repositório
 
 | Diretório | Finalidade |
-|:---:|:---:|
+|---|---|
+| `.github/workflows/` | Workflows de integração contínua |
 | `labs/` | Laboratórios, scripts e evidências de execução |
 | `docs/` | Roadmap e documentação geral |
 | `terraform/` | Infraestrutura como código |
@@ -209,6 +235,8 @@ A validação confirmou o retorno a `Healthy`. O cleanup removeu os recursos exc
 
 > Recursos AWS que possam gerar cobrança devem permanecer ativos somente durante a execução dos respectivos laboratórios.
 
+Para consultar a validação automatizada, acesse a aba Actions e selecione o workflow **LAB 24 - Terraform Validation**.
+
 ---
 
 ## Princípios operacionais
@@ -229,8 +257,11 @@ A validação confirmou o retorno a `Healthy`. O cleanup removeu os recursos exc
 - separação entre o estado do bootstrap e o estado do exercício;
 - bloqueio do estado durante operações concorrentes;
 - versionamento do arquivo de dependências do Terraform;
+- preparação das dependências para os ambientes de execução;
 - análise do plano antes da aplicação;
 - validação direta dos recursos, além da consulta ao estado e aos outputs;
+- verificação automatizada de formatação e configuração;
+- testes de pipeline em branch temporária;
 - scripts de cleanup idempotentes;
 - controle de custos e cleanup documentado.
 
@@ -290,6 +321,13 @@ Os laboratórios concluídos até esta etapa demonstram:
 - verificação de plano sem mudanças após a aplicação e a recuperação;
 - remoção pelo Terraform e validação do estado após o cleanup;
 - confirmação da ausência de recursos exclusivos na AWS;
+- integração contínua com GitHub Actions;
+- matriz de jobs para configurações Terraform distintas;
+- preparação de checksums para Windows e Linux;
+- inicialização em pipeline com lockfile somente leitura;
+- detecção de falhas de formatação e de referências inválidas;
+- confirmação da recuperação dos checks após correções;
+- encerramento de pull request de teste sem merge;
 - automação com PowerShell e Bash;
 - cleanup seguro e preservação de infraestrutura compartilhada.
 
@@ -309,29 +347,22 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-Os módulos de preparação, operações Linux, infraestrutura AWS e operação e troubleshooting foram concluídos.
+Os cinco primeiros módulos foram concluídos.
 
-O módulo de Terraform está em andamento:
-
-| Laboratório | Resultado |
-|:---:|:---:|
+| Laboratório do módulo Terraform | Resultado |
+|---|---|
 | Lab 19 | Ciclo de vida de um recurso local e aplicação de plano salvo |
 | Lab 20 | Infraestrutura AWS, validação independente e cleanup |
 | Lab 21 | Estado remoto em S3, migração e bloqueio concorrente |
 | Lab 22 | Variáveis tipadas, validação, módulos reutilizáveis e outputs |
 | Lab 23 | Mudança intencional, drift, diagnóstico e recuperação |
+| Lab 24 | Validação automatizada em GitHub Actions e testes de falha e recuperação |
 
-A próxima etapa prevista é o **Lab 24 — Validação automatizada**, com foco em:
+A próxima etapa prevista é o **Lab 25 — Métricas no CloudWatch**, iniciando o módulo de monitoramento e logs.
 
-- verificação de formatação dos arquivos Terraform;
-- inicialização e validação em ambiente de pipeline;
-- uso do arquivo de dependências versionado;
-- definição explícita dos diretórios verificados;
-- execução das verificações em alterações do repositório;
-- demonstração de falha detectada e correção;
-- publicação dos resultados e das evidências.
+O laboratório abordará a identificação e a consulta de métricas, a interpretação de períodos e estatísticas e a organização de um dashboard.
 
-O escopo e o workflow serão definidos antes da implementação. A validação não exigirá recriar os recursos removidos nos laboratórios anteriores.
+O ambiente, os recursos necessários e o procedimento de cleanup serão definidos antes da execução.
 
 ---
 
