@@ -33,7 +33,7 @@ Automatizar a verificação das configurações Terraform do repositório, utili
 ## Ambiente
 
 | Componente | Configuração |
-|---|---|
+|:---:|:---:|
 | Plataforma de CI | GitHub Actions |
 | Runner | Ubuntu 24.04 |
 | Terraform | 1.16.1 |
