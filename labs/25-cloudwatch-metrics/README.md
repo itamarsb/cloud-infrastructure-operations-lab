@@ -34,7 +34,7 @@ O exercício deverá demonstrar:
 ## Ambiente
 
 | Item | Configuração |
-|---|---|
+|:---:|:---:|
 | Estação de trabalho | Windows 11 e Windows PowerShell 5.1 |
 | Interface AWS | AWS CLI |
 | Autenticação | AWS IAM Identity Center |
