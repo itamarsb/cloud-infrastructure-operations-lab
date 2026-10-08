@@ -90,7 +90,7 @@ O intervalo observado entre perda e recuperação local no Lab 18 foi de **5 min
 Os laboratórios concluíram o cleanup dos recursos exclusivos e preservaram a rede compartilhada do Lab 08.
 
 | Laboratório | Documentação |
-|---|---|
+|:---:|:---:|
 | Lab 13 | [Procedimento e evidências](../labs/13-aws-application-troubleshooting/README.md) |
 | Lab 14 | [Procedimento e evidências](../labs/14-aws-disk-utilization/README.md) |
 | Lab 15 | [Procedimento e evidências](../labs/15-aws-connectivity-troubleshooting/README.md) |
