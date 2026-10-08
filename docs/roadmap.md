@@ -4,7 +4,7 @@
 
 O **Cloud Infrastructure Operations Lab** reúne atividades práticas relacionadas à administração e à operação de ambientes em nuvem.
 
-A trilha integra AWS, Linux, Terraform, Docker, CloudWatch e Zabbix em cenários progressivos de provisionamento, monitoramento, manutenção, diagnóstico, recuperação e troubleshooting.
+A trilha integra AWS, Linux, Terraform, GitHub Actions, Docker, CloudWatch e Zabbix em cenários progressivos de provisionamento, monitoramento, manutenção, diagnóstico, recuperação e troubleshooting.
 
 Os laboratórios priorizam:
 
@@ -12,6 +12,7 @@ Os laboratórios priorizam:
 - automação reproduzível;
 - diagnóstico antes de alterações;
 - validação independente;
+- verificação automatizada do código;
 - evidências de execução;
 - proteção de recursos compartilhados;
 - controle de custos;
@@ -89,7 +90,7 @@ O intervalo observado entre perda e recuperação local no Lab 18 foi de **5 min
 Os laboratórios concluíram o cleanup dos recursos exclusivos e preservaram a rede compartilhada do Lab 08.
 
 | Laboratório | Documentação |
-|:---:|:---:|
+|---|---|
 | Lab 13 | [Procedimento e evidências](../labs/13-aws-application-troubleshooting/README.md) |
 | Lab 14 | [Procedimento e evidências](../labs/14-aws-disk-utilization/README.md) |
 | Lab 15 | [Procedimento e evidências](../labs/15-aws-connectivity-troubleshooting/README.md) |
@@ -110,7 +111,7 @@ O módulo de operação e troubleshooting está concluído.
 | Concluído | **Lab 21 — Estado remoto** | Bootstrap separado, S3 privado e versionado, migração do estado, identidade preservada, bloqueio concorrente e cleanup |
 | Concluído | **Lab 22 — Variáveis, outputs e módulos** | Variáveis tipadas, entrada inválida rejeitada, módulo reutilizável, outputs, plano sem mudanças e remoção local |
 | Concluído | **Lab 23 — Mudanças e drift** | Mudança intencional, alteração externa, diagnóstico, recuperação, validação de conteúdo e SHA256 e remoção local |
-| Planejado | **Lab 24 — Validação automatizada** | Formatação, validação e verificação do código em pipeline |
+| Concluído | **Lab 24 — Validação automatizada** | GitHub Actions, matriz de jobs, checksums para Windows e Linux, falhas de formatação e configuração e recuperação dos checks |
 
 ### Resultados concluídos no módulo
 
@@ -207,7 +208,43 @@ Quatorze capturas documentam a execução.
 
 [Procedimento, comparação dos planos e evidências do Lab 23](../labs/23-terraform-changes-drift/README.md).
 
-O módulo de Terraform está em desenvolvimento. Os Labs 19 a 23 estão concluídos; o Lab 24 permanece planejado.
+#### Lab 24 — Validação automatizada
+
+Um workflow no GitHub Actions verificou as configurações dos Labs 22 e 23, utilizando Terraform `1.16.1` e runner Ubuntu `24.04`.
+
+Uma matriz executou dois jobs independentes. Cada job realizou:
+
+1. Checkout do repositório.
+2. Instalação e consulta da versão do Terraform.
+3. Verificação de formatação.
+4. Inicialização sem configuração do backend.
+5. Validação da configuração.
+
+O arquivo de dependências do Lab 23 foi preparado para Windows e Linux, preservando o provider `hashicorp/local` na versão `2.9.1`.
+
+O workflow utilizou lockfile somente leitura no Lab 23 e verificou sua preservação após a inicialização.
+
+Os testes foram executados em branch temporária e pull request:
+
+| Cenário | Resultado |
+|---|---|
+| Configurações válidas | Dois jobs aprovados |
+| Formatação incorreta no Lab 22 | Falha em `fmt`, código de saída `3` |
+| Formatação corrigida | Dois jobs aprovados |
+| Variável não declarada no Lab 22 | Falha em `validate`, código de saída `1` |
+| Referência inválida removida | Dois jobs aprovados |
+
+O job do Lab 23 foi aprovado durante as falhas controladas do Lab 22.
+
+Após a recuperação final, o pull request #1 foi fechado sem merge e a branch temporária foi excluída. Os arquivos de teste ficaram fora da branch `main`.
+
+A execução não utilizou credenciais AWS nem executou `plan`, `apply` ou `destroy`.
+
+[Workflow de validação](../.github/workflows/lab24-terraform-validation.yml).
+
+[Procedimento, resultados e evidências do Lab 24](../labs/24-terraform-automated-validation/README.md).
+
+O módulo de Terraform está concluído, com os Labs 19 a 24 executados e documentados.
 
 ---
 
@@ -250,6 +287,7 @@ O módulo de Terraform está em desenvolvimento. Os Labs 19 a 23 estão concluí
 O projeto final reunirá os principais componentes desenvolvidos durante a trilha:
 
 - infraestrutura AWS provisionada com Terraform;
+- validação automatizada do código;
 - aplicação web executada em Linux ou Docker;
 - acesso administrativo pelo Systems Manager;
 - armazenamento e recuperação;
@@ -266,12 +304,12 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ## Progresso atual
 
 | Módulo | Situação |
-|:---:|:---:|
+|---|---|
 | Preparação e acesso | Concluído |
 | Operações Linux | Concluído |
 | Infraestrutura AWS | Concluído |
 | Operação e troubleshooting | Concluído |
-| Terraform | Em desenvolvimento |
+| Terraform | Concluído |
 | Monitoramento e logs | Planejado |
 | Docker | Planejado |
 | Segurança, custos e confiabilidade | Planejado |
@@ -280,40 +318,38 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 ### Resumo numérico
 
 | Indicador | Quantidade |
-|:---:|:---:|
-| Laboratórios concluídos | `24` |
+|---|---|
+| Laboratórios concluídos | `25` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `14` |
-| Último laboratório concluído | `Lab 23` |
-| Próximo laboratório | `Lab 24` |
+| Laboratórios planejados | `13` |
+| Último laboratório concluído | `Lab 24` |
+| Próximo laboratório | `Lab 25` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
-O módulo de Terraform está em desenvolvimento: os Labs 19 a 23 foram concluídos, enquanto o Lab 24 permanece planejado.
+Os módulos de preparação e acesso, operações Linux, infraestrutura AWS, operação e troubleshooting e Terraform estão concluídos.
 
 ---
 
 ## Próxima etapa
 
-**Lab 24 — Validação automatizada**
+**Lab 25 — Métricas no CloudWatch**
 
-O próximo laboratório abordará a verificação automatizada do código Terraform em pipeline.
+O próximo laboratório iniciará o módulo de monitoramento e logs.
 
-O procedimento deverá incluir:
+O planejamento deverá definir:
 
-- definição dos diretórios e arquivos verificados;
-- configuração de um workflow no GitHub Actions;
-- conferência da formatação com `terraform fmt -check`;
-- inicialização necessária para validação, sem aplicação de recursos;
-- utilização do arquivo de dependências versionado;
-- validação da configuração com `terraform validate`;
-- definição dos eventos que executam o workflow;
-- introdução de uma falha controlada para comprovar a detecção;
-- correção da falha e confirmação de execução bem-sucedida;
-- documentação do escopo, dos resultados e das evidências.
+- ambiente e recursos observados;
+- perfil AWS, Região e identificação dos recursos;
+- métricas, namespaces e dimensões utilizados;
+- períodos e estatísticas adequados às consultas;
+- coleta e interpretação dos resultados;
+- comportamento esperado quando não houver dados;
+- organização de um dashboard;
+- validação das consultas e do dashboard;
+- registro das evidências;
+- custos envolvidos e procedimento de cleanup.
 
-O workflow será definido antes da implementação. O cenário deverá produzir resultados verificáveis sem depender dos estados locais, dos parâmetros não versionados ou dos recursos removidos nos laboratórios anteriores.
-
-O bucket do Lab 21 foi removido. Os estados finais dos Labs 22 e 23 estão sem recursos, e seus arquivos de configuração foram preservados.
+O escopo será definido antes da implementação. Recursos removidos nos laboratórios anteriores não serão tratados como ainda disponíveis.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de alteração e remoção.
