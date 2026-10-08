@@ -21,7 +21,7 @@ Automatizar a verificação das configurações Terraform do repositório, utili
 ## Organização
 
 | Item | Caminho |
-|---|---|
+|:---:|:---:|
 | Workflow | `.github/workflows/lab24-terraform-validation.yml` |
 | Configuração do LAB 22 | `labs/22-terraform-variables-outputs-modules/terraform/` |
 | Configuração do LAB 23 | `labs/23-terraform-changes-drift/terraform/` |
