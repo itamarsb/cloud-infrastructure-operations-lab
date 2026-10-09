@@ -1,1 +1,54 @@
-
+{
+  "ExpectedAccountId": "412381774441",
+  "Region": "us-east-1",
+  "AvailabilityZone": "us-east-1a",
+  "AmiParameter": "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64",
+  "InstanceType": "t3.micro",
+  "CpuCredits": "standard",
+  "RootVolumeSizeGiB": 8,
+  "VpcCidr": "10.25.0.0/16",
+  "SubnetCidr": "10.25.1.0/24",
+  "Names": {
+    "Vpc": "lab25-cloudwatch-vpc",
+    "Subnet": "lab25-cloudwatch-public-subnet-a",
+    "InternetGateway": "lab25-cloudwatch-igw",
+    "RouteTable": "lab25-cloudwatch-public-rt",
+    "SecurityGroup": "lab25-cloudwatch-instance-sg",
+    "Role": "lab25-cloudwatch-ec2-role",
+    "InstanceProfile": "lab25-cloudwatch-ec2-profile",
+    "Instance": "lab25-cloudwatch-instance",
+    "Dashboard": "lab25-cloudwatch-metrics"
+  },
+  "Tags": {
+    "Project": "cloud-infrastructure-operations-lab",
+    "Lab": "25",
+    "ManagedBy": "lab25-powershell"
+  },
+  "Metrics": {
+    "Namespace": "AWS/EC2",
+    "DimensionName": "InstanceId",
+    "LookbackMinutes": 60,
+    "Queries": [
+      {
+        "MetricName": "CPUUtilization",
+        "Statistics": ["Average", "Maximum"],
+        "PeriodSeconds": 300
+      },
+      {
+        "MetricName": "NetworkIn",
+        "Statistics": ["Sum"],
+        "PeriodSeconds": 300
+      },
+      {
+        "MetricName": "NetworkOut",
+        "Statistics": ["Sum"],
+        "PeriodSeconds": 300
+      },
+      {
+        "MetricName": "StatusCheckFailed",
+        "Statistics": ["Maximum"],
+        "PeriodSeconds": 60
+      }
+    ]
+  }
+}
