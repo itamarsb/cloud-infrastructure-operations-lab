@@ -433,10 +433,80 @@ try {
     $State.Ids.Instance = $Launch.Instances[0].InstanceId
     Save-Lab25State
 
-    Write-Host "Aguardando a instancia: $($State.Ids.Instance)"
+      Write-Host "Aguardando a instancia: $($State.Ids.Instance)"
 
-    Invoke-Lab25Aws -Service ec2 -Operation "wait" -Request @{} |
-        Out-Null
+    aws ec2 wait instance-running `
+        --instance-ids $State.Ids.Instance `
+        --profile $ProfileName `
+        --region $Settings.Region `
+        --no-cli-pager
+
+    if ($LASTEXITCODE -ne 0) {
+        throw "A instancia nao atingiu o estado running no prazo."
+    }
+
+    $InstanceResponse = Invoke-Lab25Aws -Service ec2 `
+        -Operation describe-instances -Request @{
+            InstanceIds = @($State.Ids.Instance)
+        }
+
+    $Instance = $InstanceResponse.Reservations[0].Instances[0]
+    $RootVolumes = @(
+        $Instance.BlockDeviceMappings | Where-Object {
+            $_.DeviceName -eq $Instance.RootDeviceName
+        }
+    )
+
+    if ($RootVolumes.Count -ne 1) {
+        throw "Volume raiz nao identificado."
+    }
+
+    $State.Ids.Volume = $RootVolumes[0].Ebs.VolumeId
+    Save-Lab25State
+
+    $Online = $false
+    for ($Attempt = 1; $Attempt -le 36; $Attempt++) {
+        $Ssm = Invoke-Lab25Aws -Service ssm `
+            -Operation describe-instance-information -Request @{
+                Filters = @(
+                    @{
+                        Key = "InstanceIds"
+                        Values = @($State.Ids.Instance)
+                    }
+                )
+            }
+
+        $ManagedInstances = @($Ssm.InstanceInformationList)
+        if (
+            $ManagedInstances.Count -eq 1 -and
+            $ManagedInstances[0].PingStatus -eq "Online"
+        ) {
+            $Online = $true
+            break
+        }
+
+        Start-Sleep -Seconds 5
+    }
+
+    if (-not $Online) {
+        throw "Instancia criada, mas SSM ainda nao esta Online."
+    }
+
+    Write-Host ""
+    [pscustomobject]@{
+        AccountId = $State.AccountId
+        Region = $State.Region
+        RunId = $State.RunId
+        InstanceId = $State.Ids.Instance
+        VolumeId = $State.Ids.Volume
+        VpcId = $State.Ids.Vpc
+        SubnetId = $State.Ids.Subnet
+        SsmStatus = "Online"
+        InventoryPath = $StatePath
+    } | Format-List
+
+    Write-Host "[OK] Infraestrutura criada e SSM Online." `
+        -ForegroundColor Green
 }
 catch {
     Write-Host "Deploy interrompido. Inventario preservado:" `
