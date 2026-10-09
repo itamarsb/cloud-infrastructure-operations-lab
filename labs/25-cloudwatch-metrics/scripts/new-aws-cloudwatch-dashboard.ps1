@@ -281,7 +281,7 @@ $DashboardName = $Settings.Names.Dashboard
 $Existing = Invoke-Lab25Aws -Service cloudwatch `
     -Operation get-dashboard -Request @{
         DashboardName = $DashboardName
-    } -AbsentCodes @("DashboardNotFoundError")
+        } -AbsentCodes @("DashboardNotFoundError", "ResourceNotFound")
 
 # Aceita uma repeticao somente se o conteudo for identico.
 if (
