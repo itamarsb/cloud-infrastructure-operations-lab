@@ -289,6 +289,8 @@ fi
 echo "LOAD_FINISHED_OK"
 '@
 
+$ShellCommand = $ShellCommand.Replace("`r`n", "`n").Replace("`r", "`n")
+
 $Receipt = [ordered]@{
     AccountId = $State.AccountId
     Region = $State.Region
