@@ -7,6 +7,74 @@ param(
 . (Join-Path $PSScriptRoot "lab25-common.ps1")
 Initialize-Lab25
 
+function ConvertTo-Lab25OrderedJsonValue {
+    param(
+        [AllowNull()]
+        $Value
+    )
+
+    if ($null -eq $Value) {
+        return $null
+    }
+
+    if ($Value -is [System.Management.Automation.PSCustomObject]) {
+        $Result = [ordered]@{}
+
+        foreach (
+            $Property in (
+                $Value.PSObject.Properties | Sort-Object Name
+            )
+        ) {
+            $Result[$Property.Name] = (
+                ConvertTo-Lab25OrderedJsonValue -Value $Property.Value
+            )
+        }
+
+        return $Result
+    }
+
+    if ($Value -is [System.Array]) {
+        $Items = New-Object "System.Collections.Generic.List[object]"
+
+        foreach ($Item in $Value) {
+            $Items.Add((
+                ConvertTo-Lab25OrderedJsonValue -Value $Item
+            ))
+        }
+
+        return ,($Items.ToArray())
+    }
+
+    return $Value
+}
+
+function Test-Lab25DashboardBody {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ExpectedJson,
+
+        [Parameter(Mandatory = $true)]
+        [string]$ActualJson
+    )
+
+    $ExpectedObject = $ExpectedJson | ConvertFrom-Json
+    $ActualObject = $ActualJson | ConvertFrom-Json
+
+    $ExpectedOrdered = ConvertTo-Lab25OrderedJsonValue `
+        -Value $ExpectedObject
+
+    $ActualOrdered = ConvertTo-Lab25OrderedJsonValue `
+        -Value $ActualObject
+
+    $ExpectedNormalized = ConvertTo-Json `
+        -InputObject $ExpectedOrdered -Depth 30
+
+    $ActualNormalized = ConvertTo-Json `
+        -InputObject $ActualOrdered -Depth 30
+
+    return ($ExpectedNormalized -ceq $ActualNormalized)
+}
+
 $State = Get-Content -LiteralPath $StatePath -Raw |
     ConvertFrom-Json
 
@@ -281,14 +349,17 @@ $DashboardName = $Settings.Names.Dashboard
 $Existing = Invoke-Lab25Aws -Service cloudwatch `
     -Operation get-dashboard -Request @{
         DashboardName = $DashboardName
-        } -AbsentCodes @("DashboardNotFoundError", "ResourceNotFound")
+    } -AbsentCodes @("DashboardNotFoundError", "ResourceNotFound")
 
-# Aceita uma repeticao somente se o conteudo for identico.
-if (
-    $null -ne $Existing -and
-    $Existing.DashboardBody -cne $BodyJson
-) {
-    throw "Ja existe um dashboard com esse nome e outro conteudo."
+# Aceita repeticao somente quando o conteudo JSON for equivalente.
+if ($null -ne $Existing) {
+    $Equivalent = Test-Lab25DashboardBody `
+        -ExpectedJson $BodyJson `
+        -ActualJson $Existing.DashboardBody
+
+    if (-not $Equivalent) {
+        throw "Ja existe um dashboard com esse nome e outro conteudo."
+    }
 }
 
 Write-Host ""
@@ -346,7 +417,11 @@ $Published = Invoke-Lab25Aws -Service cloudwatch `
         DashboardName = $DashboardName
     }
 
-if ($Published.DashboardBody -cne $BodyJson) {
+$Equivalent = Test-Lab25DashboardBody `
+    -ExpectedJson $BodyJson `
+    -ActualJson $Published.DashboardBody
+
+if (-not $Equivalent) {
     throw "O conteudo publicado difere do corpo preparado."
 }
 
