@@ -75,7 +75,7 @@ O ID retornado pelo parâmetro depende da data de execução. Os scripts consult
 ## Organização
 
 | Arquivo ou diretório | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Procedimento, interpretação, resultados e evidências |
 | `config/lab25-settings.json` | Conta esperada, região, rede, nomes e consultas |
 | `config/ec2-ssm-trust-policy.json` | Trust policy da role utilizada pela EC2 |
