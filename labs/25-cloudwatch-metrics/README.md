@@ -671,7 +671,7 @@ O inventário local é preservado.
 Resultado registrado:
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Instância EC2 | Ausente |
 | Volume EBS | Ausente |
 | Subnet | Ausente |
