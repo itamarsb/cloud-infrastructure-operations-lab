@@ -46,7 +46,7 @@ O laboratório demonstrou:
 ## Ambiente
 
 | Item | Configuração |
-|---|---|
+|:---:|:---:|
 | Estação de trabalho | Windows 11 |
 | Shell | Windows PowerShell 5.1 |
 | Interface AWS | AWS CLI |
