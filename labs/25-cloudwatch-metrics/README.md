@@ -602,12 +602,12 @@ Esse resultado indica ausência de falhas publicadas nas verificações EC2 cons
 ## Ajustes realizados durante a execução
 
 | Situação | Diagnóstico e correção |
-|---|---|
-| Primeira tentativa de carga falhou | O comando shell recebido continha quebras de linha CRLF. O script passou a normalizá-las para LF antes do envio |
-| Dashboard ainda não existia | A consulta passou a tratar o código `ResourceNotFound` como ausência esperada |
-| Comparação literal do dashboard falhou | O conteúdo era equivalente, mas a representação JSON diferia. A validação passou a comparar o conteúdo normalizado |
-| Cleanup encontrou a propriedade `V` | A lista de definições foi substituída por objetos com campos nomeados |
-| Verificação final encontrou token SSO expirado | O login foi renovado e a consulta foi repetida |
+|:---:|---|
+| Primeira tentativa de carga falhou | O comando shell recebido continha quebras de linha CRLF. O script passou a normalizá-las para LF antes do envio. |
+| Dashboard ainda não existia | A consulta passou a tratar o código `ResourceNotFound` como ausência esperada. |
+| Comparação literal do dashboard falhou | O conteúdo era equivalente, mas a representação JSON diferia. A validação passou a comparar o conteúdo normalizado. |
+| Cleanup encontrou a propriedade `V` | A lista de definições foi substituída por objetos com campos nomeados. |
+| Verificação final encontrou token SSO expirado | O login foi renovado e a consulta foi repetida. |
 
 A tentativa inicial de carga foi preservada em um recibo separado. Ela não foi utilizada como execução concluída no experimento.
 
