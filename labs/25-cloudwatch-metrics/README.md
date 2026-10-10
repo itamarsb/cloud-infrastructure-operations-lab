@@ -527,7 +527,7 @@ A validação compara o conteúdo JSON, preservando valores e ordem dos arrays. 
 ### Identificação e janela
 
 | Item | Valor registrado |
-|---|---|
+|:---:|:---:|
 | Instância | `i-01355fe81590bca35` |
 | RunId | `2d9a5708-cc88-43bb-8def-5e8bd559a978` |
 | CommandId da carga concluída | `5ee3398e-852e-4a4e-a230-18a3376a2efc` |
