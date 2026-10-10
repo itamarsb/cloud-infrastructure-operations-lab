@@ -270,7 +270,7 @@ A infraestrutura utilizou VPC e subnet exclusivas, Internet Gateway, rota públi
 As consultas utilizaram o namespace `AWS/EC2` e a dimensão `InstanceId`:
 
 | Métrica | Estatística | Período |
-|---|---|---|
+|:---:|:---:|:---:|
 | `CPUUtilization` | `Average`, `Maximum` | 300 segundos |
 | `NetworkIn` | `Sum` | 300 segundos |
 | `NetworkOut` | `Sum` | 300 segundos |
