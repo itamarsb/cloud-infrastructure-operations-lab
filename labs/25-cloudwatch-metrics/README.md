@@ -555,7 +555,7 @@ Os pontos de `StatusCheckFailed` retornaram zero.
 Seleção de pontos da consulta comparativa:
 
 | Timestamp UTC | CPU Average (%) | CPU Maximum (%) | Interpretação |
-|---|---:|---:|---|
+|:---:|:---:|:---:|:---:|
 | `20:25:00` | 0,230 | 0,308 | Repouso |
 | `20:30:00` | 0,253 | 0,300 | Repouso |
 | `20:35:00` | 0,225 | 0,308 | Repouso |
