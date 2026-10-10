@@ -699,7 +699,7 @@ Inventário, recibos, corpo do dashboard e relatórios foram armazenados fora do
 ```
 
 | Registro | Finalidade |
-|---|---|
+|:---:|:---:|
 | `deployment.json` | Inventário da infraestrutura |
 | `metrics-baseline-<timestamp>.json` | Coleta inicial |
 | `cpu-load-<RunId>.json` | Recibo e resultado da carga |
