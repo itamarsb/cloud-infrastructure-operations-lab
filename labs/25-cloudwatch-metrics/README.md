@@ -734,7 +734,7 @@ O laboratório utilizou métricas nativas. Memória, ocupação do sistema de ar
 ## Evidências
 
 | Evidência | Registro |
-|---|---|
+|:---:|:---:|
 | Pré-requisitos, identidade, região, zona e AMI | [89](images/Clipboard_10-08-2026_89.png) |
 | Configuração JSON e trust policy | [90](images/Clipboard_10-08-2026_90.png) |
 | Sintaxe e validação antes do deploy | [91](images/Clipboard_10-08-2026_91.png) |
