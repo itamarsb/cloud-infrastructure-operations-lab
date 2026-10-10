@@ -252,12 +252,66 @@ O módulo de Terraform está concluído, com os Labs 19 a 24 executados e docume
 
 | Status | Laboratório | Conteúdo |
 |---|---|---|
-| Planejado | **Lab 25 — Métricas no CloudWatch** | Métricas, consultas e dashboard |
+| Concluído | **Lab 25 — Métricas no CloudWatch** | Métricas nativas EC2, períodos e estatísticas, carga limitada de CPU, recuperação, créditos, dashboard e cleanup |
 | Planejado | **Lab 26 — CloudWatch Agent** | Memória, disco e coleta de logs |
 | Planejado | **Lab 27 — Alarmes e notificações** | Thresholds, alarmes e Amazon SNS |
 | Planejado | **Lab 28 — CloudWatch Logs Insights** | Consultas e investigação de eventos |
 | Planejado | **Lab 29 — Monitoramento com Zabbix** | Agente, itens, triggers e disponibilidade |
 | Planejado | **Lab 30 — Investigação de alertas** | Correlação entre métricas, logs e estado do sistema |
+
+### Resultados concluídos no módulo
+
+#### Lab 25 — Métricas no CloudWatch
+
+O exercício provisionou uma instância Amazon Linux 2023 `t3.micro`, com créditos `standard`, monitoramento básico e administração pelo Systems Manager.
+
+A infraestrutura utilizou VPC e subnet exclusivas, Internet Gateway, rota pública e security group sem regras de entrada. O volume raiz `gp3` de 8 GiB foi criptografado e configurado para exclusão na terminação.
+
+As consultas utilizaram o namespace `AWS/EC2` e a dimensão `InstanceId`:
+
+| Métrica | Estatística | Período |
+|---|---|---|
+| `CPUUtilization` | `Average`, `Maximum` | 300 segundos |
+| `NetworkIn` | `Sum` | 300 segundos |
+| `NetworkOut` | `Sum` | 300 segundos |
+| `StatusCheckFailed` | `Maximum` | 60 segundos |
+| `CPUCreditBalance` | `Average` | 300 segundos |
+
+A coleta inicial retornou dados para as quatro métricas previstas na configuração. O saldo de créditos foi consultado adicionalmente para interpretar a carga.
+
+Um processo de carga executou durante 600 segundos pelo SSM Run Command. A conclusão foi confirmada por status `Success`, código de resposta `0` e marcadores de início, fim e encerramento.
+
+A janela comparativa, de `20:25` a `21:15` UTC em 9 de outubro de 2026, registrou:
+
+- utilização baixa antes da carga;
+- média de CPU de aproximadamente `50,173%` no intervalo completo de carga;
+- retorno para aproximadamente `0,23%` a `0,26%` após o encerramento;
+- redução do saldo de créditos durante a carga e recuperação posterior;
+- cinquenta pontos de `StatusCheckFailed` com valor zero.
+
+Os intervalos com início e fim parciais da carga foram interpretados considerando a agregação de cinco minutos.
+
+O dashboard reuniu cinco widgets, com identificação da execução, CPU, créditos, rede e verificações de status. O conteúdo recuperado pela API foi comparado semanticamente ao corpo local, e os gráficos foram inspecionados no console.
+
+A remoção do dashboard foi confirmada antes da remoção da infraestrutura. A verificação independente do cleanup passou nas onze consultas:
+
+- instância EC2;
+- volume EBS;
+- subnet;
+- tabela de rotas;
+- security group;
+- Internet Gateway;
+- VPC;
+- interfaces de rede da VPC;
+- role IAM;
+- instance profile;
+- dashboard.
+
+Os recursos consultados estavam ausentes e nenhuma interface de rede foi encontrada na VPC. Inventário, recibos e relatórios locais foram preservados.
+
+[Procedimento, resultados e evidências do Lab 25](../labs/25-cloudwatch-metrics/README.md).
+
+O módulo de monitoramento e logs foi iniciado, com um dos seis laboratórios concluído.
 
 ---
 
@@ -310,7 +364,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Infraestrutura AWS | Concluído |
 | Operação e troubleshooting | Concluído |
 | Terraform | Concluído |
-| Monitoramento e logs | Planejado |
+| Monitoramento e logs | Iniciado — 1 de 6 laboratórios concluído |
 | Docker | Planejado |
 | Segurança, custos e confiabilidade | Planejado |
 | Projeto final | Planejado |
@@ -319,37 +373,41 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `25` |
+| Laboratórios concluídos | `26` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `13` |
-| Último laboratório concluído | `Lab 24` |
-| Próximo laboratório | `Lab 25` |
+| Laboratórios planejados | `12` |
+| Último laboratório concluído | `Lab 25` |
+| Próximo laboratório | `Lab 26` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
 Os módulos de preparação e acesso, operações Linux, infraestrutura AWS, operação e troubleshooting e Terraform estão concluídos.
 
+O módulo de monitoramento e logs possui um laboratório concluído. O Lab 26 permanece planejado.
+
 ---
 
 ## Próxima etapa
 
-**Lab 25 — Métricas no CloudWatch**
+**Lab 26 — CloudWatch Agent**
 
-O próximo laboratório iniciará o módulo de monitoramento e logs.
+O próximo laboratório ampliará a coleta para memória, utilização de disco e logs, complementando as métricas nativas estudadas no Lab 25.
 
 O planejamento deverá definir:
 
-- ambiente e recursos observados;
+- ambiente e recursos exclusivos;
 - perfil AWS, Região e identificação dos recursos;
-- métricas, namespaces e dimensões utilizados;
-- períodos e estatísticas adequados às consultas;
-- coleta e interpretação dos resultados;
-- comportamento esperado quando não houver dados;
-- organização de um dashboard;
-- validação das consultas e do dashboard;
+- instalação e configuração do CloudWatch Agent;
+- permissões IAM necessárias;
+- namespace, dimensões, unidades e intervalos de coleta;
+- métricas de memória e sistema de arquivos;
+- arquivos de logs, grupos, streams e retenção;
+- validação do serviço do agente;
+- confirmação da chegada de métricas e eventos;
+- tratamento de ausência de dados e falhas de coleta;
 - registro das evidências;
 - custos envolvidos e procedimento de cleanup.
 
-O escopo será definido antes da implementação. Recursos removidos nos laboratórios anteriores não serão tratados como ainda disponíveis.
+O escopo será definido antes da implementação. A infraestrutura exclusiva do Lab 25 foi removida e não será tratada como disponível.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de alteração e remoção.
