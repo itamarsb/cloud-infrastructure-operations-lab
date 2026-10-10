@@ -6,7 +6,7 @@ O projeto documenta a construção e a operação de um ambiente de aplicação 
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–24 are complete. The latest exercise implemented Terraform validation in GitHub Actions for two configurations, demonstrated formatting and undeclared-variable failures, and confirmed successful checks after correction. The temporary pull request was closed without merging, and its branch was deleted.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Each lab includes documented procedures, validation results and execution evidence. Labs 00–25 are complete. The latest exercise collected native EC2 metrics in CloudWatch, compared idle behavior, a bounded CPU load and recovery, and published a dashboard verified through the API. The dashboard and dedicated infrastructure were removed, and eleven independent cleanup checks passed.
 
 ---
 
@@ -76,8 +76,9 @@ As tecnologias de etapas futuras estão identificadas no roadmap. A inclusão ne
 | Concluído | [Lab 22 — Variáveis, outputs e módulos](labs/22-terraform-variables-outputs-modules/) | Variáveis tipadas, validação de entradas, módulo reutilizável, outputs e remoção local. |
 | Concluído | [Lab 23 — Mudanças e drift](labs/23-terraform-changes-drift/) | Mudança intencional, alteração externa, diagnóstico, recuperação, validação por SHA256 e remoção local. |
 | Concluído | [Lab 24 — Validação automatizada](labs/24-terraform-automated-validation/) | GitHub Actions, matriz de jobs, dependências para Windows e Linux, falhas controladas e recuperação dos checks. |
+| Concluído | [Lab 25 — Métricas no CloudWatch](labs/25-cloudwatch-metrics/) | Métricas nativas EC2, carga limitada de CPU, recuperação, créditos, dashboard e onze verificações de cleanup. |
 
-**25 laboratórios concluídos**, considerando a numeração de 00 a 24.
+**26 laboratórios concluídos**, considerando a numeração de 00 a 25.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
@@ -85,35 +86,51 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 24 — Validação automatizada** implementou um workflow no GitHub Actions para verificar as configurações Terraform dos Labs 22 e 23.
+O **Lab 25 — Métricas no CloudWatch** provisionou uma instância EC2 exclusiva para observar repouso, carga limitada de CPU e recuperação.
 
-A execução utilizou Terraform `1.16.1`, runner Ubuntu `24.04` e uma matriz com dois jobs independentes. Cada job verificou a formatação, inicializou as dependências sem configurar o backend e validou a configuração.
+O cenário utilizou Amazon Linux 2023, instância `t3.micro`, créditos `standard`, monitoramento básico e administração pelo Systems Manager. A rede era exclusiva do laboratório, e o security group não tinha regras de entrada.
 
-O arquivo de dependências do Lab 23 foi preparado para `windows_amd64` e `linux_amd64`, preservando o provider `hashicorp/local` na versão `2.9.1`. A execução em Linux utilizou `-lockfile=readonly` e conferiu que o lockfile permaneceu sem alterações.
+As consultas utilizaram o namespace `AWS/EC2`, a dimensão `InstanceId` e períodos e estatísticas definidos explicitamente.
 
-Os testes controlados foram realizados em uma branch temporária e no pull request #1:
+| Observação | Resultado |
+|---|---|
+| Coleta inicial | Quatro métricas com dados |
+| Carga | Um processo durante 600 segundos |
+| Confirmação da execução | SSM `Success`, código de resposta `0` e marcador de encerramento |
+| CPU no intervalo completo de carga | Média de aproximadamente `50,173%` |
+| CPU após a carga | Retorno para aproximadamente `0,23%` a `0,26%` |
+| Créditos de CPU | Redução durante a carga e recuperação posterior |
+| Verificações de status | Zero falhas nos 50 pontos da janela comparativa |
+| Dashboard | Cinco widgets, com conteúdo conferido pela API |
+| Cleanup | Onze verificações independentes aprovadas |
 
-| Teste | Resultado |
-|:---:|:---:|
-| Configurações válidas | Dois jobs aprovados |
-| Formatação incorreta no Lab 22 | Falha em `terraform fmt`, com código de saída `3` |
-| Formatação corrigida | Dois jobs aprovados |
-| Referência a variável não declarada no Lab 22 | Falha em `terraform validate`, com código de saída `1` |
-| Referência inválida removida | Dois jobs aprovados |
+A utilização próxima de 50% foi compatível com um processo de carga em uma instância com duas vCPUs. Os intervalos que continham apenas parte da carga foram interpretados considerando os horários de início e fim.
 
-O job do Lab 23 continuou e foi aprovado durante as falhas introduzidas no Lab 22.
+O dashboard reuniu CPU, créditos, rede e verificações de status, com anotações temporais da carga. A validação comparou o conteúdo JSON, considerando diferenças de representação.
 
-Após a aprovação final, o pull request foi fechado sem merge e a branch temporária foi excluída. Os arquivos de teste ficaram fora da branch `main`, que manteve o workflow publicado.
+Após o registro das evidências, o dashboard e a infraestrutura foram removidos. A verificação final confirmou a ausência dos recursos consultados e nenhuma interface de rede restante na VPC.
 
-O pipeline não executou plano, aplicação ou remoção de recursos e não utilizou credenciais AWS.
+![Dashboard do Lab 25](labs/25-cloudwatch-metrics/images/Clipboard_10-09-2026_100.png)
 
-[Workflow de validação](.github/workflows/lab24-terraform-validation.yml).
-
-[Procedimento, resultados e evidências do Lab 24](labs/24-terraform-automated-validation/).
+[Procedimento, resultados e evidências do Lab 25](labs/25-cloudwatch-metrics/).
 
 ---
 
 ## Resultados anteriores
+
+### Lab 24 — Validação automatizada
+
+Um workflow no GitHub Actions verificou as configurações Terraform dos Labs 22 e 23, utilizando Terraform `1.16.1`, runner Ubuntu `24.04` e uma matriz com dois jobs independentes.
+
+O arquivo de dependências do Lab 23 foi preparado para `windows_amd64` e `linux_amd64`, preservando o provider `hashicorp/local` na versão `2.9.1`. A execução utilizou `-lockfile=readonly` e conferiu a preservação do lockfile.
+
+Os testes em branch temporária demonstraram falhas de formatação e de referência a uma variável não declarada. Após cada correção, os dois jobs foram aprovados. O job do Lab 23 permaneceu aprovado durante as falhas introduzidas no Lab 22.
+
+O pull request #1 foi fechado sem merge e a branch temporária foi excluída. O pipeline não executou plano, aplicação ou remoção de recursos e não utilizou credenciais AWS.
+
+[Workflow de validação](.github/workflows/lab24-terraform-validation.yml).
+
+[Procedimento, resultados e evidências do Lab 24](labs/24-terraform-automated-validation/).
 
 ### Lab 23 — Mudanças e drift
 
@@ -262,6 +279,9 @@ Para consultar a validação automatizada, acesse a aba Actions e selecione o wo
 - validação direta dos recursos, além da consulta ao estado e aos outputs;
 - verificação automatizada de formatação e configuração;
 - testes de pipeline em branch temporária;
+- consultas de métricas com janela, período e estatística explícitos;
+- interpretação de ausência de dados sem conversão indevida para zero;
+- confirmação do encerramento de cargas antes do cleanup;
 - scripts de cleanup idempotentes;
 - controle de custos e cleanup documentado.
 
@@ -328,6 +348,11 @@ Os laboratórios concluídos até esta etapa demonstram:
 - detecção de falhas de formatação e de referências inválidas;
 - confirmação da recuperação dos checks após correções;
 - encerramento de pull request de teste sem merge;
+- consulta de métricas nativas EC2 no CloudWatch;
+- comparação entre repouso, carga limitada de CPU e recuperação;
+- interpretação de períodos, estatísticas e créditos de CPU;
+- publicação e validação de dashboard pela API;
+- comparação de conteúdo JSON considerando diferenças de representação;
 - automação com PowerShell e Bash;
 - cleanup seguro e preservação de infraestrutura compartilhada.
 
@@ -347,7 +372,7 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-Os cinco primeiros módulos foram concluídos.
+Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs foi iniciado com a conclusão do Lab 25.
 
 | Laboratório do módulo Terraform | Resultado |
 |:---:|:---:|
@@ -358,11 +383,13 @@ Os cinco primeiros módulos foram concluídos.
 | Lab 23 | Mudança intencional, drift, diagnóstico e recuperação |
 | Lab 24 | Validação automatizada em GitHub Actions e testes de falha e recuperação |
 
-A próxima etapa prevista é o **Lab 25 — Métricas no CloudWatch**, iniciando o módulo de monitoramento e logs.
+A próxima etapa prevista é o **Lab 26 — CloudWatch Agent**.
 
-O laboratório abordará a identificação e a consulta de métricas, a interpretação de períodos e estatísticas e a organização de um dashboard.
+O laboratório ampliará a coleta para memória, utilização de disco e logs, complementando as métricas nativas estudadas no Lab 25.
 
-O ambiente, os recursos necessários e o procedimento de cleanup serão definidos antes da execução.
+O planejamento definirá o ambiente, a configuração do agente, as permissões necessárias, os namespaces e dimensões, os arquivos de logs, a retenção, as validações e o procedimento de cleanup.
+
+A infraestrutura exclusiva do Lab 25 foi removida. Os recursos necessários ao Lab 26 serão definidos e validados antes da execução.
 
 ---
 
