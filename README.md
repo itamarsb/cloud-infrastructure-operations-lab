@@ -93,7 +93,7 @@ O cenário utilizou Amazon Linux 2023, instância `t3.micro`, créditos `standar
 As consultas utilizaram o namespace `AWS/EC2`, a dimensão `InstanceId` e períodos e estatísticas definidos explicitamente.
 
 | Observação | Resultado |
-|---|---|
+|:---:|:---:|
 | Coleta inicial | Quatro métricas com dados |
 | Carga | Um processo durante 600 segundos |
 | Confirmação da execução | SSM `Success`, código de resposta `0` e marcador de encerramento |
