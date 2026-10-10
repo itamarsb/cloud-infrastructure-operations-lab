@@ -135,7 +135,7 @@ O dashboard foi identificado pelo nome exclusivo, ARN, recibo local e conteúdo 
 Todas as consultas utilizaram o namespace `AWS/EC2` e a dimensão `InstanceId`.
 
 | Métrica | Estatística | Período | Unidade | Finalidade |
-|---|---|---|---|---|
+|:---:|:---:|:---:|:---:|:---:|
 | `CPUUtilization` | `Average`, `Maximum` | 300 segundos | Percent | Comparar utilização de CPU |
 | `NetworkIn` | `Sum` | 300 segundos | Bytes | Registrar bytes recebidos por intervalo |
 | `NetworkOut` | `Sum` | 300 segundos | Bytes | Registrar bytes enviados por intervalo |
