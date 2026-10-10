@@ -576,7 +576,7 @@ Após o encerramento, a utilização retornou ao patamar observado em repouso.
 ### Créditos de CPU
 
 | Timestamp UTC | CPUCreditBalance — Average |
-|---|---:|
+|:---:|:---:|
 | `20:40:00` | 7,798 |
 | `20:45:00` | 7,150 |
 | `20:50:00` | 3,130 |
