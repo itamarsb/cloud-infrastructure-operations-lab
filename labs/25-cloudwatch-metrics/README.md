@@ -94,7 +94,7 @@ O corpo JSON do dashboard é gerado localmente pelo script. Ele não é um arqui
 ## Infraestrutura exclusiva
 
 | Recurso | Nome |
-|---|---|
+|:---:|:---:|
 | VPC | `lab25-cloudwatch-vpc` |
 | Subnet pública | `lab25-cloudwatch-public-subnet-a` |
 | Internet Gateway | `lab25-cloudwatch-igw` |
