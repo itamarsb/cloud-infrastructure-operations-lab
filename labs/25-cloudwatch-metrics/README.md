@@ -28,7 +28,7 @@ O laboratório demonstrou:
 ## Resultado observado
 
 | Indicador | Resultado |
-|---|---|
+|:---:|:---:|
 | Infraestrutura | Provisionada e validada por consultas de leitura |
 | Gerenciamento SSM | Instância `Online` |
 | Coleta inicial | Quatro métricas com dados |
