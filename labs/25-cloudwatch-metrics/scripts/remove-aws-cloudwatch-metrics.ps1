@@ -24,41 +24,61 @@ if (
 }
 
 $Definitions = @(
-    @("Vpc", "describe-vpcs", "VpcIds", "Vpcs", "InvalidVpcID.NotFound")
-    @(
-        "Subnet", "describe-subnets", "SubnetIds",
-        "Subnets", "InvalidSubnetID.NotFound"
-    )
-    @(
-        "InternetGateway", "describe-internet-gateways",
-        "InternetGatewayIds", "InternetGateways",
-        "InvalidInternetGatewayID.NotFound"
-    )
-    @(
-        "RouteTable", "describe-route-tables", "RouteTableIds",
-        "RouteTables", "InvalidRouteTableID.NotFound"
-    )
-    @(
-        "SecurityGroup", "describe-security-groups", "GroupIds",
-        "SecurityGroups", "InvalidGroup.NotFound"
-    )
+    [pscustomobject]@{
+        Key         = "Vpc"
+        Operation   = "describe-vpcs"
+        IdParameter = "VpcIds"
+        Collection  = "Vpcs"
+        AbsentCode  = "InvalidVpcID.NotFound"
+    }
+    [pscustomobject]@{
+        Key         = "Subnet"
+        Operation   = "describe-subnets"
+        IdParameter = "SubnetIds"
+        Collection  = "Subnets"
+        AbsentCode  = "InvalidSubnetID.NotFound"
+    }
+    [pscustomobject]@{
+        Key         = "InternetGateway"
+        Operation   = "describe-internet-gateways"
+        IdParameter = "InternetGatewayIds"
+        Collection  = "InternetGateways"
+        AbsentCode  = "InvalidInternetGatewayID.NotFound"
+    }
+    [pscustomobject]@{
+        Key         = "RouteTable"
+        Operation   = "describe-route-tables"
+        IdParameter = "RouteTableIds"
+        Collection  = "RouteTables"
+        AbsentCode  = "InvalidRouteTableID.NotFound"
+    }
+    [pscustomobject]@{
+        Key         = "SecurityGroup"
+        Operation   = "describe-security-groups"
+        IdParameter = "GroupIds"
+        Collection  = "SecurityGroups"
+        AbsentCode  = "InvalidGroup.NotFound"
+    }
 )
 
 $Resources = @{}
 
-# Validacao de propriedade antes das exclusoes.
+# Confere IDs, tags e propriedade antes das exclusoes.
 foreach ($Definition in $Definitions) {
-    $Key = $Definition[0]
+    $Key = $Definition.Key
+
     $Resource = Get-Lab25Ec2Resource `
-        -Operation $Definition[1] `
-        -IdParameter $Definition[2] `
+        -Operation $Definition.Operation `
+        -IdParameter $Definition.IdParameter `
         -Id $State.Ids.$Key `
-        -Collection $Definition[3] `
-        -AbsentCode $Definition[4]
+        -Collection $Definition.Collection `
+        -AbsentCode $Definition.AbsentCode
 
     $Resources[$Key] = $Resource
+
     if ($null -ne $Resource) {
-        Assert-Lab25Ownership -Resource $Resource `
+        Assert-Lab25Ownership `
+            -Resource $Resource `
             -Name $Settings.Names.$Key
 
         if (
@@ -71,11 +91,15 @@ foreach ($Definition in $Definitions) {
 }
 
 $Instance = $null
+
 if (-not [string]::IsNullOrWhiteSpace($State.Ids.Instance)) {
-    $Response = Invoke-Lab25Aws -Service ec2 `
-        -Operation describe-instances -Request @{
+    $Response = Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation describe-instances `
+        -Request @{
             InstanceIds = @($State.Ids.Instance)
-        } -AbsentCodes @("InvalidInstanceID.NotFound")
+        } `
+        -AbsentCodes @("InvalidInstanceID.NotFound")
 
     if ($null -ne $Response) {
         $Instances = @(
@@ -91,7 +115,9 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.Instance)) {
         }
 
         $Instance = $Instances[0]
-        Assert-Lab25Ownership -Resource $Instance `
+
+        Assert-Lab25Ownership `
+            -Resource $Instance `
             -Name $Settings.Names.Instance
 
         if ($Instance.VpcId -ne $State.Ids.Vpc) {
@@ -100,6 +126,7 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.Instance)) {
 
         if ($Instance.State.Name -ne "terminated") {
             $Mappings = @($Instance.BlockDeviceMappings)
+
             if (
                 $Mappings.Count -ne 1 -or
                 $Mappings[0].DeviceName -ne $Instance.RootDeviceName -or
@@ -109,6 +136,7 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.Instance)) {
             }
 
             $LiveVolumeId = $Mappings[0].Ebs.VolumeId
+
             if (
                 -not [string]::IsNullOrWhiteSpace($State.Ids.Volume) -and
                 $State.Ids.Volume -ne $LiveVolumeId
@@ -121,46 +149,62 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.Instance)) {
     }
 }
 
-$Volume = Get-Lab25Ec2Resource -Operation describe-volumes `
-    -IdParameter VolumeIds -Id $State.Ids.Volume `
-    -Collection Volumes -AbsentCode "InvalidVolume.NotFound"
+$Volume = Get-Lab25Ec2Resource `
+    -Operation describe-volumes `
+    -IdParameter VolumeIds `
+    -Id $State.Ids.Volume `
+    -Collection Volumes `
+    -AbsentCode "InvalidVolume.NotFound"
 
 if ($null -ne $Volume) {
-    Assert-Lab25Ownership -Resource $Volume `
+    Assert-Lab25Ownership `
+        -Resource $Volume `
         -Name ($Settings.Names.Instance + "-root")
 }
 
 $Role = $null
+
 if (-not [string]::IsNullOrWhiteSpace($State.Ids.RoleId)) {
-    $Response = Invoke-Lab25Aws -Service iam `
-        -Operation get-role -Request @{
+    $Response = Invoke-Lab25Aws `
+        -Service iam `
+        -Operation get-role `
+        -Request @{
             RoleName = $Settings.Names.Role
-        } -AbsentCodes @("NoSuchEntity")
+        } `
+        -AbsentCodes @("NoSuchEntity")
 
     if ($null -ne $Response) {
         $Role = $Response.Role
+
         if ($Role.RoleId -ne $State.Ids.RoleId) {
             throw "RoleId diferente do inventario."
         }
 
-        Assert-Lab25Ownership -Resource $Role `
+        Assert-Lab25Ownership `
+            -Resource $Role `
             -Name $Settings.Names.Role
 
-        $Policies = Invoke-Lab25Aws -Service iam `
-            -Operation list-attached-role-policies -Request @{
+        $Policies = Invoke-Lab25Aws `
+            -Service iam `
+            -Operation list-attached-role-policies `
+            -Request @{
                 RoleName = $Settings.Names.Role
             }
 
-        if (@(
+        $AdditionalPolicies = @(
             $Policies.AttachedPolicies | Where-Object {
                 $_.PolicyArn -ne $PolicyArn
             }
-        ).Count -ne 0) {
+        )
+
+        if ($AdditionalPolicies.Count -ne 0) {
             throw "A role possui politicas adicionais."
         }
 
-        $Inline = Invoke-Lab25Aws -Service iam `
-            -Operation list-role-policies -Request @{
+        $Inline = Invoke-Lab25Aws `
+            -Service iam `
+            -Operation list-role-policies `
+            -Request @{
                 RoleName = $Settings.Names.Role
             }
 
@@ -171,11 +215,15 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.RoleId)) {
 }
 
 $InstanceProfile = $null
+
 if (-not [string]::IsNullOrWhiteSpace($State.Ids.InstanceProfileId)) {
-    $Response = Invoke-Lab25Aws -Service iam `
-        -Operation get-instance-profile -Request @{
+    $Response = Invoke-Lab25Aws `
+        -Service iam `
+        -Operation get-instance-profile `
+        -Request @{
             InstanceProfileName = $Settings.Names.InstanceProfile
-        } -AbsentCodes @("NoSuchEntity")
+        } `
+        -AbsentCodes @("NoSuchEntity")
 
     if ($null -ne $Response) {
         $InstanceProfile = $Response.InstanceProfile
@@ -187,43 +235,78 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.InstanceProfileId)) {
             throw "InstanceProfileId diferente do inventario."
         }
 
-        Assert-Lab25Ownership -Resource $InstanceProfile `
+        Assert-Lab25Ownership `
+            -Resource $InstanceProfile `
             -Name $Settings.Names.InstanceProfile
 
-        if (@(
+        $OtherRoles = @(
             $InstanceProfile.Roles | Where-Object {
                 $_.RoleId -ne $State.Ids.RoleId
             }
-        ).Count -ne 0) {
+        )
+
+        if ($OtherRoles.Count -ne 0) {
             throw "O instance profile possui uma role diferente."
         }
     }
 }
 
-# O dashboard sera criado e removido em uma etapa propria.
-$Dashboards = Invoke-Lab25Aws -Service cloudwatch `
-    -Operation list-dashboards -Request @{
-        DashboardNamePrefix = $Settings.Names.Dashboard
-    }
+# O dashboard deve estar ausente antes do cleanup da infraestrutura.
+$Dashboard = Invoke-Lab25Aws `
+    -Service cloudwatch `
+    -Operation get-dashboard `
+    -Request @{
+        DashboardName = $Settings.Names.Dashboard
+    } `
+    -AbsentCodes @("DashboardNotFoundError", "ResourceNotFound")
 
-if (@(
-    $Dashboards.DashboardEntries | Where-Object {
-        $_.DashboardName -eq $Settings.Names.Dashboard
-    }
-).Count -ne 0) {
+if ($null -ne $Dashboard) {
     throw "Remova e valide o dashboard antes do cleanup da infraestrutura."
 }
 
+# Confere as associacoes antes de iniciar qualquer exclusao.
+$RouteAssociations = @()
+
+if ($null -ne $Resources.RouteTable) {
+    $RouteAssociations = @(
+        $Resources.RouteTable.Associations | Where-Object {
+            -not $_.Main
+        }
+    )
+
+    foreach ($Association in $RouteAssociations) {
+        if ($Association.SubnetId -ne $State.Ids.Subnet) {
+            throw "Tabela de rotas possui associacao diferente da prevista."
+        }
+    }
+}
+
+if ($null -ne $Resources.InternetGateway) {
+    foreach ($Attachment in $Resources.InternetGateway.Attachments) {
+        if ($Attachment.VpcId -ne $State.Ids.Vpc) {
+            throw "Internet Gateway associado a outra VPC."
+        }
+    }
+}
+
 if ($null -ne $Resources.Vpc) {
-    $VpcInstances = Invoke-Lab25Aws -Service ec2 `
-        -Operation describe-instances -Request @{
+    $VpcInstances = Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation describe-instances `
+        -Request @{
             Filters = @(
-                @{ Name = "vpc-id"; Values = @($State.Ids.Vpc) }
+                @{
+                    Name   = "vpc-id"
+                    Values = @($State.Ids.Vpc)
+                }
                 @{
                     Name = "instance-state-name"
                     Values = @(
-                        "pending", "running", "stopping",
-                        "stopped", "shutting-down"
+                        "pending"
+                        "running"
+                        "stopping"
+                        "stopped"
+                        "shutting-down"
                     )
                 }
             )
@@ -241,6 +324,9 @@ if ($null -ne $Resources.Vpc) {
 Write-Host "[OK] IDs, tags e propriedade dos recursos conferidos." `
     -ForegroundColor Green
 
+Write-Host "[OK] Dashboard ausente e associacoes conferidas." `
+    -ForegroundColor Green
+
 if ($ValidateOnly) {
     Write-Host "[OK] ValidateOnly: nenhum recurso AWS removido." `
         -ForegroundColor Green
@@ -253,7 +339,9 @@ if (
     $null -ne $Instance -and
     $Instance.State.Name -ne "terminated"
 ) {
-    Invoke-Lab25Aws -Service ec2 -Operation terminate-instances `
+    Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation terminate-instances `
         -Request @{
             InstanceIds = @($State.Ids.Instance)
         } | Out-Null
@@ -275,8 +363,10 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.Volume)) {
     for ($Attempt = 1; $Attempt -le 24; $Attempt++) {
         $RemainingVolume = Get-Lab25Ec2Resource `
             -Operation describe-volumes `
-            -IdParameter VolumeIds -Id $State.Ids.Volume `
-            -Collection Volumes -AbsentCode "InvalidVolume.NotFound"
+            -IdParameter VolumeIds `
+            -Id $State.Ids.Volume `
+            -Collection Volumes `
+            -AbsentCode "InvalidVolume.NotFound"
 
         if ($null -eq $RemainingVolume) {
             break
@@ -292,63 +382,74 @@ if (-not [string]::IsNullOrWhiteSpace($State.Ids.Volume)) {
 
 if ($null -ne $InstanceProfile) {
     if (@($InstanceProfile.Roles).Count -ne 0) {
-        Invoke-Lab25Aws -Service iam `
-            -Operation remove-role-from-instance-profile -Request @{
+        Invoke-Lab25Aws `
+            -Service iam `
+            -Operation remove-role-from-instance-profile `
+            -Request @{
                 InstanceProfileName = $Settings.Names.InstanceProfile
-                RoleName = $Settings.Names.Role
+                RoleName            = $Settings.Names.Role
             } | Out-Null
     }
 
-    Invoke-Lab25Aws -Service iam `
-        -Operation delete-instance-profile -Request @{
+    Invoke-Lab25Aws `
+        -Service iam `
+        -Operation delete-instance-profile `
+        -Request @{
             InstanceProfileName = $Settings.Names.InstanceProfile
         } | Out-Null
 }
 
 if ($null -ne $Role) {
-    Invoke-Lab25Aws -Service iam `
-        -Operation detach-role-policy -Request @{
-            RoleName = $Settings.Names.Role
+    Invoke-Lab25Aws `
+        -Service iam `
+        -Operation detach-role-policy `
+        -Request @{
+            RoleName  = $Settings.Names.Role
             PolicyArn = $PolicyArn
         } | Out-Null
 
-    Invoke-Lab25Aws -Service iam -Operation delete-role -Request @{
-        RoleName = $Settings.Names.Role
-    } | Out-Null
-}
-
-if ($null -ne $Resources.Subnet) {
-    Invoke-Lab25Aws -Service ec2 -Operation delete-subnet -Request @{
-        SubnetId = $State.Ids.Subnet
-    } | Out-Null
+    Invoke-Lab25Aws `
+        -Service iam `
+        -Operation delete-role `
+        -Request @{
+            RoleName = $Settings.Names.Role
+        } | Out-Null
 }
 
 if ($null -ne $Resources.RouteTable) {
-    $Associations = @(
-        $Resources.RouteTable.Associations | Where-Object {
-            -not $_.Main
-        }
-    )
-
-    foreach ($Association in $Associations) {
-        if ($Association.SubnetId -ne $State.Ids.Subnet) {
-            throw "Tabela de rotas possui associacao diferente da prevista."
-        }
-
-        Invoke-Lab25Aws -Service ec2 `
-            -Operation disassociate-route-table -Request @{
+    foreach ($Association in $RouteAssociations) {
+        Invoke-Lab25Aws `
+            -Service ec2 `
+            -Operation disassociate-route-table `
+            -Request @{
                 AssociationId = $Association.RouteTableAssociationId
-            } -AbsentCodes @("InvalidAssociationID.NotFound") | Out-Null
+            } `
+            -AbsentCodes @("InvalidAssociationID.NotFound") | Out-Null
     }
+}
 
-    Invoke-Lab25Aws -Service ec2 -Operation delete-route-table `
+if ($null -ne $Resources.Subnet) {
+    Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation delete-subnet `
+        -Request @{
+            SubnetId = $State.Ids.Subnet
+        } | Out-Null
+}
+
+if ($null -ne $Resources.RouteTable) {
+    Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation delete-route-table `
         -Request @{
             RouteTableId = $State.Ids.RouteTable
         } | Out-Null
 }
 
 if ($null -ne $Resources.SecurityGroup) {
-    Invoke-Lab25Aws -Service ec2 -Operation delete-security-group `
+    Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation delete-security-group `
         -Request @{
             GroupId = $State.Ids.SecurityGroup
         } | Out-Null
@@ -356,27 +457,30 @@ if ($null -ne $Resources.SecurityGroup) {
 
 if ($null -ne $Resources.InternetGateway) {
     foreach ($Attachment in $Resources.InternetGateway.Attachments) {
-        if ($Attachment.VpcId -ne $State.Ids.Vpc) {
-            throw "Internet Gateway associado a outra VPC."
-        }
-
-        Invoke-Lab25Aws -Service ec2 `
-            -Operation detach-internet-gateway -Request @{
+        Invoke-Lab25Aws `
+            -Service ec2 `
+            -Operation detach-internet-gateway `
+            -Request @{
                 InternetGatewayId = $State.Ids.InternetGateway
-                VpcId = $State.Ids.Vpc
+                VpcId             = $State.Ids.Vpc
             } | Out-Null
     }
 
-    Invoke-Lab25Aws -Service ec2 `
-        -Operation delete-internet-gateway -Request @{
+    Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation delete-internet-gateway `
+        -Request @{
             InternetGatewayId = $State.Ids.InternetGateway
         } | Out-Null
 }
 
 if ($null -ne $Resources.Vpc) {
-    Invoke-Lab25Aws -Service ec2 -Operation delete-vpc -Request @{
-        VpcId = $State.Ids.Vpc
-    } | Out-Null
+    Invoke-Lab25Aws `
+        -Service ec2 `
+        -Operation delete-vpc `
+        -Request @{
+            VpcId = $State.Ids.Vpc
+        } | Out-Null
 }
 
 $State.Completed = $true
