@@ -135,7 +135,7 @@ Credenciais estáticas não serão gravadas na instância nem nos arquivos de co
 ## Métricas previstas
 
 | Métrica publicada | Origem | Unidade | Coleta prevista |
-|---|---|---|---|
+|:---:|:---:|:---:|:---:|
 | `mem_used_percent` | Memória do sistema operacional | Percent | 60 segundos |
 | `disk_used_percent` | Sistema de arquivos raiz `/` | Percent | 60 segundos |
 
