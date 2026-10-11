@@ -294,7 +294,7 @@ A quantidade de pontos pode variar entre séries e consultas. O validador confir
 O evento inicial `CloudWatchAgentStarted` tinha timestamp `21:13:54Z` e ingestão `21:14:05Z`, diferença observada de 11 segundos.
 
 | Sequência | Nível | Timestamp UTC em 11/10/2026 | Ingestão UTC | Diferença |
-|---|---|---|---|---|
+|:---:|:---:|:---:|:---:|:---:|
 | 1 | INFO | `22:14:35Z` | `22:14:41Z` | 6 s |
 | 2 | WARN | `22:14:36Z` | `22:14:41Z` | 5 s |
 | 3 | ERROR | `22:14:37Z` | `22:14:46Z` | 9 s |
