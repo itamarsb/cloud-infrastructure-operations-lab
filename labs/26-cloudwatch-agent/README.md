@@ -80,7 +80,7 @@ Os coletores `mem` e `disk` utilizaram `used_percent`, com intervalo de 60 segun
 O log utilizou UTF-8, timezone `UTC` e timestamp `%Y-%m-%dT%H:%M:%SZ`.
 
 | Caminho na instância | Finalidade |
-|---|---|
+|:---:|:---:|
 | `/opt/aws/amazon-cloudwatch-agent/etc/lab26-cloudwatch-agent.json` | Configuração aplicada |
 | `/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log` | Diagnóstico do agente |
 | `/var/lib/lab26/` | Registros do comando de instalação |
