@@ -24,7 +24,7 @@ O laboratório complementará as métricas nativas estudadas no LAB 25 com:
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Cenário, procedimento, resultados e evidências |
 | `config/` | Configuração do agente, parâmetros e políticas |
 | `scripts/` | Provisionamento, configuração, validação e cleanup |
