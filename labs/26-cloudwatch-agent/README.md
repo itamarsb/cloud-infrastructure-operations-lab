@@ -99,7 +99,7 @@ Inventário, recibos e relatórios ficam fora do repositório:
 ```
 
 | Registro | Conteúdo |
-|---|---|
+|:---:|:---:|
 | `deployment.json` | IDs, RunId e estado da execução |
 | `agent-install-<RunId>.json` | Recibo da instalação |
 | `agent-install-result-<RunId>-<timestamp>.json` | Resultado SSM |
