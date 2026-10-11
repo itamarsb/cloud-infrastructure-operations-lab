@@ -35,7 +35,7 @@ Inventário, recibos e relatórios de execução serão armazenados localmente f
 ## Ambiente previsto
 
 | Item | Configuração |
-|---|---|
+|:---:|:---:|
 | Estação de trabalho | Windows 11 |
 | Shell | Windows PowerShell 5.1 |
 | Interface AWS | AWS CLI |
