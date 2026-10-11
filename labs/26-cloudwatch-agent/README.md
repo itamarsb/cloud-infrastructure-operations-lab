@@ -13,7 +13,7 @@ Complementar as métricas nativas EC2 estudadas no Lab 25 com dados coletados de
 ## Resultado registrado
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Provisionamento | EC2 `running` e SSM `Online` durante a execução |
 | Instalação | SSM `Success`, código `0` |
 | Agente | Versão `1.300071.0`, serviço `active`, status `running` no comando de instalação |
