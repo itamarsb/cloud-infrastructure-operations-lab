@@ -76,7 +76,7 @@ Os eventos de log serão sintéticos e identificados como parte do laboratório.
 ## Infraestrutura exclusiva
 
 | Recurso | Nome previsto |
-|---|---|
+|:---:|:---:|
 | VPC | `lab26-cloudwatch-agent-vpc` |
 | Subnet pública | `lab26-cloudwatch-agent-public-subnet-a` |
 | Internet Gateway | `lab26-cloudwatch-agent-igw` |
