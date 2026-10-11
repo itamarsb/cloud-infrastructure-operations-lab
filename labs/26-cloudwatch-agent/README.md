@@ -1,314 +1,394 @@
-# LAB 26 — CloudWatch Agent
+# Lab 26 — CloudWatch Agent
 
-## Status
+Coleta de métricas de memória e disco e envio de logs de aplicação a partir de uma instância EC2 administrada pelo AWS Systems Manager.
 
-Em desenvolvimento.
+**Status:** concluído em 11 de outubro de 2026. Instalação, métricas, eventos sintéticos e cleanup validados.
 
-Etapa atual: definição do cenário e organização inicial.
-
-A infraestrutura ainda não foi provisionada. O CloudWatch Agent ainda não foi instalado, e os resultados ainda não foram coletados.
+> **English summary:** Installed and configured the CloudWatch Agent on a dedicated Amazon Linux 2023 EC2 instance through Systems Manager. Memory and root filesystem metrics were collected every 60 seconds. Three synthetic log events were verified locally and matched against CloudWatch Logs. Dedicated infrastructure and the log group were removed, and eleven independent cleanup checks passed.
 
 ## Objetivo
 
-Instalar, configurar e validar o Amazon CloudWatch Agent em uma instância EC2 Linux exclusiva.
+Complementar as métricas nativas EC2 estudadas no Lab 25 com dados coletados dentro do sistema operacional, utilizando configuração versionada, permissões de publicação e validações independentes.
 
-O laboratório complementará as métricas nativas estudadas no LAB 25 com:
+## Resultado registrado
 
-- utilização de memória;
-- utilização do sistema de arquivos raiz;
-- envio de eventos de um arquivo de log dedicado;
-- validação do serviço do agente;
-- confirmação independente da chegada dos dados à AWS;
-- remoção dos recursos exclusivos ao final.
+| Verificação | Resultado |
+|---|---|
+| Provisionamento | EC2 `running` e SSM `Online` durante a execução |
+| Instalação | SSM `Success`, código `0` |
+| Agente | Versão `1.300071.0`, serviço `active`, status `running` no comando de instalação |
+| Configuração | SHA-256 da configuração aplicada conferido |
+| Métricas | Memória e disco raiz com dados |
+| Log inicial | Marcador de inicialização encontrado no stream da instância |
+| Eventos sintéticos | INFO, WARN e ERROR: três linhas locais confirmadas na AWS |
+| Retenção | Um dia |
+| Cleanup | Onze verificações independentes aprovadas |
 
-## Organização
+## Ambiente
 
-| Caminho | Finalidade |
-|:---:|:---:|
-| `README.md` | Cenário, procedimento, resultados e evidências |
-| `config/` | Configuração do agente, parâmetros e políticas |
-| `scripts/` | Provisionamento, configuração, validação e cleanup |
-| `images/` | Capturas da execução |
-
-Inventário, recibos e relatórios de execução serão armazenados localmente fora do repositório.
-
-## Ambiente previsto
-
-| Item | Configuração |
-|:---:|:---:|
-| Estação de trabalho | Windows 11 |
-| Shell | Windows PowerShell 5.1 |
-| Interface AWS | AWS CLI |
-| Autenticação | AWS IAM Identity Center |
+| Parâmetro | Valor |
+|---|---|
+| Estação | Windows 11 e PowerShell |
+| Autenticação | AWS IAM Identity Center / SSO |
 | Perfil | `cloud-operations-lab` |
-| Região | `us-east-1` |
-| Zona de disponibilidade | `us-east-1a` |
-| Sistema operacional da instância | Amazon Linux 2023 |
-| Arquitetura | `x86_64` |
-| Tipo de instância | `t3.micro` |
-| Modo de créditos | `standard` |
-| Monitoramento nativo EC2 | Básico |
-| Acesso administrativo | AWS Systems Manager |
-| Volume raiz | EBS `gp3`, criptografado, 8 GiB |
-| Coletor adicional | Amazon CloudWatch Agent |
+| Região / zona | `us-east-1` / `us-east-1a` |
+| Sistema | Amazon Linux 2023, `x86_64` |
+| EC2 | `t3.micro`, créditos `standard`, monitoramento básico |
+| Volume raiz | 8 GiB, `gp3`, criptografado, exclusão na terminação |
+| Rede exclusiva | VPC `10.26.0.0/16`; subnet `10.26.1.0/24` |
+| Acesso | Systems Manager; security group sem regras de entrada |
+| Metadados | IMDSv2 obrigatório |
+| Namespace | `Lab26/CWAgent` |
+| Intervalo | 60 segundos |
+| Arquivo de aplicação | `/var/log/lab26/application.log` |
+| Grupo | `/cloud-infrastructure-operations-lab/lab26/application` |
+| Stream | ID da instância, resolvido por `{instance_id}` |
 
-A AMI será resolvida pelo parâmetro público:
+A subnet pública utilizou Internet Gateway, rota de saída e IPv4 público. A role EC2 forneceu credenciais temporárias ao agente. Não foram utilizados SSH, chaves estáticas, NAT Gateway, dashboard ou alarmes neste exercício.
 
-```text
-/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64
-```
+## Arquivos versionados
 
-A infraestrutura exclusiva do LAB 25 foi removida. Este laboratório terá novos recursos e um inventário próprio.
+| Arquivo | Finalidade |
+|---|---|
+| [lab26-settings.json](config/lab26-settings.json) | Parâmetros, nomes e tags |
+| [ec2-ssm-trust-policy.json](config/ec2-ssm-trust-policy.json) | Trust policy EC2 |
+| [cloudwatch-agent.json](config/cloudwatch-agent.json) | Memória, disco raiz e arquivo de aplicação |
+| [cloudwatch-agent-publish-policy.json](config/cloudwatch-agent-publish-policy.json) | Publicação de métricas e logs |
+| [lab26-common.ps1](scripts/lab26-common.ps1) | Identidade, JSON, chamadas AWS, tags e inventário |
+| [deploy-aws-cloudwatch-agent.ps1](scripts/deploy-aws-cloudwatch-agent.ps1) | Provisionamento |
+| [install-aws-cloudwatch-agent.ps1](scripts/install-aws-cloudwatch-agent.ps1) | Instalação e confirmação por SSM |
+| [test-aws-cloudwatch-agent.ps1](scripts/test-aws-cloudwatch-agent.ps1) | Infraestrutura, instalação, métricas e evento inicial |
+| [invoke-aws-cloudwatch-log-events.ps1](scripts/invoke-aws-cloudwatch-log-events.ps1) | Geração e confirmação dos eventos sintéticos |
+| [remove-aws-cloudwatch-agent.ps1](scripts/remove-aws-cloudwatch-agent.ps1) | Cleanup |
+| [test-aws-cloudwatch-agent-cleanup.ps1](scripts/test-aws-cloudwatch-agent-cleanup.ps1) | Confirmação independente do cleanup |
 
-## Cenário
+## Configuração e permissões
 
-O exercício terá quatro etapas principais:
+Os recursos exclusivos receberam tags `Name`, `Project=cloud-infrastructure-operations-lab`, `Lab=26`, `ManagedBy=lab26-powershell` e `RunId`.
 
-1. Provisionar e validar uma instância gerenciada pelo Systems Manager.
-2. Instalar o CloudWatch Agent e aplicar a configuração versionada.
-3. Confirmar métricas de memória e disco e eventos do arquivo de log dedicado.
-4. Remover os recursos e confirmar o cleanup.
+A role utilizou `AmazonSSMManagedInstanceCore` e uma política inline com:
 
-A execução inicial observará o comportamento normal da instância. Não será necessário provocar esgotamento de memória ou preencher o volume raiz.
+- `cloudwatch:PutMetricData`, condicionado ao namespace exclusivo;
+- `logs:DescribeLogGroups`;
+- `logs:DescribeLogStreams`, limitado ao grupo exclusivo;
+- `logs:CreateLogStream` e `logs:PutLogEvents`, limitados aos streams desse grupo.
 
-Os eventos de log serão sintéticos e identificados como parte do laboratório. Eles servirão para validar o caminho entre o arquivo local e o CloudWatch Logs.
+O provisionamento criou o grupo e definiu a retenção. O agente não recebeu permissão para criar grupos nem alterar sua retenção.
 
-## Infraestrutura exclusiva
+Os coletores `mem` e `disk` utilizaram `used_percent`, com intervalo de 60 segundos. O disco ficou limitado a `/`, com `drop_device: true`. A configuração preservou `${aws:InstanceId}`, utilizou `omit_hostname: true` e não definiu agregações adicionais.
 
-| Recurso | Nome previsto |
-|:---:|:---:|
-| VPC | `lab26-cloudwatch-agent-vpc` |
-| Subnet pública | `lab26-cloudwatch-agent-public-subnet-a` |
-| Internet Gateway | `lab26-cloudwatch-agent-igw` |
-| Tabela de rotas | `lab26-cloudwatch-agent-public-rt` |
-| Security group | `lab26-cloudwatch-agent-instance-sg` |
-| IAM role | `lab26-cloudwatch-agent-ec2-role` |
-| Instance profile | `lab26-cloudwatch-agent-ec2-profile` |
-| Instância EC2 | `lab26-cloudwatch-agent-instance` |
-| Grupo de logs | `/cloud-infrastructure-operations-lab/lab26/application` |
+O log utilizou UTF-8, timezone `UTC` e timestamp `%Y-%m-%dT%H:%M:%SZ`.
 
-A rede utilizará:
+| Caminho na instância | Finalidade |
+|---|---|
+| `/opt/aws/amazon-cloudwatch-agent/etc/lab26-cloudwatch-agent.json` | Configuração aplicada |
+| `/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log` | Diagnóstico do agente |
+| `/var/lib/lab26/` | Registros do comando de instalação |
+| `/var/log/lab26/application.log` | Eventos coletados |
 
-- VPC: `10.26.0.0/16`;
-- subnet: `10.26.1.0/24`;
-- rota pública pelo Internet Gateway;
-- IPv4 público atribuído automaticamente à instância.
+As quebras de linha do comando Linux e da configuração foram normalizadas para LF. O SHA-256 foi calculado sobre a configuração normalizada.
 
-A instância terá:
+## Pré-requisitos e registros locais
 
-- IMDSv2 obrigatório;
-- nenhuma regra de entrada no security group;
-- saída para os serviços necessários;
-- administração pelo Systems Manager;
-- exclusão do volume raiz na terminação.
+São necessários AWS CLI, perfil SSO configurado, sessão ativa e permissões para o cenário. Os scripts conferem a conta esperada. A reprodução em outra conta exige revisar em conjunto parâmetros, validações e ARNs da política.
 
-Não serão criados NAT Gateway, Elastic IP, load balancer ou VPC endpoints.
-
-Os recursos que suportarem tags receberão:
+Inventário, recibos e relatórios ficam fora do repositório:
 
 ```text
-Project=cloud-infrastructure-operations-lab
-Lab=26
-ManagedBy=lab26-powershell
-RunId=<identificador da execução>
-Name=<nome do recurso>
+%LOCALAPPDATA%\cloud-infrastructure-operations-lab\lab26
 ```
 
-Os IDs e identificadores de propriedade serão registrados antes das etapas de validação e cleanup.
+| Registro | Conteúdo |
+|---|---|
+| `deployment.json` | IDs, RunId e estado da execução |
+| `agent-install-<RunId>.json` | Recibo da instalação |
+| `agent-install-result-<RunId>-<timestamp>.json` | Resultado SSM |
+| `agent-validation-<RunId>-<timestamp>.json` | Dimensões, pontos e evento inicial |
+| `log-events-<RunId>.json` | Recibo do lote sintético |
+| `log-events-result-<BatchId>-<timestamp>.json` | Linhas locais e eventos recebidos |
+| `cleanup-validation-<RunId>-<timestamp>.json` | Confirmação das onze consultas |
 
-## Identidade e permissões
+**A execução documentada já foi encerrada.** O deploy protege o inventário existente. Uma nova execução exige arquivar os registros anteriores após confirmar o cleanup e revisar o cenário. Não exclua o inventário para contornar uma falha parcial.
 
-A identidade do operador será validada antes das chamadas AWS.
+## Procedimento de execução
 
-A instância utilizará uma IAM role exclusiva, com permissões para:
+Os comandos documentam a sequência realizada e devem ser executados etapa por etapa, na raiz do repositório.
 
-- gerenciamento pelo Systems Manager;
-- publicação das métricas previstas;
-- envio dos eventos ao grupo de logs do laboratório.
+### 1. Atualizar e autenticar
 
-As políticas efetivamente utilizadas serão documentadas e conferidas durante a implementação.
-
-O grupo de logs será criado e identificado pelo provisionamento, com retenção explícita de um dia.
-
-Credenciais estáticas não serão gravadas na instância nem nos arquivos de configuração.
-
-## Métricas previstas
-
-| Métrica publicada | Origem | Unidade | Coleta prevista |
-|:---:|:---:|:---:|:---:|
-| `mem_used_percent` | Memória do sistema operacional | Percent | 60 segundos |
-| `disk_used_percent` | Sistema de arquivos raiz `/` | Percent | 60 segundos |
-
-Namespace exclusivo:
-
-```text
-Lab26/CWAgent
+```powershell
+& {
+    $ErrorActionPreference = "Stop"
+    Set-Location "C:\GitHub\cloud-infrastructure-operations-lab"
+    $GitStatus = @(git status --porcelain)
+    if ($LASTEXITCODE -ne 0) { throw "Falha ao consultar o repositorio." }
+    if ($GitStatus.Count -ne 0) { throw "Ha alteracoes locais." }
+    git pull --ff-only
+    if ($LASTEXITCODE -ne 0) { throw "Falha ao atualizar o repositorio." }
+}
 ```
 
-A configuração adicionará `InstanceId` às métricas.
+Se a sessão expirou:
 
-As dimensões efetivamente publicadas serão consultadas e registradas antes das consultas de valores. A métrica de disco poderá incluir dimensões adicionais referentes ao caminho, dispositivo e tipo de sistema de arquivos.
-
-Não serão criadas agregações adicionais na configuração inicial.
-
-### Interpretação
-
-- Memória utilizada será interpretada segundo a definição da métrica do agente.
-- Utilização de disco será associada ao sistema de arquivos observado.
-- A ocupação do sistema de arquivos não será confundida com métricas de I/O do volume EBS.
-- Percentuais de memória e disco não serão comparados como se representassem o mesmo recurso.
-- As consultas registrarão namespace, dimensões, janela, período e estatística.
-- Uma resposta sem pontos não será convertida em zero.
-- O atraso de publicação será considerado antes de concluir que existe falha de coleta.
-
-## Coleta de logs
-
-Arquivo dedicado previsto na instância:
-
-```text
-/var/log/lab26/application.log
+```powershell
+aws sso login --profile cloud-operations-lab
 ```
 
-Grupo exclusivo:
+### 2. Validar a sintaxe
 
-```text
-/cloud-infrastructure-operations-lab/lab26/application
+```powershell
+& {
+    $ErrorActionPreference = "Stop"
+    $ScriptsPath = ".\labs\26-cloudwatch-agent\scripts"
+    foreach ($File in Get-ChildItem -LiteralPath $ScriptsPath -Filter "*.ps1") {
+        $Tokens = $null
+        $ParseErrors = $null
+        [System.Management.Automation.Language.Parser]::ParseFile(
+            $File.FullName, [ref]$Tokens, [ref]$ParseErrors
+        ) | Out-Null
+        if (@($ParseErrors).Count -ne 0) {
+            $ParseErrors | Format-List
+            throw "Erro de sintaxe em $($File.Name)."
+        }
+        Write-Host "[OK] Sintaxe: $($File.Name)" -ForegroundColor Green
+    }
+}
 ```
 
-O stream identificará a instância. Cada evento de teste incluirá:
+A verificação sintática não substitui as validações de configuração e recursos.
 
-- timestamp em UTC;
-- identificador da execução;
-- marcador exclusivo do evento;
-- mensagem sintética do laboratório.
+### 3. Validar e provisionar
 
-A validação confirmará:
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\deploy-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab" -ValidateOnly
+```
 
-1. Existência do arquivo e permissões de leitura pelo agente.
-2. Presença do marcador no arquivo local.
-3. Existência do grupo e do stream esperados.
-4. Chegada do mesmo marcador ao CloudWatch Logs.
+Após conferir nomes livres, configuração, zona e AMI:
 
-O status ativo do serviço não será considerado suficiente para provar que os eventos chegaram à AWS.
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\deploy-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab"
+```
 
-A retenção será de um dia. O grupo de logs será removido no cleanup; a retenção não substituirá a exclusão.
+O deploy registra os IDs progressivamente e aguarda EC2 `running` e SSM `Online`. A instalação é uma etapa separada.
 
-## Instalação e configuração do agente
+### 4. Instalar e conferir o agente
 
-A instalação e a configuração serão executadas pelo Systems Manager.
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\install-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab" -ValidateOnly
+```
 
-A implementação deverá:
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\install-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab"
+```
 
-- registrar a versão instalada;
-- copiar a configuração JSON versionada;
-- preservar as expressões de metadados usadas pelo agente;
-- aplicar a configuração explicitamente;
-- confirmar o resultado do comando SSM;
-- consultar o estado do serviço e o status do agente;
-- verificar os logs locais de configuração e execução;
-- confirmar a publicação de métricas e eventos.
+Aguarde aproximadamente um minuto e consulte:
 
-A validação distinguirá:
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\install-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab" -CheckStatus
+```
 
-- instalação do pacote;
-- aceitação da configuração;
-- serviço em execução;
-- chegada dos dados ao CloudWatch.
+Se o comando estiver em andamento, repita somente `-CheckStatus`. A confirmação exige sucesso, código zero, hash correto, versão, serviço ativo e marcador da execução.
 
-## Sequência de execução
+### 5. Confirmar métricas e log inicial
 
-1. Criar e validar a estrutura do laboratório.
-2. Definir parâmetros, trust policy e configuração do agente.
-3. Validar sintaxe PowerShell e conteúdo dos JSONs.
-4. Conferir identidade AWS, região, zona, AMI e conflitos de nomes.
-5. Provisionar a infraestrutura e o grupo de logs exclusivos.
-6. Confirmar EC2 e gerenciamento SSM.
-7. Instalar e configurar o CloudWatch Agent.
-8. Conferir serviço, configuração e logs locais do agente.
-9. Aguardar e consultar métricas de memória e disco.
-10. Gerar eventos sintéticos identificados.
-11. Confirmar os eventos no CloudWatch Logs.
-12. Registrar resultados e evidências.
-13. Remover os recursos exclusivos.
-14. Confirmar o cleanup por consultas independentes.
-15. Concluir a documentação.
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\test-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab"
+```
+
+O validador descobre as dimensões e consulta cada série com seu conjunto completo. A janela padrão é de 30 minutos, período de 60 segundos e estatísticas `Average` e `Maximum`, excluindo o minuto em andamento.
+
+Uma janela alternativa pode ser indicada com `-WindowMinutes 60`. Respostas sem pontos ficam pendentes e não são convertidas em zero. Aguarde e repita a consulta antes de concluir que existe falha de publicação.
+
+### 6. Gerar e confirmar eventos sintéticos
+
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\invoke-aws-cloudwatch-log-events.ps1" `
+    -ProfileName "cloud-operations-lab" -ValidateOnly
+```
+
+Envie o lote uma vez:
+
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\invoke-aws-cloudwatch-log-events.ps1" `
+    -ProfileName "cloud-operations-lab"
+```
+
+Após aproximadamente 30 segundos:
+
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\invoke-aws-cloudwatch-log-events.ps1" `
+    -ProfileName "cloud-operations-lab" -CheckStatus
+```
+
+O comando confirma o serviço ativo, acrescenta três linhas ao arquivo e relê o conteúdo para confirmar a gravação. Cada linha contém timestamp UTC, nível, RunId, BatchId, marcador e sequência.
+
+A consulta compara as linhas locais com os eventos do stream da instância. Se a entrega estiver pendente, repita somente `-CheckStatus`. O recibo impede um segundo envio acidental.
+
+INFO, WARN e ERROR são mensagens sintéticas; ERROR não representa uma falha real.
+
+### 7. Validar e executar o cleanup
+
+Depois de confirmar os eventos e preservar as evidências:
+
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\remove-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab" -ValidateOnly
+```
+
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\remove-aws-cloudwatch-agent.ps1" `
+    -ProfileName "cloud-operations-lab"
+```
+
+O cleanup confere propriedade, associações e comandos SSM ativos. Termina a instância, confere o armazenamento e remove os recursos IAM e a rede exclusivos. O grupo de logs é removido depois da instância, evitando publicação posterior pelo agente.
+
+### 8. Confirmar o cleanup
+
+```powershell
+& ".\labs\26-cloudwatch-agent\scripts\test-aws-cloudwatch-agent-cleanup.ps1" `
+    -ProfileName "cloud-operations-lab"
+```
+
+O resultado esperado é `11 de 11` verificações confirmadas. Esse validador não executa remoções.
+
+## Resultados e interpretação
+
+### Instalação
+
+| Campo | Resultado em 11/10/2026 |
+|---|---|
+| Início UTC | `21:13:27Z` |
+| Fim UTC | `21:13:54Z` |
+| Status / código | `Success` / `0` |
+| Serviço / agente | `active` / `running` |
+| Versão | `1.300071.0` |
+
+O serviço foi conferido no comando remoto de instalação. A entrega ao CloudWatch foi comprovada separadamente por consultas à AWS.
+
+### Métricas
+
+| Métrica | Unidade | Dimensões observadas |
+|---|---|---|
+| `mem_used_percent` | `Percent` | `InstanceId` |
+| `disk_used_percent` | `Percent` | `InstanceId`, `path=/`, `fstype=xfs` |
+
+A primeira consulta retornou 13 pontos de cada métrica. A validação versionada posterior retornou 29 pontos de memória e 30 de disco, com timestamps UTC.
+
+| Coleta versionada | Utilização aproximada |
+|---|---|
+| Memória | `23,05%` a `23,21%` |
+| Disco raiz | `23,576%` a `23,578%` |
+
+Os valores representam o comportamento observado, sem teste de pressão de memória ou disco e sem thresholds de alarme. A métrica de disco descreve a ocupação do sistema de arquivos, não I/O do EBS.
+
+A quantidade de pontos pode variar entre séries e consultas. O validador confirma dados na janela, mas não certifica continuidade de todos os minutos nem disponibilidade futura do agente.
+
+### Logs
+
+O evento inicial `CloudWatchAgentStarted` tinha timestamp `21:13:54Z` e ingestão `21:14:05Z`, diferença observada de 11 segundos.
+
+| Sequência | Nível | Timestamp UTC em 11/10/2026 | Ingestão UTC | Diferença |
+|---|---|---|---|---|
+| 1 | INFO | `22:14:35Z` | `22:14:41Z` | 6 s |
+| 2 | WARN | `22:14:36Z` | `22:14:41Z` | 5 s |
+| 3 | ERROR | `22:14:37Z` | `22:14:46Z` | 9 s |
+
+Os três eventos corresponderam às linhas locais. As diferenças comparam timestamp e horário de ingestão informado pela AWS; não são uma garantia de latência ou um SLO.
+
+### Cleanup
+
+| Verificação | Resultado |
+|---|---|
+| Instância EC2 | `terminated` |
+| Volume raiz | Ausente |
+| Security group | Ausente |
+| Subnet | Ausente |
+| Route table | Ausente |
+| Internet Gateway | Ausente |
+| VPC | Ausente |
+| Interfaces na VPC exclusiva | Zero |
+| IAM role | Ausente |
+| Instance profile | Ausente |
+| CloudWatch log group | Ausente |
+
+As onze consultas foram aprovadas às `22:38:04Z` de 11 de outubro de 2026. Inventário, recibos e relatórios foram preservados.
+
+A confirmação abrange os IDs e nomes registrados no cenário. O grupo foi excluído; consultas posteriores aos eventos devem usar os relatórios preservados. O cleanup não tenta excluir pontos individuais de métricas históricas.
+
+## Evidências
+
+| Captura | Etapa |
+|---|---|
+| [01](images/Clipboard_10-11-2026_01.png) | Estrutura inicial |
+| [02](images/Clipboard_10-11-2026_02.png) | JSONs e parâmetros conferidos |
+| [03](images/Clipboard_10-11-2026_03.png) | Arquivo comum e inicialização |
+| [04](images/Clipboard_10-11-2026_04.png) | Pré-validação do deploy |
+| [05](images/Clipboard_10-11-2026_05.png) | Sintaxe e inicialização do cleanup antes do deploy |
+| [06](images/Clipboard_10-11-2026_06.png) | Infraestrutura criada e SSM Online |
+| [07](images/Clipboard_10-11-2026_07.png) | Pré-validação da instalação |
+| [08](images/Clipboard_10-11-2026_08.png) | Instalação enviada |
+| [09](images/Clipboard_10-11-2026_09.png) | Instalação, versão, configuração e serviço |
+| [10](images/Clipboard_10-11-2026_10.png) | Primeira coleta e evento inicial |
+| [11](images/Clipboard_10-11-2026_11.png) | Validador versionado e relatório |
+| [12](images/Clipboard_10-11-2026_12.png) | Pré-validação do lote sintético |
+| [13](images/Clipboard_10-11-2026_13.png) | Lote enviado |
+| [14](images/Clipboard_10-11-2026_14.png) | Três eventos confirmados localmente e na AWS |
+| [15](images/Clipboard_10-11-2026_15.png) | Pré-validação do cleanup após o exercício |
+| [16](images/Clipboard_10-11-2026_16.png) | Comandos de cleanup concluídos |
+| [17](images/Clipboard_10-11-2026_17.png) | Onze verificações independentes aprovadas |
+
+### Instalação confirmada
+
+![Instalação e versão do agente](images/Clipboard_10-11-2026_09.png)
+
+### Eventos recebidos
+
+![Três eventos sintéticos confirmados](images/Clipboard_10-11-2026_14.png)
+
+### Cleanup confirmado
+
+![Onze verificações independentes](images/Clipboard_10-11-2026_17.png)
+
+## Proteções e limites
+
+- `-ValidateOnly` interrompe antes das operações de criação, instalação, geração de eventos ou remoção, conforme o script.
+- Os validadores executam consultas de leitura à AWS e gravam relatórios locais.
+- `-CheckStatus` consulta resultados e atualiza registros locais, sem reenviar comandos.
+- Ausência esperada utiliza códigos específicos; erros de autenticação e permissão não significam recurso ausente.
+- O inventário registra IDs progressivamente e permanece disponível em caso de falha parcial.
+- O cleanup confere propriedade e associações dos recursos exclusivos.
+- O validador de métricas confirma o evento inicial; o lote sintético é confirmado pelo script de eventos.
+- Retenção ou exclusão do grupo podem impedir consultas futuras ao evento inicial; os relatórios preservam a evidência já coletada.
 
 ## Custos
 
-O cenário poderá gerar cobranças por:
+O cenário pode gerar cobrança por EC2, EBS, IPv4 público, métricas personalizadas, ingestão e armazenamento de logs, transferência e chamadas de API conforme a utilização.
 
-- execução da instância EC2;
-- armazenamento EBS;
-- utilização do IPv4 público;
-- transferência de dados aplicável;
-- métricas personalizadas;
-- ingestão e armazenamento de logs;
-- chamadas de API conforme a utilização.
+A coleta ficou limitada a duas séries, um sistema de arquivos e um arquivo de aplicação, com poucos eventos sintéticos. Não foi presumida elegibilidade ao nível gratuito.
 
-Não será presumida elegibilidade ao nível gratuito.
+A retenção de um dia não substitui o cleanup. A infraestrutura e o grupo foram removidos ao final.
 
-A configuração inicial limitará a coleta a duas métricas, ao sistema de arquivos raiz e a um arquivo de log dedicado.
+## Checklist final
 
-O intervalo de coleta previsto será de 60 segundos. Não será utilizada coleta de métricas com intervalo inferior a 60 segundos.
+- [x] Estrutura, configurações e scripts versionados.
+- [x] Identidade e pré-requisitos conferidos.
+- [x] Infraestrutura exclusiva provisionada.
+- [x] EC2 e SSM confirmados durante a execução.
+- [x] Instalação, versão e configuração do agente conferidas.
+- [x] Métricas e dimensões efetivas registradas.
+- [x] Evento inicial encontrado no CloudWatch Logs.
+- [x] Três eventos sintéticos confirmados localmente e na AWS.
+- [x] Relatórios JSON e evidências preservados.
+- [x] Cleanup confirmado por onze consultas independentes.
 
-O volume de eventos sintéticos será pequeno e controlado. A infraestrutura permanecerá ativa somente durante o exercício.
+## Próxima etapa
 
-## Cleanup previsto
+O [roadmap](../../docs/roadmap.md) prevê o **Lab 27 — Alarmes e notificações**, com thresholds, CloudWatch e Amazon SNS. O cenário será definido antes da implementação; a infraestrutura do Lab 26 foi removida.
 
-O cleanup deverá:
-
-1. Conferir conta, região, inventário e propriedade.
-2. Confirmar a conclusão dos comandos SSM do laboratório.
-3. Terminar a instância e aguardar sua finalização.
-4. Confirmar a exclusão do volume raiz.
-5. Remover o instance profile e a IAM role exclusivos.
-6. Remover os componentes exclusivos da rede.
-7. Remover o grupo de logs exclusivo.
-8. Confirmar a ausência dos recursos por consultas independentes.
-9. Preservar inventário, recibos e relatórios locais.
-
-As métricas históricas poderão permanecer consultáveis após a remoção da instância. O cleanup não tentará excluir pontos individuais de métricas.
-
-Recursos de outros laboratórios e projetos permanecerão fora do escopo de alteração e remoção.
-
-## Evidências previstas
-
-- Estrutura e configurações publicadas.
-- Identidade AWS e pré-requisitos.
-- Infraestrutura criada e SSM Online.
-- Versão instalada do CloudWatch Agent.
-- Configuração aplicada.
-- Serviço e status do agente.
-- Métricas de memória e disco com suas dimensões.
-- Marcador de teste no arquivo local.
-- Mesmo marcador recebido pelo CloudWatch Logs.
-- Retenção do grupo de logs.
-- Remoção dos recursos.
-- Verificação final do cleanup.
-
-## Critérios de conclusão
-
-- [x] Cenário e escopo definidos.
-- [x] Fontes de custo e estratégia de cleanup documentadas.
-- [ ] Configurações e scripts publicados.
-- [ ] Identidade AWS e pré-requisitos validados.
-- [ ] Infraestrutura exclusiva provisionada e validada.
-- [ ] CloudWatch Agent instalado.
-- [ ] Configuração aplicada e conferida.
-- [ ] Serviço e status do agente validados.
-- [ ] Métricas de memória recebidas.
-- [ ] Métricas de disco recebidas.
-- [ ] Dimensões e resultados interpretados.
-- [ ] Eventos sintéticos recebidos no CloudWatch Logs.
-- [ ] Retenção conferida.
-- [ ] Evidências publicadas.
-- [ ] Recursos exclusivos removidos.
-- [ ] Cleanup confirmado.
-- [ ] Documentação concluída.
-
-## Referências
-
-- [Instalação do CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-EC2-Instance.html)
-- [Instalação pelo Systems Manager](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html)
-- [Configuração do CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html)
-- [Exemplos de configuração](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-cloudwatch-agent-configuration-file-examples.html)
+[Voltar ao repositório](../../README.md)
