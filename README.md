@@ -92,7 +92,7 @@ O **Lab 26 — CloudWatch Agent** coletou métricas de memória e disco raiz e e
 A configuração versionada utilizou namespace `Lab26/CWAgent`, intervalo de 60 segundos, grupo de logs exclusivo e retenção de um dia. A role publicou métricas somente no namespace previsto e eventos somente no grupo exclusivo.
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Instalação | SSM `Success`, código `0`, agente `1.300071.0` |
 | Configuração | SHA-256 aplicado conferido |
 | Memória | 29 pontos na consulta versionada; aproximadamente `23,05%` a `23,21%` |
