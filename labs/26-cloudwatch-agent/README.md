@@ -274,7 +274,7 @@ O serviço foi conferido no comando remoto de instalação. A entrega ao CloudWa
 ### Métricas
 
 | Métrica | Unidade | Dimensões observadas |
-|---|---|---|
+|:---:|:---:|:---:|
 | `mem_used_percent` | `Percent` | `InstanceId` |
 | `disk_used_percent` | `Percent` | `InstanceId`, `path=/`, `fstype=xfs` |
 
