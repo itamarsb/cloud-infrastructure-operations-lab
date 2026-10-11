@@ -324,7 +324,7 @@ A confirmação abrange os IDs e nomes registrados no cenário. O grupo foi excl
 ## Evidências
 
 | Captura | Etapa |
-|---|---|
+|:---:|:---:|
 | [01](images/Clipboard_10-11-2026_01.png) | Estrutura inicial |
 | [02](images/Clipboard_10-11-2026_02.png) | JSONs e parâmetros conferidos |
 | [03](images/Clipboard_10-11-2026_03.png) | Arquivo comum e inicialização |
