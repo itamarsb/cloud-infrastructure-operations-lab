@@ -1,1 +1,63 @@
-
+{
+  "ExpectedAccountId": "412381774441",
+  "Region": "us-east-1",
+  "AvailabilityZone": "us-east-1a",
+  "AmiParameter": "/aws/service/ami-amazon-linux-latest/al2023-ami-kernel-default-x86_64",
+  "InstanceType": "t3.micro",
+  "CpuCredits": "standard",
+  "RootVolumeSizeGiB": 8,
+  "RootVolumeType": "gp3",
+  "VpcCidr": "10.26.0.0/16",
+  "SubnetCidr": "10.26.1.0/24",
+  "Names": {
+    "Vpc": "lab26-cloudwatch-agent-vpc",
+    "Subnet": "lab26-cloudwatch-agent-public-subnet-a",
+    "InternetGateway": "lab26-cloudwatch-agent-igw",
+    "RouteTable": "lab26-cloudwatch-agent-public-rt",
+    "SecurityGroup": "lab26-cloudwatch-agent-instance-sg",
+    "Role": "lab26-cloudwatch-agent-ec2-role",
+    "InstanceProfile": "lab26-cloudwatch-agent-ec2-profile",
+    "Instance": "lab26-cloudwatch-agent-instance",
+    "AgentInlinePolicy": "lab26-cloudwatch-agent-publish"
+  },
+  "Tags": {
+    "Project": "cloud-infrastructure-operations-lab",
+    "Lab": "26",
+    "ManagedBy": "lab26-powershell"
+  },
+  "Iam": {
+    "SsmManagedPolicyArn": "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "TrustPolicyFile": "ec2-ssm-trust-policy.json",
+    "AgentPolicyFile": "cloudwatch-agent-publish-policy.json"
+  },
+  "Agent": {
+    "ConfigurationFile": "cloudwatch-agent.json",
+    "RemoteConfigurationPath": "/opt/aws/amazon-cloudwatch-agent/etc/lab26-cloudwatch-agent.json",
+    "ServiceName": "amazon-cloudwatch-agent",
+    "DiagnosticLogPath": "/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"
+  },
+  "Metrics": {
+    "Namespace": "Lab26/CWAgent",
+    "CollectionIntervalSeconds": 60,
+    "Queries": [
+      {
+        "MetricName": "mem_used_percent",
+        "PeriodSeconds": 60,
+        "Statistics": ["Average", "Maximum"]
+      },
+      {
+        "MetricName": "disk_used_percent",
+        "PeriodSeconds": 60,
+        "Statistics": ["Average", "Maximum"]
+      }
+    ]
+  },
+  "Logs": {
+    "LogGroupName": "/cloud-infrastructure-operations-lab/lab26/application",
+    "RetentionInDays": 1,
+    "ApplicationLogPath": "/var/log/lab26/application.log",
+    "LogStreamName": "{instance_id}",
+    "TimestampFormat": "%Y-%m-%dT%H:%M:%SZ",
+    "Timezone": "UTC"
+  }
+}
