@@ -27,7 +27,7 @@ Complementar as métricas nativas EC2 estudadas no Lab 25 com dados coletados de
 ## Ambiente
 
 | Parâmetro | Valor |
-|---|---|
+|:---:|:---:|
 | Estação | Windows 11 e PowerShell |
 | Autenticação | AWS IAM Identity Center / SSO |
 | Perfil | `cloud-operations-lab` |
