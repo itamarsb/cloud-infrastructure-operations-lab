@@ -1,1 +1,39 @@
-
+{
+  "ExpectedAccountId": "412381774441",
+  "Region": "us-east-1",
+  "Names": {
+    "Topic": "lab27-cloudwatch-alarm-notifications",
+    "Alarm": "lab27-controlled-application-errors"
+  },
+  "Tags": {
+    "Project": "cloud-infrastructure-operations-lab",
+    "Lab": "27",
+    "ManagedBy": "lab27-powershell"
+  },
+  "Metric": {
+    "Namespace": "Lab27/ControlledApplication",
+    "MetricName": "ApplicationErrorCount",
+    "Unit": "Count",
+    "StorageResolution": 60,
+    "Scenario": "controlled-application-errors"
+  },
+  "Alarm": {
+    "Statistic": "Sum",
+    "PeriodSeconds": 60,
+    "EvaluationPeriods": 3,
+    "DatapointsToAlarm": 2,
+    "Threshold": 3,
+    "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+    "TreatMissingData": "missing",
+    "NotifyOnAlarm": true,
+    "NotifyOnOk": true,
+    "NotifyOnInsufficientData": false
+  },
+  "Stimulus": {
+    "BaselineValue": 0,
+    "BreachValue": 5,
+    "RecoveryValue": 0,
+    "IntervalSeconds": 60,
+    "MaximumSamplesPerPhase": 10
+  }
+}
