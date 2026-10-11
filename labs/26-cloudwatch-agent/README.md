@@ -304,7 +304,7 @@ Os três eventos corresponderam às linhas locais. As diferenças comparam times
 ### Cleanup
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Instância EC2 | `terminated` |
 | Volume raiz | Ausente |
 | Security group | Ausente |
