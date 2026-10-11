@@ -49,7 +49,7 @@ A subnet pública utilizou Internet Gateway, rota de saída e IPv4 público. A r
 ## Arquivos versionados
 
 | Arquivo | Finalidade |
-|---|---|
+|:---:|:---:|
 | [lab26-settings.json](config/lab26-settings.json) | Parâmetros, nomes e tags |
 | [ec2-ssm-trust-policy.json](config/ec2-ssm-trust-policy.json) | Trust policy EC2 |
 | [cloudwatch-agent.json](config/cloudwatch-agent.json) | Memória, disco raiz e arquivo de aplicação |
