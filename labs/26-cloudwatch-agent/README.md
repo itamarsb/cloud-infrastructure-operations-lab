@@ -262,7 +262,7 @@ O resultado esperado é `11 de 11` verificações confirmadas. Esse validador n�
 ### Instalação
 
 | Campo | Resultado em 11/10/2026 |
-|---|---|
+|:---:|:---:|
 | Início UTC | `21:13:27Z` |
 | Fim UTC | `21:13:54Z` |
 | Status / código | `Success` / `0` |
