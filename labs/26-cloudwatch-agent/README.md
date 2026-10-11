@@ -281,7 +281,7 @@ O serviço foi conferido no comando remoto de instalação. A entrega ao CloudWa
 A primeira consulta retornou 13 pontos de cada métrica. A validação versionada posterior retornou 29 pontos de memória e 30 de disco, com timestamps UTC.
 
 | Coleta versionada | Utilização aproximada |
-|---|---|
+|:---:|:---:|
 | Memória | `23,05%` a `23,21%` |
 | Disco raiz | `23,576%` a `23,578%` |
 
