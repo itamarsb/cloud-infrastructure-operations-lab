@@ -320,7 +320,7 @@ O CloudWatch Agent foi instalado e configurado por SSM. O resultado confirmou `S
 A coleta utilizou intervalo de 60 segundos e namespace `Lab26/CWAgent`:
 
 | Métrica | Dimensões observadas | Resultado da consulta versionada |
-|---|---|---|
+|:---:|:---:|:---:|
 | `mem_used_percent` | `InstanceId` | 29 pontos; aproximadamente `23,05%` a `23,21%` |
 | `disk_used_percent` | `InstanceId`, `path=/`, `fstype=xfs` | 30 pontos; aproximadamente `23,576%` a `23,578%` |
 
