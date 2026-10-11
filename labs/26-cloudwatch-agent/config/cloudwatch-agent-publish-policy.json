@@ -1,1 +1,37 @@
-
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "PublishLab26Metrics",
+      "Effect": "Allow",
+      "Action": "cloudwatch:PutMetricData",
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "cloudwatch:namespace": "Lab26/CWAgent"
+        }
+      }
+    },
+    {
+      "Sid": "DescribeLogGroups",
+      "Effect": "Allow",
+      "Action": "logs:DescribeLogGroups",
+      "Resource": "*"
+    },
+    {
+      "Sid": "DescribeLab26LogStreams",
+      "Effect": "Allow",
+      "Action": "logs:DescribeLogStreams",
+      "Resource": "arn:aws:logs:us-east-1:412381774441:log-group:/cloud-infrastructure-operations-lab/lab26/application:*"
+    },
+    {
+      "Sid": "PublishLab26LogEvents",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:us-east-1:412381774441:log-group:/cloud-infrastructure-operations-lab/lab26/application:log-stream:*"
+    }
+  ]
+}
