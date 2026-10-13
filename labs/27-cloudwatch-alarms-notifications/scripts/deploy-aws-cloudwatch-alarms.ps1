@@ -11,25 +11,38 @@ $ErrorActionPreference = "Stop"
 Initialize-Lab27 -ProfileName $ProfileName
 
 function Save-Lab27Deployment {
+    $Token = [guid]::NewGuid().ToString("N")
+
     $TemporaryPath = Join-Path $script:LocalDirectory (
-        "deployment-" + [guid]::NewGuid().ToString("N") + ".tmp"
+        "deployment-$Token.tmp"
+    )
+
+    $BackupPath = Join-Path $script:LocalDirectory (
+        "deployment-$Token.bak"
     )
 
     $Utf8 = New-Object System.Text.UTF8Encoding($false)
 
     try {
         $Json = ConvertTo-Json -InputObject $script:Deployment -Depth 40
-        [IO.File]::WriteAllText($TemporaryPath, $Json, $Utf8)
+
+        [IO.File]::WriteAllText(
+            $TemporaryPath,
+            $Json,
+            $Utf8
+        )
 
         [IO.File]::Replace(
             $TemporaryPath,
             $script:StatePath,
-            $null
+            $BackupPath
         )
     }
+    
     finally {
         if (Test-Path -LiteralPath $TemporaryPath) {
-            Remove-Item -LiteralPath $TemporaryPath -Force
+            Remove-Item -LiteralPath $TemporaryPath `
+                -Force -ErrorAction SilentlyContinue
         }
     }
 }
