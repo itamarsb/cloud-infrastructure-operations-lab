@@ -15,7 +15,7 @@ Os valores são sintéticos e publicados pelo PowerShell. Não representam erros
 ## Ambiente e configuração
 
 | Parâmetro | Definição |
-|---|---|
+|:---:|:---:|
 | Estação | Windows e PowerShell |
 | Autenticação | AWS IAM Identity Center / SSO |
 | Perfil | `cloud-operations-lab` |
