@@ -249,25 +249,37 @@ function Save-Lab27CleanupState {
         -NotePropertyName "LastCleanupError" `
         -NotePropertyValue $ErrorMessage -Force
 
+    $Token = [guid]::NewGuid().ToString("N")
+
     $TemporaryPath = Join-Path $script:LocalDirectory (
-        "cleanup-" + [guid]::NewGuid().ToString("N") + ".tmp"
+        "cleanup-$Token.tmp"
+    )
+
+    $BackupPath = Join-Path $script:LocalDirectory (
+        "cleanup-$Token.bak"
     )
 
     $Utf8 = New-Object System.Text.UTF8Encoding($false)
 
     try {
         $Json = ConvertTo-Json -InputObject $script:Inventory -Depth 40
-        [IO.File]::WriteAllText($TemporaryPath, $Json, $Utf8)
+
+        [IO.File]::WriteAllText(
+            $TemporaryPath,
+            $Json,
+            $Utf8
+        )
 
         [IO.File]::Replace(
             $TemporaryPath,
             $script:StatePath,
-            $null
+            $BackupPath
         )
     }
     finally {
         if (Test-Path -LiteralPath $TemporaryPath) {
-            Remove-Item -LiteralPath $TemporaryPath -Force
+            Remove-Item -LiteralPath $TemporaryPath `
+                -Force -ErrorAction SilentlyContinue
         }
     }
 }
