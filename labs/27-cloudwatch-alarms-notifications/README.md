@@ -4,7 +4,7 @@ Avaliação de uma métrica sintética de erros de aplicação pelo Amazon Cloud
 
 **Status:** execução e cleanup concluídos em 14 de outubro de 2026. Quinze períodos conferidos e duas verificações independentes de cleanup aprovadas.
 
-> **English summary:** Published fifteen controlled metric samples and verified CloudWatch baseline, alarm, recovery, and missing-data transitions. The alarm used Sum >= 3 in two of three 60-second periods. Three successful SNS actions were recorded; baseline and alarm email delivery was captured. Recovery email delivery is not documented in the available screenshots. The alarm and SNS topic were removed, and two independent cleanup checks passed.
+> **English summary:** Published fifteen controlled metric samples and verified CloudWatch baseline, alarm, recovery, and missing-data transitions. The alarm used Sum >= 3 in two of three 60-second periods. Three successful SNS actions were recorded, and email delivery for baseline, alarm, and recovery was captured. The alarm and SNS topic were removed, and two independent cleanup checks passed.
 
 ## Objetivo
 
@@ -24,10 +24,10 @@ Os valores são sintéticos e publicados pelo PowerShell. Não representam erros
 | Recuperação | Cinco períodos com soma zero e retorno a OK |
 | Dados ausentes | Retorno a INSUFFICIENT_DATA após interromper a publicação |
 | Ações SNS | Três ações bem-sucedidas no histórico do ensaio de 14/10 |
-| Entrega na caixa postal | Capturas dos e-mails de baseline e alarme |
+| Entrega na caixa postal | Capturas dos e-mails de baseline, alarme e recuperação |
 | Cleanup | Alarme e tópico ausentes; 2 de 2 verificações aprovadas |
 
-O histórico comprova a ação SNS da recuperação. O recebimento desse e-mail não está documentado nas capturas disponíveis e não é presumido a partir da ação bem-sucedida.
+O histórico comprova a ação SNS da recuperação, e a captura 42 documenta o recebimento do e-mail com a transição `ALARM → OK`, registrada em 14/10/2026 às 22:42:29 UTC (19:42:29 no horário de Brasília). Essa evidência completa as notificações do ensaio: baseline, alarme e recuperação.
 
 ## Ambiente e configuração
 
@@ -347,6 +347,7 @@ O relatório de 14/10/2026 às 23:26:32 UTC confirmou 2 de 2 verificações. O r
 | [39](images/Clipboard_10-14-2026_39.png) | Sintaxe e pré-validação final do cleanup |
 | [40](images/Clipboard_10-14-2026_40.png) | Remoção confirmada pelo cleanup |
 | [41](images/Clipboard_10-14-2026_41.png) | Duas verificações independentes aprovadas |
+| [42](images/Clipboard_10-14-2026_42.png) | E-mail da recuperação: ALARM → OK, em 14/10 às 22:42:29 UTC |
 
 ### Série e recuperação
 
@@ -355,6 +356,10 @@ O relatório de 14/10/2026 às 23:26:32 UTC confirmou 2 de 2 verificações. O r
 ### Notificação de alarme
 
 ![E-mail do alarme](images/Clipboard_10-14-2026_35.png)
+
+### Notificação de recuperação
+
+![E-mail da recuperação: ALARM para OK](images/Clipboard_10-14-2026_42.png)
 
 ### Dados ausentes
 
@@ -392,8 +397,8 @@ O alarme e o tópico foram removidos. O procedimento não exclui pontos individu
 - [x] Quinze períodos consultados e comparados com os recibos.
 - [x] Baseline OK, ALARM e recuperação OK confirmados.
 - [x] Três ações SNS comprovadas no histórico.
-- [x] E-mails da baseline e alarme documentados.
-- [ ] Captura do recebimento do e-mail da recuperação anexada.
+- [x] E-mails da baseline, alarme e recuperação documentados.
+- [x] Captura do recebimento do e-mail da recuperação anexada.
 - [x] Retorno a INSUFFICIENT_DATA documentado.
 - [x] Histórico, inventários, recibos e relatórios preservados.
 - [x] Cleanup confirmado por duas consultas independentes.
