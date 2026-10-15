@@ -1,1 +1,11 @@
-
+{
+  "ExpectedAccountId": "412381774441",
+  "Region": "us-east-1",
+  "LogGroupPrefix": "/lab28/logs-insights",
+  "RetentionDays": 1,
+  "Tags": {
+    "Project": "cloud-infrastructure-operations-lab",
+    "Lab": "28",
+    "ManagedBy": "lab28-powershell"
+  }
+}
