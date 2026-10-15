@@ -254,7 +254,7 @@ O módulo de Terraform está concluído, com os Labs 19 a 24 executados e docume
 |---|---|---|
 | Concluído | **Lab 25 — Métricas no CloudWatch** | Métricas nativas EC2, períodos e estatísticas, carga limitada de CPU, recuperação, créditos, dashboard e cleanup |
 | Concluído | **Lab 26 — CloudWatch Agent** | Memória, disco raiz, logs sintéticos, validação de entrega e cleanup |
-| Planejado | **Lab 27 — Alarmes e notificações** | Thresholds, alarmes e Amazon SNS |
+| Concluído | **Lab 27 — Alarmes e notificações** | Métrica sintética, thresholds, SNS, recuperação, dados ausentes e cleanup |
 | Planejado | **Lab 28 — CloudWatch Logs Insights** | Consultas e investigação de eventos |
 | Planejado | **Lab 29 — Monitoramento com Zabbix** | Agente, itens, triggers e disponibilidade |
 | Planejado | **Lab 30 — Investigação de alertas** | Correlação entre métricas, logs e estado do sistema |
@@ -336,7 +336,28 @@ Inventário, recibos e relatórios foram preservados.
 
 [Procedimento, resultados e evidências do Lab 26](../labs/26-cloudwatch-agent/README.md).
 
-O módulo de monitoramento e logs possui dois dos seis laboratórios concluídos.
+#### Lab 27 — Alarmes e notificações
+
+Concluído em 14 de outubro de 2026. O cenário publicou uma métrica sintética em `Lab27/ControlledApplication`, com dimensões `Scenario` e `RunId`, unidade `Count` e períodos de 60 segundos.
+
+O alarme avaliou soma maior ou igual a três em dois de três períodos, com dados ausentes tratados como `missing`. A assinatura de e-mail foi confirmada pela AWS CLI.
+
+O ensaio contínuo conferiu quinze períodos: cinco zeros de baseline, cinco valores cinco de estímulo e cinco zeros de recuperação, todos com `SampleCount=1`.
+
+| Transição | Horário de Brasília em 14/10/2026 |
+|:---:|:---:|
+| `INSUFFICIENT_DATA → OK` | 19:31:29 |
+| `OK → ALARM` | 19:37:29 |
+| `ALARM → OK` | 19:42:29 |
+| `OK → INSUFFICIENT_DATA` | 19:53:29 |
+
+O histórico registrou três ações SNS bem-sucedidas. As capturas documentam o recebimento dos e-mails de baseline e alarme; a entrega do e-mail de recuperação não está documentada nas evidências disponíveis.
+
+O alarme e o tópico foram removidos. Duas consultas independentes confirmaram sua ausência em 14/10/2026 às 23:26:32 UTC. Inventário, recibos, backups locais e histórico experimental foram preservados.
+
+[Procedimento, resultados e evidências do Lab 27](../labs/27-cloudwatch-alarms-notifications/README.md).
+
+O módulo de monitoramento e logs possui três dos seis laboratórios concluídos.
 
 ---
 
@@ -389,7 +410,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Infraestrutura AWS | Concluído |
 | Operação e troubleshooting | Concluído |
 | Terraform | Concluído |
-| Monitoramento e logs | Iniciado — 2 de 6 laboratórios concluídos |
+| Monitoramento e logs | Iniciado — 3 de 6 laboratórios concluídos |
 | Docker | Planejado |
 | Segurança, custos e confiabilidade | Planejado |
 | Projeto final | Planejado |
@@ -398,39 +419,36 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `27` |
+| Laboratórios concluídos | `28` |
 | Laboratórios em desenvolvimento | `0` |
-| Laboratórios planejados | `11` |
-| Último laboratório concluído | `Lab 26` |
-| Próximo laboratório | `Lab 27` |
+| Laboratórios planejados | `10` |
+| Último laboratório concluído | `Lab 27` |
+| Próximo laboratório | `Lab 28` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
 Os módulos de preparação e acesso, operações Linux, infraestrutura AWS, operação e troubleshooting e Terraform estão concluídos.
 
-O módulo de monitoramento e logs possui dois laboratórios concluídos. O Lab 27 permanece planejado.
+O módulo de monitoramento e logs possui três laboratórios concluídos. O Lab 28 permanece planejado.
 
 ---
 
 ## Próxima etapa
 
-**Lab 27 — Alarmes e notificações**
+**Lab 28 — CloudWatch Logs Insights**
 
-O próximo laboratório trabalhará thresholds, alarmes CloudWatch e notificações pelo Amazon SNS.
+O próximo laboratório trabalhará consultas e investigação de eventos.
 
 O planejamento deverá definir:
 
-- ambiente e recursos exclusivos;
-- perfil, Região e identificação dos recursos;
-- métricas e dimensões utilizadas nos alarmes;
-- thresholds, estatísticas e períodos de avaliação;
-- tratamento de dados ausentes;
-- estados `OK`, `ALARM` e `INSUFFICIENT_DATA`;
-- tópico SNS e confirmação da assinatura de teste;
-- estímulos controlados para mudança de estado;
-- confirmação das notificações e recuperação;
-- permissões, custos, evidências e cleanup.
+- ambiente e recursos exclusivos, perfil e região;
+- grupo de logs, retenção, formato e campos dos eventos de teste;
+- filtros, ordenação, agregações e interpretação das consultas;
+- janelas temporais e confirmação de ingestão;
+- eventos controlados que permitam investigar um problema;
+- registro das consultas, resultados e evidências;
+- permissões, volume consultado, custos e cleanup.
 
-O escopo será definido antes da implementação. As infraestruturas exclusivas dos Labs 25 e 26 foram removidas e não serão tratadas como disponíveis.
+O escopo será definido antes da implementação. Os recursos exclusivos dos Labs 25, 26 e 27 foram removidos e não serão tratados como disponíveis.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de alteração e remoção.
