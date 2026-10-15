@@ -6,7 +6,7 @@ O projeto documenta a construção e a operação de um ambiente de aplicação 
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Labs 00–26 are complete. The latest exercise installed the CloudWatch Agent on a dedicated EC2 instance, collected memory and root filesystem metrics, and verified three synthetic log events locally and in CloudWatch Logs. Dedicated infrastructure and the log group were removed, and eleven independent cleanup checks passed.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Labs 00–27 are complete. The latest exercise published fifteen controlled metric samples, verified CloudWatch alarm and recovery transitions, and recorded SNS actions and missing-data behavior. Baseline and alarm emails were captured. The alarm and SNS topic were removed, and two independent cleanup checks passed.
 
 ---
 
@@ -79,13 +79,44 @@ As tecnologias de etapas futuras estão identificadas no roadmap. A inclusão ne
 | Concluído | [Lab 25 — Métricas no CloudWatch](labs/25-cloudwatch-metrics/) | Métricas nativas EC2, carga limitada de CPU, recuperação, créditos, dashboard e onze verificações de cleanup. |
 | Concluído | [Lab 26 — CloudWatch Agent](labs/26-cloudwatch-agent/) | Memória, disco raiz, eventos sintéticos, relatórios JSON e onze verificações de cleanup. |
 
-**27 laboratórios concluídos**, considerando a numeração de 00 a 26.
+| Concluído | [Lab 27 — Alarmes e notificações](labs/27-cloudwatch-alarms-notifications/) | Métrica sintética, avaliação 2 de 3, ações SNS, recuperação, dados ausentes e duas verificações de cleanup. |
+
+**28 laboratórios concluídos**, considerando a numeração de 00 a 27.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
 ---
 
 ## Resultado mais recente
+
+O **Lab 27 — Alarmes e notificações** utilizou uma métrica sintética de erros de aplicação para verificar thresholds, mudanças de estado, ações pelo Amazon SNS e tratamento de dados ausentes.
+
+O cenário publicou quinze pontos em períodos separados de 60 segundos: cinco zeros de baseline, cinco valores `5` de estímulo e cinco zeros de recuperação. O alarme avaliou `Sum >= 3`, com dois de três períodos e `TreatMissingData=missing`.
+
+| Verificação | Resultado em 14/10/2026 |
+|:---:|:---:|
+| Métricas | Quinze períodos conferidos, cada um com `SampleCount=1` |
+| Baseline | `INSUFFICIENT_DATA → OK` às 19:31:29 |
+| Estímulo | `OK → ALARM` às 19:37:29 |
+| Recuperação | `ALARM → OK` às 19:42:29 |
+| Dados ausentes | `OK → INSUFFICIENT_DATA` às 19:53:29 |
+| SNS | Três ações executadas com sucesso no histórico |
+| Caixa postal | Capturas dos e-mails da baseline e do alarme |
+| Cleanup | Alarme e tópico ausentes; duas consultas independentes aprovadas |
+
+Horários de Brasília (UTC−03:00). O histórico comprova a ação SNS de recuperação; o recebimento desse e-mail não está documentado nas capturas disponíveis.
+
+Inventário, recibos e relatórios locais foram preservados. O cenário não provisionou EC2 nem coletou erros de uma aplicação real.
+
+![Validação independente do cleanup do Lab 27](labs/27-cloudwatch-alarms-notifications/images/Clipboard_10-14-2026_41.png)
+
+[Procedimento, resultados e evidências do Lab 27](labs/27-cloudwatch-alarms-notifications/).
+
+---
+
+## Resultados anteriores
+
+### Lab 26 — CloudWatch Agent
 
 O **Lab 26 — CloudWatch Agent** coletou métricas de memória e disco raiz e enviou logs de aplicação a partir de uma instância Amazon Linux 2023 administrada pelo Systems Manager.
 
@@ -109,9 +140,6 @@ A EC2 foi terminada, e os demais recursos exclusivos consultados, incluindo o gr
 
 [Procedimento, resultados e evidências do Lab 26](labs/26-cloudwatch-agent/).
 
----
-
-## Resultados anteriores
 
 ### Lab 25 — Métricas no CloudWatch
 
@@ -382,6 +410,9 @@ Os laboratórios concluídos até esta etapa demonstram:
 - publicação de métricas de memória e disco com dimensões efetivas;
 - confirmação de linhas locais no CloudWatch Logs por marcador exclusivo;
 - retenção explícita e relatórios JSON de validação;
+- avaliação de alarmes com dois de três períodos e dados ausentes;
+- assinatura de e-mail SNS, ações de alarme e recuperação;
+- confirmação independente da remoção de alarme e tópico;
 - automação com PowerShell e Bash;
 - cleanup seguro e preservação de infraestrutura compartilhada.
 
@@ -401,7 +432,7 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs possui dois dos seis laboratórios concluídos: Labs 25 e 26.
+Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs possui três dos seis laboratórios concluídos: Labs 25, 26 e 27.
 
 | Laboratório do módulo Terraform | Resultado |
 |:---:|:---:|
@@ -412,13 +443,11 @@ Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs
 | Lab 23 | Mudança intencional, drift, diagnóstico e recuperação |
 | Lab 24 | Validação automatizada em GitHub Actions e testes de falha e recuperação |
 
-A próxima etapa prevista é o **Lab 27 — Alarmes e notificações**.
+A próxima etapa prevista é o **Lab 28 — CloudWatch Logs Insights**.
 
-O laboratório definirá métricas, thresholds, períodos de avaliação, tratamento de dados ausentes, alarmes CloudWatch e notificações pelo Amazon SNS.
+O laboratório trabalhará consultas e investigação de eventos. O planejamento definirá logs de teste, campos, filtros, agregações, janelas de consulta, custos, evidências e cleanup.
 
-O planejamento deverá delimitar os recursos, os testes controlados de mudança de estado, a confirmação da entrega das notificações e o cleanup.
-
-As infraestruturas exclusivas dos Labs 25 e 26 foram removidas. O cenário do Lab 27 será definido e validado antes da implementação.
+Os recursos exclusivos dos Labs 25, 26 e 27 foram removidos. O cenário do Lab 28 será definido e validado antes da implementação.
 
 ---
 
