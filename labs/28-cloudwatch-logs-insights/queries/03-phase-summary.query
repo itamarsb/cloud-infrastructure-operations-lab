@@ -1,1 +1,9 @@
-
+filter runId = "{{RUN_ID}}"
+| stats count(*) as requests,
+        sum(errorFlag) as errors,
+        100.0 * sum(errorFlag) / count(*) as errorRatePercent,
+        avg(durationMs) as avgMs,
+        pct(durationMs, 95) as p95Ms,
+        pct(durationMs, 99) as p99Ms
+  by phase
+| sort phase asc
