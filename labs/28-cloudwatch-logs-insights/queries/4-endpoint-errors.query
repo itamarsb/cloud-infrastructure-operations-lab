@@ -1,1 +1,7 @@
-
+filter runId = "{{RUN_ID}}"
+| filter statusCode >= 500
+| stats count(*) as errors,
+        avg(durationMs) as avgMs,
+        max(durationMs) as maxMs
+  by endpoint, cause
+| sort errors desc
