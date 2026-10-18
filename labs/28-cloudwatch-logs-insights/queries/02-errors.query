@@ -1,1 +1,5 @@
-
+filter runId = "{{RUN_ID}}"
+| filter statusCode >= 500
+| fields @timestamp, phase, requestId, endpoint, statusCode, durationMs, cause
+| sort @timestamp asc
+| limit 100
