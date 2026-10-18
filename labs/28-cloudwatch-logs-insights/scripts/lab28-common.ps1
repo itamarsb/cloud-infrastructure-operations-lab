@@ -170,7 +170,7 @@ function Initialize-Lab28 {
         $Settings.ExpectedAccountId -cne "412381774441" -or
         $Settings.Region -cne "us-east-1" -or
         $Settings.LogGroupPrefix -cne "/lab28/logs-insights" -or
-        $Settings.RetentionDays -ne 1 -or
+        $Settings.RetentionDays -ne 7 -or
         $Settings.Tags.Project -cne "cloud-infrastructure-operations-lab" -or
         $Settings.Tags.Lab -cne "28" -or
         $Settings.Tags.ManagedBy -cne "lab28-powershell"
