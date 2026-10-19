@@ -1,1 +1,5 @@
-
+filter runId = "{{RUN_ID}}"
+| filter requestId = "{{RUN_ID}}-req-021"
+| fields @timestamp, service, phase, requestId, endpoint, statusCode, durationMs, cause
+| sort @timestamp asc
+| limit 100
