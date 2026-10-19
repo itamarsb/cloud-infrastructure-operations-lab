@@ -255,7 +255,7 @@ O módulo de Terraform está concluído, com os Labs 19 a 24 executados e docume
 | Concluído | **Lab 25 — Métricas no CloudWatch** | Métricas nativas EC2, períodos e estatísticas, carga limitada de CPU, recuperação, créditos, dashboard e cleanup |
 | Concluído | **Lab 26 — CloudWatch Agent** | Memória, disco raiz, logs sintéticos, validação de entrega e cleanup |
 | Concluído | **Lab 27 — Alarmes e notificações** | Métrica sintética, thresholds, SNS, recuperação, dados ausentes e cleanup |
-| Planejado | **Lab 28 — CloudWatch Logs Insights** | Consultas e investigação de eventos |
+| Em desenvolvimento | **Lab 28 — CloudWatch Logs Insights** | Consultas e investigação de eventos |
 | Planejado | **Lab 29 — Monitoramento com Zabbix** | Agente, itens, triggers e disponibilidade |
 | Planejado | **Lab 30 — Investigação de alertas** | Correlação entre métricas, logs e estado do sistema |
 
@@ -420,7 +420,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Indicador | Quantidade |
 |:---:|:---:|
 | Laboratórios concluídos | `28` |
-| Laboratórios em desenvolvimento | `0` |
+| Laboratórios em desenvolvimento | `1` |
 | Laboratórios planejados | `10` |
 | Último laboratório concluído | `Lab 27` |
 | Próximo laboratório | `Lab 28` |
