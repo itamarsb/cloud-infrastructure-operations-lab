@@ -74,11 +74,48 @@ for ($Page = 1; $Page -le 20; $Page++) {
     $ObservedEvents += @($Response.events)
     $PagesRead++
 
-    $ReturnedToken = [string]$Response.nextForwardToken
+    $TokenProperty = $null
 
-    if ([string]::IsNullOrWhiteSpace($ReturnedToken)) {
-        throw "A resposta nao apresentou o token de paginacao."
+if ($null -ne $Response) {
+    $TokenProperty = (
+        $Response.PSObject.Properties["nextForwardToken"]
+    )
+}
+
+$ReturnedToken = $null
+
+if ($null -ne $TokenProperty) {
+    $ReturnedToken = [string]$TokenProperty.Value
+}
+
+if ([string]::IsNullOrWhiteSpace($ReturnedToken)) {
+    $DiagnosticId = [guid]::NewGuid().ToString("N")
+
+    $DiagnosticPath = Join-Path $script:LocalDirectory (
+        "ingestion-missing-token-$DiagnosticId.json"
+    )
+
+    $Diagnostic = [pscustomobject]@{
+        ObservedAtUtc = [DateTime]::UtcNow.ToString("o")
+        RunId         = $State.RunId
+        LogGroupName  = $State.LogGroupName
+        StreamName    = $State.StreamName
+        PageNumber    = $Page
+        Request       = $Request
+        Response      = $Response
     }
+
+    Save-Lab28Json `
+        -Path $DiagnosticPath `
+        -Value $Diagnostic
+
+    throw (
+        "A resposta nao apresentou nextForwardToken valido. " +
+        "Nao foi possivel confirmar o fim da paginacao " +
+        "nem validar a ingestao. " +
+        "Diagnostico salvo em: $DiagnosticPath"
+    )
+}
 
     if ($ReturnedToken -ceq $NextToken) {
         $PaginationComplete = $true
