@@ -29,7 +29,7 @@ Os laboratórios priorizam:
 ## Módulo 00 — Preparação e acesso
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | Concluído | **Lab 00 — Preparação da estação de trabalho** | Git, VS Code, PowerShell e organização local |
 | Concluído | **Lab 01 — Configuração segura da conta AWS** | Proteção da conta e acesso administrativo |
 | Concluído | **Lab 02 — AWS CLI e autenticação por SSO** | Perfis, sessões temporárias e validação de identidade |
@@ -40,7 +40,7 @@ Os laboratórios priorizam:
 ## Módulo 01 — Operações Linux
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | Concluído | **Lab 04 — Arquivos e diretórios** | Navegação, busca, cópia, movimentação e remoção |
 | Concluído | **Lab 05 — Usuários, grupos e permissões** | Identidades, permissões e acesso compartilhado |
 | Concluído | **Lab 06 — Serviços e logs** | `systemctl`, `journalctl`, diagnóstico e recuperação de serviço |
@@ -50,7 +50,7 @@ Os laboratórios priorizam:
 ## Módulo 02 — Infraestrutura AWS
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | Concluído | **Lab 07 — Baseline operacional da conta AWS** | Inventário somente leitura de identidade, rede, recursos, segurança, tags, observabilidade e custos |
 | Concluído | **Lab 08 — Rede da aplicação** | VPC, sub-redes, rotas, Internet Gateway, Security Group, validação e cleanup |
 | Concluído | **Lab 09 — Instância EC2 administrada pelo Systems Manager** | EC2, IAM Role, Session Manager, validação e cleanup |
@@ -63,7 +63,7 @@ Os laboratórios priorizam:
 ## Módulo 03 — Operação e troubleshooting
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | Concluído | **Lab 13 — Aplicação indisponível** | Serviço, processo, porta, configuração, logs, recuperação e cleanup |
 | Concluído | **Lab 14 — Utilização de disco** | Volume EBS dedicado, pressão controlada, capacidade, inodes, diagnóstico, mitigação e cleanup |
 | Concluído | **Lab 15 — Falha de conectividade** | Security Group, rota, Network ACL, serviço local, diagnóstico por camadas, recuperação e cleanup |
@@ -105,7 +105,7 @@ O módulo de operação e troubleshooting está concluído.
 ## Módulo 04 — Terraform
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | Concluído | **Lab 19 — Fluxo essencial do Terraform** | Recurso local `terraform_data`, inicialização, formatação, validação, plano salvo, aplicação, estado, outputs e destroy |
 | Concluído | **Lab 20 — Infraestrutura AWS como código** | Provider AWS, lock de dependências, IAM, Security Group, regras, EC2 com Nginx, validação independente e cleanup |
 | Concluído | **Lab 21 — Estado remoto** | Bootstrap separado, S3 privado e versionado, migração do estado, identidade preservada, bloqueio concorrente e cleanup |
@@ -251,7 +251,7 @@ O módulo de Terraform está concluído, com os Labs 19 a 24 executados e docume
 ## Módulo 05 — Monitoramento e logs
 
 | Status | Laboratório | Conteúdo |
-|---|---|---|
+|:---:|---|---|
 | Concluído | **Lab 25 — Métricas no CloudWatch** | Métricas nativas EC2, períodos e estatísticas, carga limitada de CPU, recuperação, créditos, dashboard e cleanup |
 | Concluído | **Lab 26 — CloudWatch Agent** | Memória, disco raiz, logs sintéticos, validação de entrega e cleanup |
 | Concluído | **Lab 27 — Alarmes e notificações** | Métrica sintética, thresholds, SNS, recuperação, dados ausentes e cleanup |
