@@ -1,1 +1,6 @@
-
+filter runId = "{{RUN_ID}}"
+| stats count(*) as requests,
+        sum(errorFlag) as errors,
+        100.0 * sum(errorFlag) / count(*) as errorRatePercent
+  by bin(1m) as minute
+| sort minute asc
