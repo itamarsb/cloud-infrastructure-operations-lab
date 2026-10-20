@@ -456,7 +456,7 @@ A trilha está dividida em nove etapas:
 8. segurança, custos e confiabilidade;
 9. projeto integrado de uma aplicação web.
 
-Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs possui três dos seis laboratórios concluídos: Labs 25, 26 e 27.
+Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs possui quatro dos seis laboratórios concluídos: Labs 25, 26, 27 e 28.
 
 | Laboratório do módulo Terraform | Resultado |
 |:---:|:---:|
