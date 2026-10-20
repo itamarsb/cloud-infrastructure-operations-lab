@@ -81,7 +81,7 @@ As tecnologias de etapas futuras estão identificadas no roadmap. A inclusão ne
 | Concluído | [Lab 27 — Alarmes e notificações](labs/27-cloudwatch-alarms-notifications/) | Métrica sintética, avaliação 2 de 3, ações SNS, recuperação, dados ausentes e duas verificações de cleanup. |
 | Concluído | [Lab 28 — CloudWatch Logs Insights](labs/28-cloudwatch-logs-insights/) | Sessenta eventos sintéticos, sete consultas, erros, percentis, linha do tempo, investigação por requestId e cleanup independente. |
 
-**28 laboratórios concluídos**, considerando a numeração de 00 a 27.
+**29 laboratórios concluídos**, considerando a numeração de 00 a 28.
 
 O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md).
 
