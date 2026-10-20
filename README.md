@@ -6,7 +6,7 @@ O projeto documenta a construção e a operação de um ambiente de aplicação 
 
 Cada laboratório apresenta contexto, procedimentos, validações, evidências e, quando aplicável, scripts reutilizáveis e etapas de cleanup.
 
-> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Labs 00–27 are complete. The latest exercise published fifteen controlled metric samples, verified CloudWatch alarm and recovery transitions, and recorded SNS actions and missing-data behavior. Baseline and alarm emails were captured. The alarm and SNS topic were removed, and two independent cleanup checks passed.
+> **English summary:** Hands-on cloud infrastructure and operations portfolio focused on AWS, Linux administration, Terraform, automation, observability, troubleshooting, security and operational reliability. Labs 00–28 are complete. The latest exercise independently verified 60 synthetic JSON log events and executed seven CloudWatch Logs Insights queries to investigate errors, latency, a timeline, and a specific request. The exclusive log group was removed, and an independent cleanup check confirmed its absence.
 
 ---
 
