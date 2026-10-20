@@ -357,7 +357,39 @@ O alarme e o tópico foram removidos. Duas consultas independentes confirmaram s
 
 [Procedimento, resultados e evidências do Lab 27](../labs/27-cloudwatch-alarms-notifications/README.md).
 
-O módulo de monitoramento e logs possui três dos seis laboratórios concluídos.
+#### Lab 28 — CloudWatch Logs Insights
+
+O exercício provisionou um grupo de logs exclusivo, classe `STANDARD`, e o stream `controlled-application`. A configuração final utilizou retenção de sete dias e tags de propriedade vinculadas ao RunId.
+
+Um lote de 60 eventos JSON sintéticos foi publicado. A leitura paginada confirmou timestamps e mensagens idênticos ao dataset preservado antes do envio.
+
+Sete consultas foram concluídas:
+
+| Consulta | Resultado |
+|:---:|:---:|
+| Eventos da execução | Sessenta linhas |
+| Erros HTTP 5xx | Doze linhas |
+| Resumo por fase | Vinte requisições em cada fase |
+| Erros por endpoint e causa | Doze erros em `/orders`, com `dependency_timeout` |
+| Linha do tempo | Erros concentrados no minuto intermediário |
+| Requisição específica | `req-021`, HTTP 503 e 900 ms |
+| Resumo global | Sessenta requisições, doze erros e taxa de 20% |
+
+A taxa de erro durante o incidente foi de 60%. Baseline e recuperação apresentaram zero erros. As médias de duração foram de 108,5 ms na baseline e recuperação e 673,1 ms no incidente.
+
+Os dados foram gerados pelo PowerShell. A causa registrada e as fases representam um cenário sintético, sem falha ou recuperação de uma aplicação real.
+
+Durante a execução, a retenção foi ampliada de um para sete dias. Os eventos originais voltaram a ser consultados, sem republicação do lote. O teste de ingestão recebeu tratamento para token ausente e passou novamente no fluxo normal.
+
+Cada uma das sete consultas registradas examinou 60 eventos e 17574 bytes em um grupo. A consulta por requestId retornou uma linha, demonstrando a diferença entre quantidade retornada e volume examinado.
+
+O grupo foi removido em 19 de outubro de 2026. Uma nova consulta independente confirmou sua ausência na conta e região verificadas. Inventário, dataset, recibos e relatórios locais foram preservados.
+
+Vinte capturas documentam as etapas da execução.
+
+[Procedimento, resultados e evidências do Lab 28](../labs/28-cloudwatch-logs-insights/README.md).
+
+O módulo de monitoramento e logs possui quatro dos seis laboratórios concluídos. A próxima etapa prevista é o Lab 29 — Monitoramento com Zabbix.
 
 ---
 
