@@ -94,7 +94,7 @@ O **Lab 28 — CloudWatch Logs Insights** investigou 60 eventos JSON sintéticos
 A ingestão foi confirmada por leitura e comparação dos timestamps e mensagens com o dataset local. Sete consultas concluídas permitiram listar eventos, isolar erros, comparar durações, agrupar falhas, construir uma linha do tempo e localizar uma requisição específica.
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Dataset | 60 eventos idênticos ao lote local |
 | Fases | Vinte eventos em cada fase |
 | Erros | Doze respostas HTTP 503 em `/orders` |
