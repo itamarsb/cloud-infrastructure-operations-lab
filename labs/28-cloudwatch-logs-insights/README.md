@@ -179,7 +179,7 @@ Esses horários representam os eventos do dataset, não o momento em que as cons
 A consulta `06-request` encontrou:
 
 | Campo | Valor |
-|---|---|
+|:---:|:---:|
 | Timestamp UTC | `2026-10-16 23:03:00.000` |
 | Serviço | `checkout-api` |
 | Fase | `incident` |
