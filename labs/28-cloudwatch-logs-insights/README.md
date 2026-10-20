@@ -68,7 +68,7 @@ Grupo utilizado:
 Tags de propriedade:
 
 | Tag | Valor |
-|---|---|
+|:---:|:---:|
 | Project | `cloud-infrastructure-operations-lab` |
 | Lab | `28` |
 | ManagedBy | `lab28-powershell` |
