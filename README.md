@@ -79,6 +79,7 @@ As tecnologias de etapas futuras estão identificadas no roadmap. A inclusão ne
 | Concluído | [Lab 25 — Métricas no CloudWatch](labs/25-cloudwatch-metrics/) | Métricas nativas EC2, carga limitada de CPU, recuperação, créditos, dashboard e onze verificações de cleanup. |
 | Concluído | [Lab 26 — CloudWatch Agent](labs/26-cloudwatch-agent/) | Memória, disco raiz, eventos sintéticos, relatórios JSON e onze verificações de cleanup. |
 | Concluído | [Lab 27 — Alarmes e notificações](labs/27-cloudwatch-alarms-notifications/) | Métrica sintética, avaliação 2 de 3, ações SNS, recuperação, dados ausentes e duas verificações de cleanup. |
+| Concluído | [Lab 28 — CloudWatch Logs Insights](labs/28-cloudwatch-logs-insights/) | Sessenta eventos sintéticos, sete consultas, erros, percentis, linha do tempo, investigação por requestId e cleanup independente. |
 
 **28 laboratórios concluídos**, considerando a numeração de 00 a 27.
 
