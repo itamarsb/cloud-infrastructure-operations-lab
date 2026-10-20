@@ -442,7 +442,7 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 | Infraestrutura AWS | Concluído |
 | Operação e troubleshooting | Concluído |
 | Terraform | Concluído |
-| Monitoramento e logs | Iniciado — 3 de 6 laboratórios concluídos |
+| Monitoramento e logs | Iniciado — 4 de 6 laboratórios concluídos |
 | Docker | Planejado |
 | Segurança, custos e confiabilidade | Planejado |
 | Projeto final | Planejado |
@@ -451,36 +451,40 @@ O projeto final reunirá os principais componentes desenvolvidos durante a trilh
 
 | Indicador | Quantidade |
 |:---:|:---:|
-| Laboratórios concluídos | `28` |
-| Laboratórios em desenvolvimento | `1` |
-| Laboratórios planejados | `10` |
-| Último laboratório concluído | `Lab 27` |
-| Próximo laboratório | `Lab 28` |
+| Laboratórios concluídos | `29` |
+| Laboratórios em desenvolvimento | `0` |
+| Laboratórios planejados | `9` |
+| Último laboratório concluído | `Lab 28` |
+| Próximo laboratório | `Lab 29` |
 
 O total considera os Labs 00 a 37. O projeto final é acompanhado separadamente.
 
 Os módulos de preparação e acesso, operações Linux, infraestrutura AWS, operação e troubleshooting e Terraform estão concluídos.
 
-O módulo de monitoramento e logs possui três laboratórios concluídos. O Lab 28 permanece planejado.
+O módulo de monitoramento e logs possui quatro laboratórios concluídos: Labs 25, 26, 27 e 28. Os Labs 29 e 30 permanecem planejados.
 
 ---
 
 ## Próxima etapa
 
-**Lab 28 — CloudWatch Logs Insights**
+**Lab 29 — Monitoramento com Zabbix**
 
-O próximo laboratório trabalhará consultas e investigação de eventos.
+O próximo laboratório trabalhará coleta por agente, itens, triggers e disponibilidade.
 
 O planejamento deverá definir:
 
-- ambiente e recursos exclusivos, perfil e região;
-- grupo de logs, retenção, formato e campos dos eventos de teste;
-- filtros, ordenação, agregações e interpretação das consultas;
-- janelas temporais e confirmação de ingestão;
-- eventos controlados que permitam investigar um problema;
-- registro das consultas, resultados e evidências;
-- permissões, volume consultado, custos e cleanup.
+- ambiente de execução do Zabbix e do host monitorado;
+- versões e pré-requisitos;
+- recursos exclusivos e limites de acesso;
+- comunicação entre servidor e agente;
+- itens e intervalos de coleta;
+- triggers e critérios de recuperação;
+- falha controlada e evidências de detecção;
+- validação independente;
+- procedimento de cleanup e preservação dos registros.
 
-O escopo será definido antes da implementação. Os recursos exclusivos dos Labs 25, 26 e 27 foram removidos e não serão tratados como disponíveis.
+A implementação seguirá etapas separadas: estrutura inicial, configuração, implantação, validação, experimento, recuperação, cleanup e documentação.
+
+Os recursos exclusivos dos Labs 25, 26, 27 e 28 foram removidos.
 
 A infraestrutura compartilhada e os recursos de outros projetos permanecerão fora do escopo de alteração e remoção.
