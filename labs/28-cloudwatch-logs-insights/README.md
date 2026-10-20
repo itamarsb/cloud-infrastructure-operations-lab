@@ -157,7 +157,7 @@ Os percentis são os valores retornados pelo Logs Insights para esse conjunto pe
 A consulta `04-endpoint-errors` considerou somente eventos com `statusCode >= 500`.
 
 | Endpoint | Causa registrada | Erros | Média (ms) | Máximo (ms) |
-|---|---|---:|---:|---:|
+|:---:|:---:|:---:|:---:|:---:|
 | `/orders` | `dependency_timeout` | 12 | 1037,5 | 1175 |
 
 A média de 1037,5 ms considera somente os doze erros. A média de 673,1 ms da fase `incident` inclui também suas oito requisições sem erro.
@@ -167,7 +167,7 @@ A média de 1037,5 ms considera somente os doze erros. A média de 673,1 ms da f
 A consulta `05-timeline` agrupou os eventos por `bin(1m)`:
 
 | Minuto UTC em 16/10/2026 | Requisições | Erros | Taxa de erro |
-|---|---:|---:|---:|
+|:---:|:---:|:---:|:---:|
 | 23:02 | 20 | 0 | 0% |
 | 23:03 | 20 | 12 | 60% |
 | 23:04 | 20 | 0 | 0% |
