@@ -107,7 +107,7 @@ level, durationMs, errorFlag, cause, synthetic
 O gerador posiciona as três fases em minutos UTC distintos no passado recente. Os horários representam os timestamps atribuídos aos eventos.
 
 | Fase | Eventos | Erros | Taxa de erro |
-|---|---:|---:|---:|
+|:---:|:---:|:---:|:---:|
 | baseline | 20 | 0 | 0% |
 | incident | 20 | 12 | 60% |
 | recovery | 20 | 0 | 0% |
