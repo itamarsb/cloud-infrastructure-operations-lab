@@ -467,11 +467,11 @@ Os cinco primeiros módulos foram concluídos. O módulo de monitoramento e logs
 | Lab 23 | Mudança intencional, drift, diagnóstico e recuperação |
 | Lab 24 | Validação automatizada em GitHub Actions e testes de falha e recuperação |
 
-A próxima etapa prevista é o **Lab 28 — CloudWatch Logs Insights**.
+A próxima etapa prevista é o **Lab 29 — Monitoramento com Zabbix**.
 
-O laboratório trabalhará consultas e investigação de eventos. O planejamento definirá logs de teste, campos, filtros, agregações, janelas de consulta, custos, evidências e cleanup.
+O planejamento definirá o ambiente, o agente, os itens, as triggers, os testes de disponibilidade, as evidências e o procedimento de cleanup antes da implementação.
 
-Os recursos exclusivos dos Labs 25, 26 e 27 foram removidos. O cenário do Lab 28 será definido e validado antes da implementação.
+Os recursos exclusivos dos Labs 25, 26, 27 e 28 foram removidos.
 
 ---
 
