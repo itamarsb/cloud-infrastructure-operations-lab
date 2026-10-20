@@ -27,7 +27,7 @@ Não houve execução de uma API real, falha de uma dependência ou recuperaçã
 ## Resultados registrados
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Infraestrutura | Grupo exclusivo, classe STANDARD e stream conferidos |
 | Propriedade | Tags Project, Lab, ManagedBy e RunId verificadas |
 | Retenção final | Sete dias |
