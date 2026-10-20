@@ -242,7 +242,7 @@ labs/28-cloudwatch-logs-insights/local-artifacts/
 Esse diretório é ignorado pelo Git.
 
 | Registro | Conteúdo |
-|---|---|
+|:---:|:---:|
 | `deployment.json` | Conta, região, RunId, grupo e stream |
 | `dataset.json` | Lote exato e janela temporal |
 | `publication-response.json` | Resposta da publicação |
