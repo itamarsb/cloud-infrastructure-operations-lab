@@ -430,7 +430,15 @@ Os laboratórios concluídos até esta etapa demonstram:
 - assinatura de e-mail SNS, ações de alarme e recuperação;
 - confirmação independente da remoção de alarme e tópico;
 - automação com PowerShell e Bash;
-- cleanup seguro e preservação de infraestrutura compartilhada.
+- cleanup seguro e preservação de infraestrutura compartilhada;
+- publicação de logs JSON sintéticos com dataset preservado;
+- comparação de timestamps e mensagens para confirmar ingestão;
+- consultas Logs Insights com filtros e janela temporal explícita;
+- agregações, percentis e taxas de erro por fase;
+- investigação de eventos por endpoint, causa registrada e requestId;
+- distinção entre linhas retornadas e registros examinados;
+- diagnóstico de retenção e respostas sem token de paginação;
+- remoção de grupo de logs com validação independente da ausência.
 
 ---
 
