@@ -129,7 +129,7 @@ A causa é um campo previamente definido no dataset. Sua presença nos resultado
 Todas as consultas filtram o `runId` da execução. O executor substitui `{{RUN_ID}}` pelo valor do inventário e utiliza a janela temporal do dataset.
 
 | Consulta | Pergunta investigada | Resultado observado |
-|---|---|---|
+|:---:|:---:|:---:|
 | [01-events](queries/01-events.query) | Quais eventos pertencem à execução? | 60 linhas |
 | [02-errors](queries/02-errors.query) | Quais eventos têm status HTTP 5xx? | 12 linhas |
 | [03-phase-summary](queries/03-phase-summary.query) | Como erros e durações variam por fase? | Três linhas |
