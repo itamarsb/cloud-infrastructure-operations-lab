@@ -81,7 +81,7 @@ As permissões de execução foram fornecidas pelo perfil AWS utilizado. As tags
 ## Arquivos versionados
 
 | Arquivo | Finalidade |
-|---|---|
+|:---:|:---:|
 | [lab28-settings.json](config/lab28-settings.json) | Conta esperada, região, retenção, prefixo e tags |
 | [lab28-common.ps1](scripts/lab28-common.ps1) | Identidade, inventário, JSON, chamadas AWS e propriedade |
 | [deploy-aws-logs-insights.ps1](scripts/deploy-aws-logs-insights.ps1) | Pré-validação e provisionamento |
