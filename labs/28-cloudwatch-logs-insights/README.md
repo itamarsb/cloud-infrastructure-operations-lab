@@ -438,7 +438,7 @@ A remoção confere a propriedade antes da exclusão e verifica posteriormente a
 Resultado registrado:
 
 | Verificação | Resultado |
-|---|---|
+|:---:|:---:|
 | Conta AWS | PASS |
 | Região consultada | PASS |
 | Grupo ausente | PASS |
