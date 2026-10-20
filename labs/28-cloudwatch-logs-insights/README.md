@@ -452,7 +452,7 @@ O teste faz uma nova chamada à AWS e compara o nome exato do grupo. Sua conclus
 As capturas iniciais mostram retenção de um dia. A captura 10 registra a alteração e a validação de sete dias.
 
 | Captura | Etapa |
-|---|---|
+|:---:|:---:|
 | [01](images/Clipboard_10-15-2026_01.png) | Sintaxe, exclusão dos artefatos pelo Git e pré-validação inicial |
 | [02](images/Clipboard_10-16-2026_02.png) | Provisionamento inicial |
 | [03](images/Clipboard_10-16-2026_03.png) | Validação independente da infraestrutura |
