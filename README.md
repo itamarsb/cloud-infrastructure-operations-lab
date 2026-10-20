@@ -89,28 +89,31 @@ O planejamento completo está disponível em [`docs/roadmap.md`](docs/roadmap.md
 
 ## Resultado mais recente
 
-O **Lab 27 — Alarmes e notificações** utilizou uma métrica sintética de erros de aplicação para verificar thresholds, mudanças de estado, ações pelo Amazon SNS e tratamento de dados ausentes.
+O **Lab 28 — CloudWatch Logs Insights** investigou 60 eventos JSON sintéticos, distribuídos entre baseline, incidente e recuperação.
 
-O cenário publicou quinze pontos em períodos separados de 60 segundos: cinco zeros de baseline, cinco valores `5` de estímulo e cinco zeros de recuperação. O alarme avaliou `Sum >= 3`, com dois de três períodos e `TreatMissingData=missing`.
+A ingestão foi confirmada por leitura e comparação dos timestamps e mensagens com o dataset local. Sete consultas concluídas permitiram listar eventos, isolar erros, comparar durações, agrupar falhas, construir uma linha do tempo e localizar uma requisição específica.
 
-| Verificação | Resultado em 14/10/2026 |
-|:---:|:---:|
-| Métricas | Quinze períodos conferidos, cada um com `SampleCount=1` |
-| Baseline | `INSUFFICIENT_DATA → OK` às 19:31:29 |
-| Estímulo | `OK → ALARM` às 19:37:29 |
-| Recuperação | `ALARM → OK` às 19:42:29 |
-| Dados ausentes | `OK → INSUFFICIENT_DATA` às 19:53:29 |
-| SNS | Três ações executadas com sucesso no histórico |
-| Caixa postal | Capturas dos e-mails da baseline e do alarme |
-| Cleanup | Alarme e tópico ausentes; duas consultas independentes aprovadas |
+| Verificação | Resultado |
+|---|---|
+| Dataset | 60 eventos idênticos ao lote local |
+| Fases | Vinte eventos em cada fase |
+| Erros | Doze respostas HTTP 503 em `/orders` |
+| Taxa de erro no incidente | 60% |
+| Taxa global de erro | 20% |
+| Duração média | 108,5 ms na baseline e recuperação; 673,1 ms no incidente |
+| Requisição investigada | `req-021`, HTTP 503 e 900 ms |
+| Retenção final | Sete dias |
+| Cleanup | Grupo excluído e ausência confirmada por consulta independente |
 
-Horários de Brasília (UTC−03:00). O histórico comprova a ação SNS de recuperação; o recebimento desse e-mail não está documentado nas capturas disponíveis.
+Os dados foram gerados pelo PowerShell. As durações, os erros e a causa `dependency_timeout` são campos sintéticos; não representam uma falha real de aplicação ou dependência.
 
-Inventário, recibos e relatórios locais foram preservados. O cenário não provisionou EC2 nem coletou erros de uma aplicação real.
+Durante o exercício, a retenção foi ajustada de um para sete dias, e o tratamento de respostas sem token no teste de ingestão foi corrigido. Os eventos originais foram novamente consultados, sem republicação do lote.
 
-![Validação independente do cleanup do Lab 27](labs/27-cloudwatch-alarms-notifications/images/Clipboard_10-14-2026_41.png)
+O cleanup foi concluído em 19 de outubro de 2026. Inventário, dataset, recibos e relatórios locais foram preservados. Vinte capturas documentam a execução.
 
-[Procedimento, resultados e evidências do Lab 27](labs/27-cloudwatch-alarms-notifications/).
+![Resumo por fase do Lab 28](labs/28-cloudwatch-logs-insights/images/Clipboard_10-17-2026_13.png)
+
+[Procedimento, resultados e evidências do Lab 28](labs/28-cloudwatch-logs-insights/).
 
 ---
 
