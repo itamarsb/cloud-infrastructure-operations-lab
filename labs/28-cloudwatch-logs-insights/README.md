@@ -143,7 +143,7 @@ Todas as consultas filtram o `runId` da execução. O executor substitui `{{RUN_
 Resultados retornados por `03-phase-summary`:
 
 | Fase | Requisições | Erros | Taxa de erro | Média (ms) | P95 (ms) | P99 (ms) |
-|---|---:|---:|---:|---:|---:|---:|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | baseline | 20 | 0 | 0% | 108,5 | 134 | 137 |
 | incident | 20 | 12 | 60% | 673,1 | 1150 | 1175 |
 | recovery | 20 | 0 | 0% | 108,5 | 134 | 137 |
