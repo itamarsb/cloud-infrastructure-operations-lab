@@ -47,7 +47,7 @@ A publicação aceita foi tratada separadamente da confirmação de ingestão. O
 ## Ambiente e configuração
 
 | Parâmetro | Valor |
-|---|---|
+|:---:|:---:|
 | Estação | Windows e PowerShell |
 | Autenticação | AWS IAM Identity Center / SSO |
 | Perfil | `cloud-operations-lab` |
