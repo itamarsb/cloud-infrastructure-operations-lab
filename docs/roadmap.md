@@ -351,7 +351,7 @@ O ensaio contínuo conferiu quinze períodos: cinco zeros de baseline, cinco val
 | `ALARM → OK` | 19:42:29 |
 | `OK → INSUFFICIENT_DATA` | 19:53:29 |
 
-O histórico registrou três ações SNS bem-sucedidas. As capturas documentam o recebimento dos e-mails de baseline e alarme; a entrega do e-mail de recuperação não está documentada nas evidências disponíveis.
+O histórico registrou três ações SNS bem-sucedidas. As capturas documentam o recebimento dos e-mails de baseline, alarme e recuperação. A captura 42 registra a notificação da transição `ALARM → OK`.
 
 O alarme e o tópico foram removidos. Duas consultas independentes confirmaram sua ausência em 14/10/2026 às 23:26:32 UTC. Inventário, recibos, backups locais e histórico experimental foram preservados.
 
