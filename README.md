@@ -119,6 +119,19 @@ O cleanup foi concluído em 19 de outubro de 2026. Inventário, dataset, recibos
 
 ## Resultados anteriores
 
+### Lab 27 — Alarmes e notificações
+
+O cenário publicou quinze pontos de uma métrica sintética para verificar baseline, alarme, recuperação e comportamento com dados ausentes.
+
+O alarme avaliou `Sum >= 3` em dois de três períodos de 60 segundos, com `TreatMissingData=missing`. O histórico registrou três ações SNS bem-sucedidas.
+
+As capturas documentam o recebimento dos e-mails de baseline, alarme e recuperação. A captura 42 registra a notificação da transição `ALARM → OK`.
+
+O alarme e o tópico SNS foram removidos. Duas consultas independentes confirmaram sua ausência, preservando os registros locais.
+
+[Procedimento, resultados e evidências do Lab 27](labs/27-cloudwatch-alarms-notifications/).
+
+
 ### Lab 26 — CloudWatch Agent
 
 O **Lab 26 — CloudWatch Agent** coletou métricas de memória e disco raiz e enviou logs de aplicação a partir de uma instância Amazon Linux 2023 administrada pelo Systems Manager.
