@@ -78,7 +78,6 @@ As tecnologias de etapas futuras estão identificadas no roadmap. A inclusão ne
 | Concluído | [Lab 24 — Validação automatizada](labs/24-terraform-automated-validation/) | GitHub Actions, matriz de jobs, dependências para Windows e Linux, falhas controladas e recuperação dos checks. |
 | Concluído | [Lab 25 — Métricas no CloudWatch](labs/25-cloudwatch-metrics/) | Métricas nativas EC2, carga limitada de CPU, recuperação, créditos, dashboard e onze verificações de cleanup. |
 | Concluído | [Lab 26 — CloudWatch Agent](labs/26-cloudwatch-agent/) | Memória, disco raiz, eventos sintéticos, relatórios JSON e onze verificações de cleanup. |
-
 | Concluído | [Lab 27 — Alarmes e notificações](labs/27-cloudwatch-alarms-notifications/) | Métrica sintética, avaliação 2 de 3, ações SNS, recuperação, dados ausentes e duas verificações de cleanup. |
 
 **28 laboratórios concluídos**, considerando a numeração de 00 a 27.
