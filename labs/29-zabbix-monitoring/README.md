@@ -72,7 +72,7 @@ SNMP, notificações por e-mail e recuperação do ambiente Zabbix anterior não
 ## Organização
 
 | Caminho | Finalidade |
-|---|---|
+|:---:|:---:|
 | `README.md` | Objetivo, procedimento e resultados |
 | `config/` | Configurações versionadas |
 | `scripts/` | Preparação, validação, experimento e cleanup |
