@@ -1,1 +1,19 @@
-
+{
+  "ProjectName": "cloud-operations-lab29",
+  "Web": {
+    "BindAddress": "127.0.0.1",
+    "Port": 18080
+  },
+  "Monitoring": {
+    "HostName": "lab29-linux",
+    "HostGroupName": "Lab29",
+    "CollectionIntervalSeconds": 10,
+    "FailureConsecutiveSamples": 3,
+    "RecoveryConsecutiveSamples": 3
+  },
+  "Experiment": {
+    "BaselineSeconds": 60,
+    "FailureSeconds": 60,
+    "RecoveryTimeoutSeconds": 120
+  }
+}
