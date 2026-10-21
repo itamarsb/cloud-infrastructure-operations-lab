@@ -84,7 +84,7 @@ Credenciais reais permanecerão em arquivos locais ignorados pelo Git. Os modelo
 ## Fluxo de execução
 
 | Etapa | Resultado esperado |
-|---|---|
+|:---:|:---:|
 | Preparação | Configurações e pré-requisitos conferidos |
 | Implantação | Componentes exclusivos em execução |
 | Monitoramento | Host cadastrado e itens recebendo valores |
