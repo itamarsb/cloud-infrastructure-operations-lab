@@ -30,7 +30,7 @@ O exercício deverá confirmar:
 O laboratório será executado localmente com Docker Desktop.
 
 | Componente | Finalidade |
-|---|---|
+|:---:|:---:|
 | Banco de dados exclusivo | Armazenar configurações, valores e eventos do laboratório |
 | Zabbix Server | Coletar dados e avaliar triggers |
 | Interface web | Configurar e acompanhar o monitoramento |
