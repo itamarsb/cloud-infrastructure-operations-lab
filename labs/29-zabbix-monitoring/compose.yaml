@@ -63,6 +63,19 @@ services:
       - database
       - frontend
 
+  linux-target:
+    build:
+      context: ./config/target
+      dockerfile: Dockerfile
+    hostname: ${LAB29_HOST_NAME:?Defina o nome do alvo}
+    restart: "no"
+    depends_on:
+      zabbix-server:
+        condition: service_started
+    networks:
+      - monitoring
+    stop_grace_period: 30s
+
 volumes:
   postgres-data:
 
