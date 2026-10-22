@@ -1,1 +1,74 @@
+name: ${LAB29_PROJECT_NAME:?Defina LAB29_PROJECT_NAME}
 
+services:
+  postgres:
+    image: postgres:16.15-alpine3.24
+    restart: "no"
+    environment:
+      POSTGRES_DB: zabbix
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: ${LAB29_DB_PASSWORD:?Prepare a senha local}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - database
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 20s
+    stop_grace_period: 30s
+
+  zabbix-server:
+    image: zabbix/zabbix-server-pgsql:ubuntu-7.0.30
+    restart: "no"
+    environment:
+      DB_SERVER_HOST: postgres
+      DB_SERVER_PORT: "5432"
+      POSTGRES_DB: zabbix
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: ${LAB29_DB_PASSWORD:?Prepare a senha local}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+      - monitoring
+    stop_grace_period: 30s
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-pgsql:ubuntu-7.0.30
+    restart: "no"
+    environment:
+      DB_SERVER_HOST: postgres
+      DB_SERVER_PORT: "5432"
+      POSTGRES_DB: zabbix
+      POSTGRES_USER: zabbix
+      POSTGRES_PASSWORD: ${LAB29_DB_PASSWORD:?Prepare a senha local}
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_SERVER_PORT: "10051"
+      ZBX_SERVER_NAME: Cloud Operations - LAB 29
+      PHP_TZ: America/Sao_Paulo
+    ports:
+      - "${LAB29_WEB_BIND_ADDRESS:?Defina o endereco local}:${LAB29_WEB_PORT:?Defina a porta web}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      zabbix-server:
+        condition: service_started
+    networks:
+      - database
+      - frontend
+
+volumes:
+  postgres-data:
+
+networks:
+  database:
+    internal: true
+  monitoring:
+    internal: true
+  frontend:
