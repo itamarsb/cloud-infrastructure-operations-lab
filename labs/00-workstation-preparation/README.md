@@ -1,5 +1,7 @@
 # Lab 00 — Preparação da estação de trabalho
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Preparar uma estação de trabalho Windows para executar os laboratórios do projeto **Cloud Infrastructure Operations Lab**.
