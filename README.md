@@ -1,5 +1,7 @@
 # Cloud Infrastructure Operations Lab
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 Laboratório progressivo de infraestrutura e operações em nuvem, com atividades práticas em **AWS, Linux, Terraform, GitHub Actions, Docker, CloudWatch, Zabbix, Bash e PowerShell**.
 
 O projeto documenta a construção e a operação de um ambiente de aplicação ao longo de uma trilha evolutiva: preparação da estação de trabalho, acesso seguro à nuvem, administração Linux, infraestrutura AWS, automação, observabilidade, troubleshooting, segurança, custos e confiabilidade.
