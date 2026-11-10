@@ -1,0 +1,70 @@
+# Auditoria de documentação e internacionalização
+
+**Repositório:** `cloud-infrastructure-operations-lab`  
+**Início:** 2026-11-09  
+**Idioma principal:** português brasileiro  
+**Idioma complementar:** inglês técnico  
+**Objetivo:** melhorar legibilidade, consistência, precisão e navegação para leitores externos sem alterar ou ampliar os resultados documentados.
+
+Este arquivo registra oportunidades de melhoria. Um item listado aqui **não representa uma falha técnica comprovada** até que seu documento e suas evidências sejam examinados. O registro não deve substituir os procedimentos nem a documentação de execução dos laboratórios.
+
+## Convenção editorial
+
+- Preservar `README.md` como fonte principal em português e criar `README.en.md` no mesmo diretório.
+- Disponibilizar links recíprocos PT-BR ↔ EN no início de cada README.
+- Usar inglês natural, objetivo e consistente, evitando tradução literal e frases promocionais.
+- Distinguir **executado / observado / inferido / simulado / planejado**.
+- Preservar valores, unidades, datas, parâmetros, comandos, nomes de serviços e limitações.
+- Não transformar experimentos sintéticos em incidentes reais, nem observações isoladas em garantias.
+- Preferir instruções dirigidas ao leitor, sem trechos com aparência de conversa privada.
+- Reutilizar imagens e scripts existentes; não duplicar evidências sem necessidade.
+- Validar links relativos, imagens, Markdown e coerência entre o índice principal e cada laboratório.
+- Registrar alterações propostas antes de intervenções técnicas maiores.
+
+## Controle de auditoria
+
+| ID | Escopo | Constatação ou verificação proposta | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-001 | `README.md` | Resumo em inglês atual é curto para servir como documentação paralela; criar link para `README.en.md` | Alta | Em implementação |
+| DOC-002 | `README.en.md` | Verificar paridade de escopo com o documento português e preservar ressalvas sobre dados sintéticos | Alta | Primeira versão editorial |
+| DOC-003 | Índice de labs | Conferir todos os caminhos, status e distinção entre Labs 00–28 concluídos e Lab 29 planejado | Alta | Estrutura conferida; links individuais pendentes |
+| DOC-004 | README principal | Avaliar redundância entre tabela de progresso, resultados anteriores, práticas demonstradas e princípios operacionais | Média | Pendente |
+| DOC-005 | README principal | Distinguir ferramentas já utilizadas das previstas (por exemplo, Docker e Zabbix) | Alta | Sinalização existente; revisar por laboratório |
+| DOC-006 | Labs 25–28 | Revisar métricas, janelas, unidades, dados ausentes, testes sintéticos e afirmações sobre cleanup | Alta | Pendente |
+| DOC-007 | Labs 14–18 | Revisar termos de falha, mitigação, rollback, disponibilidade e intervalos observados | Alta | Pendente |
+| DOC-008 | Labs 19–24 | Verificar precisão sobre estado Terraform, locking, drift, plano sem mudanças e CI | Alta | Pendente |
+| DOC-009 | Labs 00–13 | Avaliar pré-requisitos, neutralidade editorial, reprodutibilidade e clareza das instruções | Média | Pendente |
+| DOC-010 | Todos os READMEs | Procurar trechos com tom de conversa, autoelogio, repetição excessiva ou menções a interlocutores | Média | Pendente |
+| DOC-011 | Todos os READMEs | Revisar terminologia bilíngue, ortografia, pontuação e clareza para público externo | Média | Pendente |
+| DOC-012 | Recursos visuais | Conferir legendas, descrição das evidências, acessibilidade e links relativos | Média | Pendente |
+| DOC-013 | `docs/roadmap.md` | Avaliar necessidade de `docs/roadmap.en.md` e consistência com o progresso dos laboratórios | Média | Pendente |
+| DOC-014 | `docs/career-path.md` e `docs/faq.md` | Arquivos possuem apenas conteúdo mínimo; decidir entre preenchimento útil ou remoção posterior | Baixa | Pendente |
+| DOC-015 | Templates auxiliares | Revisar templates vazios ou mínimos para evitar aparência de documentação inacabada | Baixa | Pendente |
+| DOC-016 | Segurança | Revisar comandos destrutivos, custos, referências sensíveis e proteção dos recursos compartilhados | Alta | Pendente |
+
+## Sequência de execução
+
+1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
+2. **Etapa 2 — Labs 00–13:** leitura técnica e editorial individual, criação de `README.en.md`, registro das observações.
+3. **Etapa 3 — Labs 14–18:** troubleshooting, atualização, backup e recuperação.
+4. **Etapa 4 — Labs 19–24:** Terraform e validação automatizada.
+5. **Etapa 5 — Labs 25–28:** CloudWatch, métricas, alarmes e Logs Insights.
+6. **Etapa 6 — Lab 29 e documentos auxiliares:** preservar a distinção entre planejado e executado; avaliar traduções de roadmap e demais documentos.
+7. **Etapa final — Revisão cruzada:** verificar links, paridade técnica, linguagem natural e estado de todos os itens de auditoria.
+
+## Critérios para encerrar um item
+
+- O texto revisado corresponde aos procedimentos e evidências realmente existentes.
+- Resultados quantitativos e limitações estão corretamente expressos.
+- A versão inglesa comunica o mesmo significado técnico, sem exageros.
+- Links e referências são válidos.
+- A alteração editorial não modifica scripts, recursos ou evidências.
+- O item foi registrado como concluído somente após verificação.
+
+## Observações iniciais — 2026-11-09
+
+- README principal em PT-BR contém aproximadamente 30 KB e descreve 29 laboratórios concluídos (00–28).
+- O diretório do Lab 29 possui README, porém é tratado como atividade futura no índice principal.
+- Existem arquivos auxiliares praticamente vazios em `docs/` e `templates/`; não são prioritários nesta etapa.
+- O resumo inglês original do README não oferece navegação integral pelos labs para o leitor internacional.
+- A primeira versão inglesa do índice principal é uma **adaptação editorial**, não uma auditoria linha a linha de todos os procedimentos; a análise detalhada fica registrada como pendente.
