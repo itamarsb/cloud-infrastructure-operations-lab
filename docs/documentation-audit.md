@@ -62,6 +62,27 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Critério editorial:** a versão inglesa conserva os doze passos e as dezenove imagens existentes, substitui descrições genéricas das imagens por alternativas mais informativas e esclarece que os comandos mostrados não foram reexecutados nesta revisão. O código do script foi inspecionado estaticamente, não executado. Os apontamentos sobre o texto português permanecem abertos para revisão posterior.
 
+## Auditoria específica — Lab 01
+
+**Data:** 2026-11-09  
+**Arquivo examinado:** `labs/01-secure-aws-account-configuration/README.md`.  
+**Intervenção:** criação de `README.en.md` com 13 etapas e 10 imagens preservadas; navegação bilíngue adicionada ao README principal do laboratório. Nenhuma configuração AWS foi alterada e não houve reexecução dos procedimentos.
+
+| ID | Escopo | Constatação ou verificação proposta | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-026 | Lab 01 | Distinguir planos AWS Free e Paid, créditos e limites atuais; não presumir elegibilidade uniforme ao Free Tier | Alta | Registrado para PT-BR; esclarecido no EN |
+| DOC-027 | Lab 01 | Evidenciar que Budgets/alertas não são teto de gastos, não bloqueiam serviços e podem ter atraso | Alta | Ressalva existente no PT-BR; reforçada no EN |
+| DOC-028 | Lab 01 | Atualizar recomendações de MFA com preferência por métodos resistentes a phishing e dispositivos redundantes, sem descaracterizar o experimento TOTP | Alta | Pendente no PT-BR; contextualizado no EN |
+| DOC-029 | Lab 01 | A etapa de recebimento de alertas não comprova entrega antes de ocorrer uma notificação; distinguir destinatário configurado de e-mail recebido | Média | Pendente no PT-BR; corrigido no EN |
+| DOC-030 | Lab 01 | Revisar checklist com `[X]`, que pode ser confundido com validação feita pelo visitante; preferir checklist reutilizável | Média | Pendente no PT-BR; mitigado no EN |
+| DOC-031 | Lab 01 | Substituir alt text `LAB01_DevOps_Operations` por descrições contextuais das capturas, com revisão futura de dados sensíveis | Média | Pendente no PT-BR; alt text ajustado no EN; inspeção visual pendente |
+| DOC-032 | Lab 01 | Esclarecer limites de acesso root e a diferença entre exemplo educacional e controles corporativos | Média | Pendente no PT-BR; contextualizado no EN |
+| DOC-033 | Lab 01 | Rever menção a `sa-east-1` como Região de referência sem apresentar a escolha como obrigatória ou válida para qualquer conta | Baixa | Pendente no PT-BR; esclarecido no EN |
+| DOC-034 | Lab 01 | Validar futuramente menus e campos do console, políticas de custo, links oficiais e alterações da AWS Free Tier | Média | Referências oficiais consultadas; navegação do console não reexecutada |
+| DOC-035 | Lab 01 | Inspecionar as 10 imagens para identificar eventual exposição de conta, contatos, MFA e informações de cobrança, antes de atestar sua segurança | Alta | Pendente de inspeção visual |
+
+**Critério editorial:** versão inglesa mantém os 13 passos, os 10 links de imagens, as tabelas operacionais, os limiares de 50%/80%/100%, o orçamento ilustrativo de USD 5 e os procedimentos de troubleshooting. O fluxograma Mermaid foi simplificado editorialmente na tradução, enquanto o diagrama detalhado permanece no README português. Esta é uma auditoria documental e não comprova reexecução das configurações AWS.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
