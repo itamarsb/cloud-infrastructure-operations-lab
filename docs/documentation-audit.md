@@ -129,6 +129,31 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** tradução editorial publicada; 5/5 caminhos de imagens referenciados e arquivos correspondentes encontrados na árvore do repositório. Leitura estática do script concluída; comandos, atualizações e validações não foram reexecutados. A contagem histórica de 8 aprovações, 0 avisos, 0 falhas e saída 0 foi mantida sem atribuir nova execução.
 
+## Auditoria específica — Lab 04
+
+**Data:** 2026-11-09  
+**Arquivos examinados:** `labs/04-linux-file-management/README.md`, `scripts/validate-linux-file-management.sh`, inventário de seis imagens e estrutura de diretórios.  
+**Intervenção:** criação de `README.en.md` em inglês técnico, com as seis referências visuais preservadas, e navegação de idioma no README português. O script, os arquivos de evidência e o ambiente Linux não foram modificados nem executados nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-060 | Lab 04 | Caminho `/home/itamarsbt/...` depende do usuário da execução original; orientar o uso de `$HOME` em outras estações | Média | Esclarecido no EN; revisão PT-BR pendente |
+| DOC-061 | Lab 04 | Os registros `ERROR` e `WARNING` são sintéticos, gerados por `printf`, e não devem ser descritos como incidentes reais | Alta | Explicitado no EN |
+| DOC-062 | Lab 04 | Comandos com redirecionamento `>` sobrescrevem arquivos de destino existentes; incluir orientação preventiva para reutilização | Média | Advertência no EN; PT-BR pendente |
+| DOC-063 | Lab 04 | Verificação `find` com `-o` não apresenta parênteses explícitos; preferir agrupamento de condições para clareza e futuras extensões | Baixa | Alternativa documentada no EN |
+| DOC-064 | Lab 04 | O guard de cleanup compara `pwd` com caminho esperado, mas não cobre todas as situações envolvendo symlinks ou execução com shell diferente | Média | Limitação explicada no EN |
+| DOC-065 | Lab 04 | O comando `exit 1` no guard pode encerrar o shell caso seja executado diretamente na sessão; recomendar execução isolada de guardas críticos | Média | Ressalva no EN |
+| DOC-066 | Lab 04 | Script retorna código `0` quando há apenas `[AVISO]`, inclusive estrutura temporária não removida; distinguir warnings de conclusão totalmente limpa | Média | Documentado no EN; melhoria de critérios pendente |
+| DOC-067 | Lab 04 | `grep -qE` verifica existência de padrões em vez de igualdade integral do arquivo; não interpretar como validação completa de configuração | Média | Esclarecido no EN |
+| DOC-068 | Lab 04 | Preservar a distinção entre erro real de CRLF/LF do ambiente de execução e registros de erro simulados inseridos nos logs | Média | Esclarecido no EN |
+| DOC-069 | Lab 04 | Regra `*.sh text eol=lf` evita discrepâncias em novos checkouts, mas arquivos já materializados podem exigir normalização | Baixa | Esclarecido no EN |
+| DOC-070 | Lab 04 | Revisar se valores de distribuição, kernel, Bash, nome de usuário e logs datados são apresentados como registro histórico, não requisitos universais | Média | Contextualizado no EN |
+| DOC-071 | Lab 04 | Inspecionar visualmente seis capturas para legibilidade, correspondência e ausência de informações identificadoras | Alta | Arquivos existentes; inspeção visual pendente |
+| DOC-072 | Lab 04 | Preservar contagem histórica 21/0/0 e distinguir execução documentada de leitura estática do script na auditoria | Alta | Aplicado no EN |
+| DOC-073 | Lab 04 | Reduzir duplicidade entre boas práticas, competências, resultado e status sem empobrecer o registro do procedimento | Baixa | Adaptação editorial no EN; PT-BR pendente |
+
+**Resultado:** a versão inglesa preserva as seis imagens, os procedimentos Bash, a estrutura de arquivos e os resultados históricos 21 aprovações, 0 avisos, 0 falhas e código de saída 0. Foi realizada leitura estática do script; nenhuma execução do laboratório ou inspeção visual profunda das imagens foi feita nesta etapa.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
