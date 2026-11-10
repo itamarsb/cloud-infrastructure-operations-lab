@@ -154,6 +154,30 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** a versão inglesa preserva as seis imagens, os procedimentos Bash, a estrutura de arquivos e os resultados históricos 21 aprovações, 0 avisos, 0 falhas e código de saída 0. Foi realizada leitura estática do script; nenhuma execução do laboratório ou inspeção visual profunda das imagens foi feita nesta etapa.
 
+## Auditoria específica — Lab 05
+
+**Data:** 2026-11-09  
+**Arquivos examinados:** `labs/05-linux-users-groups-permissions/README.md`, `scripts/validate-linux-users-groups-permissions.sh`, lista de oito capturas e estrutura do diretório.  
+**Intervenção:** criação de `README.en.md` com oito imagens, sequência completa de comandos e navegação recíproca. README português preservado, exceto link de idioma. Nenhum script, conta Linux, grupo, diretório ou evidência foi modificado ou executado nesta etapa.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-074 | Lab 05 | O bloqueio de senha das contas temporárias não impede, por si só, todos os mecanismos de acesso (ex.: chaves ou execução privilegiada) | Alta | Limitação documentada no EN; PT-BR pendente |
+| DOC-075 | Lab 05 | SGID em diretório define herança de grupo, mas não concede automaticamente permissão de escrita; considerar umask, modo do arquivo e ACLs | Alta | Esclarecido no EN |
+| DOC-076 | Lab 05 | `sudo find /srv/cloudops-lab05 -depth -mindepth 1 -delete` é exclusão recursiva destrutiva; conferir caminho, propriedade e dependências antes de executar | Alta | Aviso reforçado no EN; PT-BR pendente |
+| DOC-077 | Lab 05 | `userdel --remove` pode apagar diretórios pessoais e conteúdo não relacionado caso o alvo seja reutilizado; confirmar exclusividade dos usuários | Alta | Ressalva no EN; PT-BR pendente |
+| DOC-078 | Lab 05 | Validação de negação usa `SUDO_USER`; sem usuário original válido ou com associação ao grupo, é registrada advertência, não prova de acesso negado | Alta | Documentado no EN |
+| DOC-079 | Lab 05 | Script retorna código 0 quando só há avisos. Não interpretar código 0 como 37 verificações aprovadas em qualquer execução | Média | Distinção no EN; revisão futura do script |
+| DOC-080 | Lab 05 | Conferir explicação de permissões 770/2770 e diferença entre grupos primários e suplementares, com indicação de herança apenas para novos objetos | Média | Explicado no EN |
+| DOC-081 | Lab 05 | Uso de `grep -Fq` no validador confirma presença de conteúdo, mas não igualdade integral dos arquivos ou ausência de entradas adicionais | Média | Limitação no EN |
+| DOC-082 | Lab 05 | Status histórico de 37 OK, zero avisos e zero falhas foi registrado antes do cleanup; validador não deve ser executado depois da exclusão esperando mesmo resultado | Alta | Contextualizado no EN |
+| DOC-083 | Lab 05 | Revisar imagens para exposição de nomes de contas, informações pessoais e caminhos locais; melhorar textos alternativos genéricos | Média | Alt text aprimorado no EN; inspeção visual pendente |
+| DOC-084 | Lab 05 | README possui seções repetitivas de competências, resultado, status e evidências; consolidar somente após revisão de paridade | Baixa | EN condensado editorialmente; PT-BR pendente |
+| DOC-085 | Lab 05 | Verificar políticas de contas, permissões herdadas e possíveis ACLs em sistemas de arquivos diferentes antes de generalizar o resultado em WSL 2 | Média | Limitações contextualizadas no EN |
+| DOC-086 | Lab 05 | Scripts e procedimentos administrativos devem ser reproduzidos apenas em ambiente de testes autorizado; não prometer segurança apenas por nomes explícitos de recursos | Alta | Aviso no EN; PT-BR pendente |
+
+**Resultado:** versão inglesa publicada com oito imagens e oito fases de execução; preservados comandos, configurações, tabela de propriedade antes/depois do SGID e registros históricos de 37 aprovações, 0 avisos e 0 falhas. Script Bash revisado estaticamente, sem execução. Inspeção visual detalhada das capturas permanece pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
