@@ -83,6 +83,30 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Critério editorial:** versão inglesa mantém os 13 passos, os 10 links de imagens, as tabelas operacionais, os limiares de 50%/80%/100%, o orçamento ilustrativo de USD 5 e os procedimentos de troubleshooting. O fluxograma Mermaid foi simplificado editorialmente na tradução, enquanto o diagrama detalhado permanece no README português. Esta é uma auditoria documental e não comprova reexecução das configurações AWS.
 
+## Auditoria específica — Lab 02
+
+**Data:** 2026-11-09  
+**Arquivos examinados:** `labs/02-aws-cli-installation-and-configuration/README.md` e `scripts/validate-aws-cli.ps1`.  
+**Intervenção:** criação de `README.en.md` com as 16 etapas, comandos e evidência visual preservados; inclusão de navegação recíproca PT-BR ↔ EN. Não houve instalação, autenticação, execução de scripts ou acesso à conta AWS nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-036 | Lab 02 | Atualizar procedimento SSO: AWS CLI v2.22.0+ utiliza PKCE por padrão e `--use-device-code` oferece alternativa explícita; URLs PKCE devem ser abertas no mesmo dispositivo | Alta | Pendente no PT-BR; esclarecido no EN |
+| DOC-037 | Lab 02 | Diferenciar a Região do IAM Identity Center (`sso_region`) da Região padrão dos recursos (`us-east-1`) | Alta | Correto no PT-BR; preservado no EN |
+| DOC-038 | Lab 02 | Esclarecer que `sts get-caller-identity` confirma identidade, mas não prova autorização ampla nem, isoladamente, a origem IAM Identity Center | Média | Registrado no EN; pendente no PT-BR |
+| DOC-039 | Lab 02 | Reforçar proteção de saídas de `Get-ChildItem Env:AWS*`, `aws configure list` e caches SSO; não publicar valores sensíveis | Alta | Pendente no PT-BR; reforçado no EN |
+| DOC-040 | Lab 02 | Etapa do download por `Invoke-WebRequest` verifica apenas presença e tamanho do MSI; considerar validação da assinatura digital | Média | Pendente no PT-BR; ressalva no EN |
+| DOC-041 | Lab 02 | Verificar conformidade dos comandos com novas versões da AWS CLI e a precedência entre flags, perfil e variáveis de ambiente | Média | Pendente de teste prático; ressalva no EN |
+| DOC-042 | Lab 02 | Checklist preenchido com `[x]` reflete execução documentada mas pode confundir leitores que reutilizem o procedimento | Média | Pendente no PT-BR; versão EN usa caixas vazias |
+| DOC-043 | Lab 02 | Trocar expressão conversacional “No nosso caso” por documentação impessoal; reduzir seções de validação repetidas | Média | Pendente no PT-BR; tratado editorialmente no EN |
+| DOC-044 | Lab 02 | Preservar a evidência registrada de 9 aprovações, 0 avisos e 0 falhas como resultado histórico e não como nova validação | Alta | Diferenciação explícita no EN |
+| DOC-045 | Lab 02 | Revisar mensagem de cleanup: `aws sso logout` limpa tokens de cache local, não implica revogação de todas as sessões organizacionais | Média | Pendente no PT-BR; ressalva no EN |
+| DOC-046 | Lab 02 | Inspecionar imagem para exposição de informações de identidade/credenciais; conferir integridade dos links e visualização Mermaid | Alta | Inspeção visual e renderização pendentes |
+| DOC-047 | Lab 02 | Script usa sucesso com `assumed-role` como indício de sessão temporária; não é verificação suficiente para atribuir origem exclusiva ao IAM Identity Center | Média | Auditoria estática concluída; eventual aprimoramento de script pendente |
+| DOC-048 | Lab 02 | Limpeza do instalador depende de variável de sessão `$AwsCliInstaller`; evitar recomendar exclusão sem validar caminho | Baixa | Esclarecido no EN; pendente no PT-BR |
+
+**Resultado:** tradução técnica publicada, com 16 etapas e o mesmo caminho da evidência visual. O script foi lido estaticamente, sem execução. Os resultados 9/0/0 correspondem à execução anterior descrita no documento original, não à presente auditoria. O conteúdo português foi preservado, exceto pela navegação de idioma.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
