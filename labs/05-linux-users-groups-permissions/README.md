@@ -1,5 +1,7 @@
 # Lab 05 — Usuários, grupos e permissões no Linux
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Visão geral
 
 Este laboratório apresenta uma implementação prática de gerenciamento de identidades e controle de acesso em um sistema Linux.
