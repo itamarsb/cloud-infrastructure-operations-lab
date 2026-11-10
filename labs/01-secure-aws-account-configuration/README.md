@@ -1,5 +1,7 @@
 # Lab 01 — Configuração segura da conta AWS
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Configurar os controles básicos de segurança, recuperação de acesso e acompanhamento de custos de uma conta AWS antes da criação de recursos em nuvem.
