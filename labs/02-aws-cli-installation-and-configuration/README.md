@@ -1,5 +1,7 @@
 # Lab 02 — Instalação e configuração da AWS CLI
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Instalar a AWS Command Line Interface versão 2 no Windows 11, configurar um perfil nomeado com autenticação temporária pelo AWS IAM Identity Center e validar, com segurança, a identidade, a Região e o funcionamento da comunicação entre a estação de trabalho e a AWS.
