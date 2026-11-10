@@ -1,5 +1,7 @@
 # Lab 03 — Instalação das ferramentas de infraestrutura
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Instalar, atualizar e validar as ferramentas de infraestrutura utilizadas nos próximos laboratórios do projeto **Cloud Infrastructure Operations Lab**.
