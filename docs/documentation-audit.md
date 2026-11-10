@@ -42,6 +42,26 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 | DOC-015 | Templates auxiliares | Revisar templates vazios ou mínimos para evitar aparência de documentação inacabada | Baixa | Pendente |
 | DOC-016 | Segurança | Revisar comandos destrutivos, custos, referências sensíveis e proteção dos recursos compartilhados | Alta | Pendente |
 
+## Auditoria específica — Lab 00
+
+**Data:** 2026-11-09  
+**Arquivos examinados:** `labs/00-workstation-preparation/README.md` e `labs/00-workstation-preparation/scripts/validate-workstation.ps1`.  
+**Intervenção:** criada a documentação `README.en.md` com navegação recíproca; o conteúdo técnico português original e o script foram preservados.
+
+| ID | Escopo | Constatação ou verificação proposta | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-017 | Lab 00 | Checklist de execução em PT-BR usa `[X]` e pode ser interpretado como preenchido pelo leitor; separar exemplo histórico de checklist reutilizável | Média | Pendente no PT-BR; mitigado no EN |
+| DOC-018 | Lab 00 | Reforçar o aviso de remoção irreversível por `Remove-Item -Recurse -Force` e preservar a cópia local antes do cleanup | Alta | Pendente no PT-BR; reforçado no EN |
+| DOC-019 | Lab 00 | Remover expressão conversacional “No nosso caso” e revisar referências a publicação no LinkedIn; manter tom neutro para leitor desconhecido | Média | Pendente no PT-BR; ajustado no EN |
+| DOC-020 | Lab 00 | Consolidar repetições entre validação, checklist, lições aprendidas e resultado final sem perder critérios de aceitação | Média | Pendente |
+| DOC-021 | Lab 00 | Descrições de imagens `![LAB00]` são genéricas; criar textos alternativos específicos | Média | Pendente no PT-BR; ajustado no EN |
+| DOC-022 | Lab 00 | Diferenciar pré-requisito de conta GitHub e clonagem anônima de repositório público; esclarecer `git remote -v` sem sugerir acesso de escrita | Baixa | Pendente no PT-BR; ajustado no EN |
+| DOC-023 | Lab 00 | Comando `Test-Connection` não demonstra, isoladamente, funcionamento do GitHub via HTTPS; esclarecer limitações do teste | Média | Pendente no PT-BR; observado no EN |
+| DOC-024 | Lab 00 | Verificar consistência do checklist, nomes dos diretórios, imagens e documentação do script de validação com os arquivos do repositório | Média | Leitura estática concluída; execução não realizada |
+| DOC-025 | Lab 00 | O script usa PowerShell ≥5 e Windows; o README mostra exemplo PowerShell 7; evitar tratar versão exemplificativa como obrigatória | Baixa | Esclarecido no EN |
+
+**Critério editorial:** a versão inglesa conserva os doze passos e as dezenove imagens existentes, substitui descrições genéricas das imagens por alternativas mais informativas e esclarece que os comandos mostrados não foram reexecutados nesta revisão. O código do script foi inspecionado estaticamente, não executado. Os apontamentos sobre o texto português permanecem abertos para revisão posterior.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
