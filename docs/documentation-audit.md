@@ -107,6 +107,28 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** tradução técnica publicada, com 16 etapas e o mesmo caminho da evidência visual. O script foi lido estaticamente, sem execução. Os resultados 9/0/0 correspondem à execução anterior descrita no documento original, não à presente auditoria. O conteúdo português foi preservado, exceto pela navegação de idioma.
 
+## Auditoria específica — Lab 03
+
+**Data:** 2026-11-09  
+**Arquivos examinados:** `labs/03-infrastructure-tools-installation/README.md`, `scripts/validate-infrastructure-tools.ps1` e inventário de cinco arquivos de imagem.  
+**Intervenção:** criada versão inglesa `README.en.md` com as cinco referências visuais originais e links recíprocos de idioma. A tradução distingue registros históricos de orientações para novas execuções. Não foram alterados scripts, binários, evidências nem configurações de sistemas.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-049 | Lab 03 | O validador exige padrão exato `Terraform v1.16.1`; versões mais recentes podem gerar aviso apesar de válidas. Diferenciar versão registrada e requisito de compatibilidade | Média | Explicado no EN; revisão futura do script |
+| DOC-050 | Lab 03 | Uso de `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` reduz verificações durante a sessão; orientar inspeção prévia e alternativas aprovadas | Alta | Observação no EN; PT-BR pendente |
+| DOC-051 | Lab 03 | Hash SHA-256 comparado a checksum oficial não prova, sozinho, a autenticidade do arquivo de checksum; avaliar validação criptográfica da fonte ou assinatura | Alta | Observação no EN; procedimento futuro |
+| DOC-052 | Lab 03 | Script exibe `$Command.Source` e saídas de ferramentas; avaliar risco de exposição de nomes locais/organizacionais nas capturas | Média | Advertência no EN; revisão visual pendente |
+| DOC-053 | Lab 03 | Distinguir instalação e execução local do Session Manager Plugin de conexão operacional bem-sucedida a uma sessão SSM | Média | Esclarecido no EN |
+| DOC-054 | Lab 03 | O validador retorna código `0` mesmo com avisos; explicitar que avisos não equivalem a reprovação e discutir uso em CI | Média | Esclarecido no EN; aprimoramento opcional |
+| DOC-055 | Lab 03 | Checklist marcado `[x]` representa execução histórica; evitar interpretação de que o leitor concluiu o exercício | Média | Contextualizado no EN; PT-BR pendente |
+| DOC-056 | Lab 03 | Preservar UTF-8 com BOM para PowerShell 5.1; testar após futuras edições e distinguir comportamento de versões mais recentes | Média | Documentado no EN; validação prática não realizada |
+| DOC-057 | Lab 03 | Inspecionar visualmente as cinco capturas para confirmar legibilidade, correspondência e ausência de dados sensíveis | Alta | Pendente de inspeção visual |
+| DOC-058 | Lab 03 | Avaliar inclusão de comandos completos de instalação/reprodução, atualmente o PT-BR documenta etapas executadas sem detalhar todos os comandos | Baixa | Pendente; escopo de registro histórico preservado |
+| DOC-059 | Lab 03 | Validar se as versões fixadas no inventário continuam apropriadas e se caminhos locais devem ser tratados apenas como exemplos | Média | Esclarecido no EN; revisão de manutenção futura |
+
+**Resultado:** tradução editorial publicada; 5/5 caminhos de imagens referenciados e arquivos correspondentes encontrados na árvore do repositório. Leitura estática do script concluída; comandos, atualizações e validações não foram reexecutados. A contagem histórica de 8 aprovações, 0 avisos, 0 falhas e saída 0 foi mantida sem atribuir nova execução.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
