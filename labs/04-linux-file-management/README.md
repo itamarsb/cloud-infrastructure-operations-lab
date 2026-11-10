@@ -1,5 +1,7 @@
 # Lab 04 — Navegação e gerenciamento de arquivos no Linux
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Desenvolver habilidades fundamentais para navegar pelo sistema de arquivos Linux e executar operações controladas de criação, consulta, cópia, movimentação, localização e remoção de arquivos.
