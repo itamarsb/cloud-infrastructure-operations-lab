@@ -741,6 +741,39 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês com baseline v1, mudança intencional para v2, drift do arquivo, plano de recuperação, validação independente por conteúdo/hash e limpeza final. Sete arquivos técnicos (HCL/lock/exemplo e .gitignore) revisados estaticamente, 14 capturas preservadas e nenhuma operação Terraform/AWS executada. Inspeção visual integral pendente.
 
+## Auditoria específica — Lab 24
+
+**Data:** 2026-11-11  
+**Arquivos examinados:** `labs/24-terraform-automated-validation/README.md`, workflow `.github/workflows/lab24-terraform-validation.yml`, lock do provider do Lab 23 em `labs/23-terraform-changes-drift/terraform/.terraform.lock.hcl`, inventário de seis capturas e registro GitHub do pull request #1.  
+**Intervenção:** criada versão inglesa `README.en.md` com cinco imagens incorporadas e uma imagem adicional vinculada; adicionada navegação bilíngue ao README original. Nenhum workflow foi executado novamente, nenhum arquivo YAML/HCL/lock foi modificado, nenhuma operação AWS foi realizada.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-452 | Lab 24 | Workflow CI valida somente Labs 22 e 23; matriz de dois jobs não representa cobertura de todos os laboratórios Terraform do repositório | Alta | Escopo definido no EN |
+| DOC-453 | Lab 24 | Testes executam `terraform version`, `fmt`, `init -backend=false`, `validate`; não executam `plan`, `apply`, `destroy` ou integração AWS | Alta | Limitações explicitadas no EN |
+| DOC-454 | Lab 24 | `init -backend=false` não verifica backend de estado, bloqueios, autenticação ou comunicação de recursos remotos | Alta | Limite documentado no EN |
+| DOC-455 | Lab 24 | `fail-fast: false` mantém outro job em execução quando há falha, sem transformar resultado reprovado em aprovado | Média | Comportamento no EN |
+| DOC-456 | Lab 24 | Alterações automáticas só acionam workflow em push/PR para `main` quando afetam filtros específicos; README e imagens do Lab 24 não acionam por si só | Média | Filtros explicitados no EN |
+| DOC-457 | Lab 24 | Existe acionamento `workflow_dispatch`; não há execução periódica agendada no YAML examinado | Baixa | Gatilhos documentados no EN |
+| DOC-458 | Lab 24 | Provider `hashicorp/local` 2.9.1 do Lab 23 exigiu ajustes de hashes para Windows e Linux; preservar `.terraform.lock.hcl` versionado e verificar integridade cross-platform | Alta | Histórico e reparo no EN |
+| DOC-459 | Lab 24 | Lock de dependências e bloqueio de state são mecanismos diferentes; `-lockfile=readonly` impede atualização silenciosa do arquivo de dependências | Média | Distinção no EN |
+| DOC-460 | Lab 24 | Comando `git diff --exit-code -- .terraform.lock.hcl` verifica arquivo imutável após init; não é análise de mudanças não versionadas fora da comparação Git | Média | Escopo especificado no EN |
+| DOC-461 | Lab 24 | Falha de formatação do Lab 22 registrou código 3 no `fmt`; não confundir com `plan -detailed-exitcode` que utiliza 0/1/2 | Média | Advertência no EN |
+| DOC-462 | Lab 24 | Falha em `fmt` interrompeu passos restantes daquele job, enquanto Lab 23 concluiu normalmente; não interpretar como falha simultânea dos dois labs | Média | Resultado no EN |
+| DOC-463 | Lab 24 | Referência a variável inexistente passou pelo `fmt` e `init`, mas foi detectada por `validate` (exit 1); cenários demonstram responsabilidades de checks distintos | Alta | Teste descrito no EN |
+| DOC-464 | Lab 24 | Após correções, ambos os jobs passaram; testes cobrem defeitos específicos e não todas as falhas possíveis de HCL, módulo ou provider | Alta | Generalização evitada no EN |
+| DOC-465 | Lab 24 | PR #1 encontra-se fechado e não mesclado no GitHub; histórico afirma exclusão de branch temporária e arquivos de teste | Média | PR conferido; histórico contextualizado no EN |
+| DOC-466 | Lab 24 | Checks aprovados não comprovam branch protection ou regra de status obrigatório para impedir merge com falhas | Alta | Limitação explícita no EN |
+| DOC-467 | Lab 24 | Actions `actions/checkout@v6` e `hashicorp/setup-terraform@v4` usam tags em vez de SHA imutável; considerar pinagem para reduzir risco de supply chain | Alta | Recomendação no EN |
+| DOC-468 | Lab 24 | Permissão `contents: read` e checkout sem credenciais persistentes restringem exposição, mas não são comprovação de segurança de todo pipeline | Média | Distinção no EN |
+| DOC-469 | Lab 24 | Runner `ubuntu-24.04`, Terraform `1.16.1` e timeout de dez minutos por job são escolhas de execução registradas; avaliar upgrades separadamente | Baixa | Configuração documentada no EN |
+| DOC-470 | Lab 24 | Diretório `images/` contém seis PNGs, apesar de README original incorporar cinco; sexta imagem vinculada sem atribuição de conteúdo não verificado | Média | Inventário completo no EN |
+| DOC-471 | Lab 24 | Inspeção visual integral das seis capturas quanto a conteúdo, legibilidade e possível exposição de identidade/ambiente GitHub permanece pendente | Média | Pendente |
+| DOC-472 | Lab 24 | Uso de GitHub-hosted Actions pode estar sujeito a limites/consumo de plataforma, mas laboratório não consome EC2/S3 nem AWS credentials | Baixa | Custos contextualizados no EN |
+| DOC-473 | Lab 24 | Próximo diretório existente é `25-cloudwatch-metrics` e deve ser vinculado sem sugerir execução do Lab 25 | Baixa | Link inserido no EN |
+
+**Resultado:** publicada documentação inglesa com arquitetura de dois jobs, filtros de eventos, inicialização readonly, dependências Windows/Linux, dois ensaios negativos, correções e encerramento de PR sem merge. Workflow, lock e PR inspecionados; seis imagens preservadas. Nenhuma execução do CI/Terraform/AWS nem modificação de YAML/HCL. Inspeção visual das evidências pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
