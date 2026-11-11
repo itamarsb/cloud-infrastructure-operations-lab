@@ -570,6 +570,39 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** versão inglesa publicada com fluxo `Baseline → BackedUp → DataLoss → Restored → cleanup`, comandos, integridade do pacote, VersionId, 404/200 da falha parcial, recuperação, intervalos distintos, cleanup S3 versionado e 13 caminhos de imagens. Sete scripts e duas políticas inspecionados estaticamente. Nenhuma operação AWS realizada. Inspeção visual integral das evidências e saneamento de identificadores históricos permanecem pendentes.
 
+## Auditoria específica — Lab 19
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/19-terraform-essential-workflow/README.md`, `terraform/versions.tf`, `terraform/main.tf`, `terraform/outputs.tf`, `.gitignore` na raiz do repositório e inventário de três imagens.  
+**Intervenção:** publicado `README.en.md` em inglês com três imagens e documentação passo a passo; navegação bilíngue adicionada ao README original, sem alterar as demais seções. Nenhuma execução do Terraform, alteração de configuração HCL, estado ou recurso AWS ocorreu nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-336 | Lab 19 | `terraform_data.lab19` é recurso integrado registrado no estado local, não objeto EC2/S3 ou recurso provisionado na AWS | Alta | Escopo explicitado no EN |
+| DOC-337 | Lab 19 | Execução documentada dispensou AWS CLI, credenciais AWS e infraestrutura de nuvem; não atribuir custos AWS ao exercício | Alta | Esclarecido no EN |
+| DOC-338 | Lab 19 | Restrição `>= 1.4.0, < 2.0.0` aceita versões além da `1.16.1` historicamente utilizada; não confundir versão usada com pin exato | Média | Contextualizado no EN |
+| DOC-339 | Lab 19 | `terraform plan -detailed-exitcode`: 0 sem mudanças, 1 erro e 2 mudanças propostas; código 2 não representa falha | Alta | Semântica documentada no EN |
+| DOC-340 | Lab 19 | Arquivo de plano salvo deve ser inspecionado antes do `apply`; aplicação com caminho de plano não solicita confirmação interativa habitual | Alta | Advertência no EN |
+| DOC-341 | Lab 19 | Planos podem ficar obsoletos com mudanças de estado; não reutilizar `.tfplan` depois de alterações concorrentes sem revisão | Alta | Advertência no EN |
+| DOC-342 | Lab 19 | Segundo plano sem mudanças comprova convergência da configuração e estado do recurso local; não é validação de drift de infraestrutura AWS | Alta | Limitação no EN |
+| DOC-343 | Lab 19 | `terraform destroy` remove o recurso gerenciado no workspace atual, não necessariamente arquivos de estado, backups ou arquivos `.tf` | Alta | Distinção no EN |
+| DOC-344 | Lab 19 | Após destroy, um novo plano normal pode propor criação, pois os arquivos de configuração continuam declarando o recurso | Média | Esclarecido no EN |
+| DOC-345 | Lab 19 | Antes de destroy, conferir workspace e `terraform state list` para prevenir destruição de objetos não pertencentes ao exercício | Alta | Salvaguarda no EN |
+| DOC-346 | Lab 19 | Remover ou editar `terraform.tfstate` manualmente não equivale a destruir recurso com Terraform e pode prejudicar rastreabilidade | Alta | Advertência no EN |
+| DOC-347 | Lab 19 | `.gitignore` exclui `.terraform/`, arquivos de estado e planos, mas não oferece criptografia, bloqueio de leitura nem garantia contra commits anteriores | Alta | Limitação no EN |
+| DOC-348 | Lab 19 | Em deployments reais, estado e planos podem conter atributos sensíveis; tratar arquivos locais como dados operacionais protegidos | Alta | Alerta no EN |
+| DOC-349 | Lab 19 | `.terraform.lock.hcl` é relevante para seleções de providers externos; exercício usa provider integrado, sem necessidade de plugin AWS | Média | Diferenciado no EN |
+| DOC-350 | Lab 19 | Erro inicial `Too many command line arguments` decorreu de invocação CLI; array PowerShell corrigiu argumentos sem criar recurso na tentativa falha | Média | Histórico preservado no EN |
+| DOC-351 | Lab 19 | `terraform fmt -check` verifica sem reformatar; execução de `terraform fmt` pode modificar arquivos e exige revisão Git | Baixa | Esclarecido no EN |
+| DOC-352 | Lab 19 | `terraform validate` confirma validade de configuração, não que o plano foi aplicado ou que houve criação de recurso | Média | Limitação no EN |
+| DOC-353 | Lab 19 | IDs do recurso `terraform_data` são específicos da criação; não reutilizar identificador histórico como parâmetro fixo | Baixa | Observação no EN |
+| DOC-354 | Lab 19 | O laboratório não ensaia backend remoto, locking compartilhado, colaboração, AWS provider, políticas CI/CD ou risco de drift externo | Média | Limites explicitados no EN |
+| DOC-355 | Lab 19 | Três imagens estão presentes e referenciadas, mas não foram inspecionadas integralmente para legibilidade ou dados acidentais | Média | Inventário confirmado; inspeção visual pendente |
+| DOC-356 | Lab 19 | Caminho `C:\GitHub\...` é específico da estação original; documentação para terceiros deve permitir qualquer local de clone | Baixa | Ajustado no EN |
+| DOC-357 | Lab 19 | Próximo diretório existente é `20-terraform-aws-infrastructure`; manter navegação e distinguir claramente Lab 19 local de Lab 20 AWS | Baixa | Confirmado no EN |
+
+**Resultado:** README em inglês publicado com procedimentos `init`, `fmt`, `validate`, plano salvo, `apply`, inspeção de estado e outputs, plano sem mudanças, `destroy` e verificação de estado vazio. Três imagens preservadas. Arquivos HCL e `.gitignore` revisados estaticamente. Nenhum comando Terraform ou AWS foi executado. Inspeção visual integral das três imagens permanece pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
