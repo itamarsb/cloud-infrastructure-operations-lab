@@ -371,6 +371,37 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** tradução inglesa publicada com cinco imagens e procedimentos completos de implantação, validação, injeção de falha controlada, vinte requisições bem-sucedidas pelo backend B, recuperação, nova validação e cleanup. Scripts e política IAM inspecionados estaticamente. Nenhuma operação AWS realizada nesta fase. Evidências não inspecionadas visualmente em resolução integral.
 
+## Auditoria específica — Lab 13
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/13-aws-application-troubleshooting/README.md`, seis scripts PowerShell (`deploy-aws-application-troubleshooting.ps1`, `invoke-aws-application-failure.ps1`, `diagnose-aws-application-failure.ps1`, `recover-aws-application-service.ps1`, `test-aws-application-troubleshooting.ps1`, `remove-aws-application-troubleshooting.ps1`), `policies/ec2-ssm-trust-policy.json` e inventário de três imagens.  
+**Intervenção:** publicada versão inglesa `README.en.md` com evidências efetivamente existentes e links bilíngues. Português preservado exceto pelo link. Nenhum script, serviço Linux ou recurso AWS foi executado ou alterado nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-203 | Lab 13 | Diagnóstico que termina com sucesso confirma a causa esperada da falha, **não** significa que o serviço esteja recuperado | Alta | Explicado no EN |
+| DOC-204 | Lab 13 | Injeção de configuração inválida mantém Nginx indisponível até executar script separado de recuperação; não há rollback automático da injeção | Alta | Advertência no EN |
+| DOC-205 | Lab 13 | Diagnóstico cobre estado de serviço, processo, porta TCP 80, `nginx -t` e `journalctl`; explicitar que esse encadeamento caracteriza uma falha simulada conhecida | Média | Esclarecido no EN |
+| DOC-206 | Lab 13 | Diagnóstico sem alterações corretivas usa `ssm:SendCommand`; distinguir comandos remotos observacionais de API AWS estritamente read-only | Alta | Distinção no EN |
+| DOC-207 | Lab 13 | Injeção exige `-ConfirmFailureInjection`; recuperação `-ConfirmRecovery`; cleanup `-ConfirmRemoval`. As três ações possuem efeitos distintos | Alta | Fluxo detalhado no EN |
+| DOC-208 | Lab 13 | Backup e marcador de falha são fundamentais para restaurar e evitar repetição ambígua da injeção; revisar estado e preservar evidências em falha parcial | Alta | Contextualizado no EN |
+| DOC-209 | Lab 13 | `nginx -t` pode falhar de maneira esperada durante incidente; saída e status devem ser interpretados no contexto do diagnóstico | Média | Contextualizado no EN |
+| DOC-210 | Lab 13 | Resultado HTTP público pode ser afetado por IP de origem, VPN/NAT ou configuração do SG; indisponibilidade isolada não identifica causa de aplicação | Média | Ressalva no EN |
+| DOC-211 | Lab 13 | README em português contém IDs completos da VPC e da sub-rede na seção de resultados, apesar do compromisso de anonimização de evidências | Alta | Identificado; correção no PT-BR pendente de aprovação |
+| DOC-212 | Lab 13 | Scripts imprimem IDs, IPv4 público e URL em saídas; inspecionar imagens e o README original antes de afirmar anonimização integral | Alta | Observação no EN; inspeção visual pendente |
+| DOC-213 | Lab 13 | O inventário contém apenas três imagens; duas possuem nomes genéricos `Clipboard_...` e não devem receber descrições específicas sem inspeção visual | Média | EN preserva links neutros; análise visual pendente |
+| DOC-214 | Lab 13 | Alguns trechos PT-BR ainda narram execução futura apesar de resultados finais documentados; uniformizar tempos verbais posteriormente | Média | EN relata histórico; PT-BR pendente |
+| DOC-215 | Lab 13 | Ambiente EC2 não tem chave SSH, mas HTTP TCP 80 permanece sem TLS; restrição por IPv4 e ausência de SSH não são hardening completo | Alta | Esclarecido no EN |
+| DOC-216 | Lab 13 | AMI Amazon Linux 2023 dinâmica impede reprodução bit a bit sem registrar AMI selecionada por execução | Média | Registrado no EN |
+| DOC-217 | Lab 13 | Falhas no deploy podem deixar recursos parciais; cleanup exige conferência de IDs, propriedade e dependências além das tags e da autorização | Alta | Advertência no EN |
+| DOC-218 | Lab 13 | Validação saudável e pós-recuperação é pontual; não comprova SLA/SLO ou resiliência de longo prazo | Média | Escopo no EN |
+| DOC-219 | Lab 13 | Uma instância `t3.micro`, armazenamento EBS e IPv4 público podem gerar cobrança mesmo se removidos após a execução | Média | Custos contextualizados no EN |
+| DOC-220 | Lab 13 | Critérios de sucesso (29) representam execução histórica registrada; não atribuir sua conclusão a revisor ou leitor | Média | Esclarecido no EN |
+| DOC-221 | Lab 13 | Confirmar continuidade ao diretório real `14-aws-disk-utilization` e preservação da rede compartilhada do Lab 08 | Baixa | Navegação conferida no EN |
+| DOC-222 | Lab 13 | A política EC2 permite assumir role, mas não substitui permissão IAM de operador para Session Manager; revisar auditoria de sessões em uso real | Média | Esclarecido no EN |
+
+**Resultado:** publicação inglesa com roteiro completo de deploy, validação inicial, falha intencional, diagnóstico não remediador, recuperação autorizada, revalidação e cleanup. Os seis scripts e a política IAM foram revisados estaticamente. Inventário com três imagens confirmado, sendo duas vinculadas sem interpretação visual não verificada. IDs completos presentes no README português identificados como pendência prioritária. Nenhuma operação AWS realizada.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
