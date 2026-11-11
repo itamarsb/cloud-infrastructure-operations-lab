@@ -1,5 +1,7 @@
 # Lab 12 — Disponibilidade da aplicação com Application Load Balancer
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implementar e validar uma aplicação web distribuída entre duas zonas de disponibilidade na AWS.
