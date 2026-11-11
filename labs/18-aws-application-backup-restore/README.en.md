@@ -336,14 +336,9 @@ The first unsuccessful provisioning attempt was followed by removal of its parti
 
 ### Script syntax checks
 
-<row gap={2} align="start">
-  <box flex="1">
-    ![Recorded data-loss script syntax validation](images/Clipboard_09-30-2026_20.png)
-  </box>
-  <box flex="1">
-    ![Recorded diagnostic script syntax validation](images/Clipboard_09-30-2026_21.png)
-  </box>
-</row>
+![Recorded data-loss script syntax validation](images/Clipboard_09-30-2026_20.png)
+
+![Recorded diagnostic script syntax validation](images/Clipboard_09-30-2026_21.png)
 
 ![Recorded restore script syntax validation](images/Clipboard_09-30-2026_22.png)
 
