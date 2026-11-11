@@ -1,5 +1,7 @@
 # Lab 08 — Rede da aplicação na AWS
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Construir uma base de rede própria, segura e identificável para os próximos laboratórios do projeto.
