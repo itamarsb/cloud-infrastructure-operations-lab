@@ -340,6 +340,37 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** criada documentação inglesa com as oito referências de evidência, comandos dos quatro scripts, políticas IAM, requisitos e 22 critérios registrados; preservada a distinção entre implantação histórica, teste local simulado, validação de infraestrutura, restauração SHA-256 e cleanup. Scripts e políticas lidos estaticamente, sem execução. Inspeção visual aprofundada das oito imagens permanece pendente.
 
+## Auditoria específica — Lab 12
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/12-aws-application-availability/README.md`, quatro scripts (`deploy-aws-application-availability.ps1`, `test-aws-application-availability.ps1`, `invoke-aws-availability-failure.ps1` e `remove-aws-application-availability.ps1`), política `ec2-ssm-trust-policy.json` e inventário de cinco imagens.  
+**Intervenção:** criado `README.en.md` com resultados históricos e cinco imagens; README original recebeu apenas navegação recíproca. Nenhum script, instância, ALB ou configuração AWS foi executado ou alterado durante esta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-183 | Lab 12 | Falha controlada de Nginx em um backend não corresponde à indisponibilidade de uma Availability Zone inteira | Alta | Esclarecido no EN |
+| DOC-184 | Lab 12 | Vinte respostas HTTP consecutivas durante a janela após `unhealthy` comprovam continuidade observada, não 100% de uptime ou ausência de perdas durante transição | Alta | Limitação explicitada no EN |
+| DOC-185 | Lab 12 | Health check HTTP `GET /health` com resposta esperada não representa teste completo de jornadas, dependências e SLIs/SLOs da aplicação | Média | Contextualizado no EN |
+| DOC-186 | Lab 12 | Script de validação apresentado como somente leitura usa `ssm:SendCommand` para executar inspeções no host; não é exclusivamente consulta passiva AWS | Alta | Distinção no EN; PT-BR pendente |
+| DOC-187 | Lab 12 | Recuperação obrigatória via `finally` reduz riscos do teste de falha, mas não garante recuperação caso SSM/instância/serviço estejam indisponíveis | Alta | Alerta no EN |
+| DOC-188 | Lab 12 | `-ConfirmFailureTest` e `-ConfirmRemoval` autorizam ações disruptivas e destrutivas, mas exigem verificação contextual de alvos antes da execução | Alta | Alertas no EN |
+| DOC-189 | Lab 12 | ALB expõe HTTP público na porta 80 sem TLS; distinguir isolamento de acesso na rede de confidencialidade de dados | Alta | Esclarecido no EN |
+| DOC-190 | Lab 12 | Backend em sub-rede pública com ingress restrito ao Security Group do ALB não equivale a instância localizada em sub-rede privada | Média | Esclarecido no EN |
+| DOC-191 | Lab 12 | Security Groups e ausência de SSH não demonstram controle completo de egress, IAM ou segurança da aplicação | Média | Ressalva no EN |
+| DOC-192 | Lab 12 | Respostas observadas de A e B validam distribuição na amostra, não balanceamento percentual, latência ou desempenho em carga sustentada | Média | Limitação no EN |
+| DOC-193 | Lab 12 | AMI Amazon Linux 2023 selecionada por parâmetro público SSM pode mudar em novas execuções; registrar AMI ID para reprodutibilidade | Média | Contextualizado no EN |
+| DOC-194 | Lab 12 | Falha no provisionamento pode deixar recursos parciais; deployment não assegura rollback e exige avaliação antes de reexecução/cleanup | Alta | Alerta no EN |
+| DOC-195 | Lab 12 | Cleanup depende de nomes, tags e IDs identificados; verificar dependências e dados antes da exclusão de recursos e respeitar rede compartilhada do Lab 08 | Alta | Alerta no EN |
+| DOC-196 | Lab 12 | Troubleshooting de `Keep-Alive`/`Close` em PowerShell 5.1 e normalização de `\r` devem ser registrados como ajustes históricos, sem atribuir erro ao ALB | Média | Preservado no EN |
+| DOC-197 | Lab 12 | Teste de sintaxe PowerShell e parsing JSON não comprovam êxito operacional das consultas e ações AWS | Média | Esclarecido no EN |
+| DOC-198 | Lab 12 | Custo potencial de dois EC2, EBS, IPv4 público, ALB e transferência não é eliminado retroativamente por cleanup | Alta | Esclarecido no EN |
+| DOC-199 | Lab 12 | Inspecionar visualmente cinco evidências para IDs de instância, ALB URL/ARN, dados de conta e integridade dos resultados | Alta | Inventário verificado; inspeção visual pendente |
+| DOC-200 | Lab 12 | Critérios de sucesso marcados com `[x]` são resultados históricos, não execução recente de revisor ou futuro leitor | Média | Esclarecido no EN |
+| DOC-201 | Lab 12 | Verificação final da rede deve preservar VPC e ambas as sub-redes do Lab 08; distinguir resultado histórico de inventário atual | Média | Documentado no EN |
+| DOC-202 | Lab 12 | Verificar navegação ao diretório real do Lab 13, `13-aws-application-troubleshooting`, sem inventar rota | Baixa | Conferido no EN |
+
+**Resultado:** tradução inglesa publicada com cinco imagens e procedimentos completos de implantação, validação, injeção de falha controlada, vinte requisições bem-sucedidas pelo backend B, recuperação, nova validação e cleanup. Scripts e política IAM inspecionados estaticamente. Nenhuma operação AWS realizada nesta fase. Evidências não inspecionadas visualmente em resolução integral.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
