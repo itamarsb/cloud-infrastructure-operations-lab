@@ -1,5 +1,7 @@
 # Lab 07 — Baseline operacional da conta AWS
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Executar uma avaliação somente leitura de uma conta AWS antes de novas implantações.
