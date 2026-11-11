@@ -201,6 +201,33 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** versão inglesa com seis ações do script e duas referências de imagens, mantendo as observações históricas de falha e recuperação. O script foi lido, não executado. Arquivos binários não foram inspecionados visualmente nesta fase. Navegação final conferida com o diretório real do Lab 07 (`07-aws-account-baseline`).
 
+## Auditoria específica — Lab 07
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/07-aws-account-baseline/README.md`, `scripts/test-aws-account-baseline.ps1` e inventário da imagem `images/lab-07-baseline-summary.png`.  
+**Intervenção:** criada versão inglesa `README.en.md` com inventário e resultados originais, além de navegação recíproca no README português. Nenhuma consulta à AWS foi executada; o script e a evidência foram preservados.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-099 | Lab 07 | Script retorna código `0` com avisos; resultado 17 OK/8 avisos/0 falhas não equivale a aprovação integral de segurança | Alta | Contextualizado no EN |
+| DOC-100 | Lab 07 | `get-public-access-block` no S3 pode falhar por ausência de configuração, acesso negado ou outro erro; separar causas antes de inferir postura de segurança | Alta | Ressalva no EN; refinamento de script pendente |
+| DOC-101 | Lab 07 | Falha de `get-bucket-website` é relatada como hospedagem não configurada, sem distinguir `AccessDenied` de ausência de configuração | Média | Ressalva no EN; script pendente |
+| DOC-102 | Lab 07 | Quatro controles de Block Public Access não habilitados no bucket não provam, isoladamente, que o bucket esteja efetivamente público | Alta | Esclarecido no EN |
+| DOC-103 | Lab 07 | `list-objects-v2 --max-keys 1` não comprova inexistência de versões não atuais ou delete markers; rever afirmação de bucket totalmente vazio | Média | Escopo esclarecido no EN |
+| DOC-104 | Lab 07 | API Resource Groups Tagging não representa necessariamente todos os recursos; não interpretar 4 recursos como inventário total da conta | Alta | Esclarecido no EN |
+| DOC-105 | Lab 07 | A falta de tags reflete convenção proposta no lab; sem política corporativa registrada, não classificar ausência como não conformidade comprovada | Média | Contextualizado no EN |
+| DOC-106 | Lab 07 | Zero nós no Systems Manager ou zero alarmes métricos não é necessariamente falha: depende do inventário, do requisito e do monitoramento externo | Média | Esclarecido no EN |
+| DOC-107 | Lab 07 | EC2 parada e monitoramento detalhado desabilitado podem ser estados válidos conforme objetivo e política; evitar tratar como incidentes | Média | Contextualizado no EN |
+| DOC-108 | Lab 07 | Resultado de EBS não criptografado merece investigação prioritária, mas ação deve ser planejada após confirmar proprietário e dependências | Alta | Prioridade contextualizada no EN |
+| DOC-109 | Lab 07 | Escopo regional `us-east-1` e chamadas globais/por bucket S3 não constituem varredura de todas as Regiões e contas | Alta | Clarificado no EN |
+| DOC-110 | Lab 07 | `cloudwatch describe-alarms` analisa `MetricAlarms` no código, sem avaliação completa de alarmes compostos ou monitores externos | Média | Limitação no EN |
+| DOC-111 | Lab 07 | Inventário anônimo oculta nomes e IDs, mas datas, contagens, perfil, Região e detalhes de saídas ainda podem ser sensíveis | Média | Aviso no EN; inspeção visual pendente |
+| DOC-112 | Lab 07 | Resultados 17/8/0 e recursos inventariados são registros históricos; não descrever a conta como se tivesse sido verificada hoje | Alta | Diferenciação explícita no EN |
+| DOC-113 | Lab 07 | Inspecionar captura `lab-07-baseline-summary.png` em resolução integral e validar ausência de informações sensíveis ou identificadores | Alta | Arquivo confirmado; inspeção visual pendente |
+| DOC-114 | Lab 07 | Avaliar tratamento sanitizado de erros distintos da AWS CLI (permissão versus configuração ausente versus falha de conexão) | Alta | Auditoria estática concluída; evolução do script pendente |
+
+**Resultado:** tradução inglesa publicada com 17 aprovações, 8 avisos, 0 falhas, código de saída 0, tabelas de inventário, limiares e conclusões de escopo preservados. O script PowerShell foi lido estaticamente, sem autenticação ou consultas à conta. O próximo diretório `08-aws-application-network` foi conferido no repositório.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
