@@ -281,6 +281,34 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** tradução inglesa publicada com quatro referências visuais, arquitetura, scripts, IAM trust policy e sequência de deploy/validate/session/cleanup preservadas. Os arquivos foram lidos estaticamente; a conta AWS não foi consultada. A inspeção visual das quatro imagens permanece pendente.
 
+## Auditoria específica — Lab 10
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/10-linux-web-service/README.md`, `scripts/deploy-linux-web-service.ps1`, `scripts/test-linux-web-service.ps1`, `scripts/remove-linux-web-service.ps1`, `policies/ec2-ssm-trust-policy.json` e inventário de seis imagens.  
+**Intervenção:** criada versão inglesa `README.en.md` com seis imagens e navegação recíproca; documentação portuguesa preservada exceto pelo link de idioma. Nenhuma execução de PowerShell, EC2, Systems Manager ou Nginx foi realizada durante esta auditoria.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-146 | Lab 10 | HTTP na porta 80 não utiliza TLS; limitar origem com `/32` não fornece criptografia nem autenticação da aplicação | Alta | Advertência no EN; PT-BR pendente |
+| DOC-147 | Lab 10 | `/32` restringe a um endereço IPv4, mas não a um usuário; NAT, VPN, proxy ou mudanças de endereço podem afetar a origem efetiva | Média | Explicado no EN |
+| DOC-148 | Lab 10 | `checkip.amazonaws.com` é consulta externa e o endereço observado pode não coincidir com a origem efetiva de todas as conexões HTTP | Média | Contextualizado no EN |
+| DOC-149 | Lab 10 | Script de validação descrito como “somente leitura” emprega `ssm:SendCommand` com comandos locais de inspeção; operação não é API AWS estritamente read-only | Alta | Distinção explícita no EN; precisão do PT-BR pendente |
+| DOC-150 | Lab 10 | HTTP 200 e conteúdo esperado demonstram resposta pontual, não disponibilidade contínua, SLO ou prontidão de produção | Média | Esclarecido no EN |
+| DOC-151 | Lab 10 | AMI Amazon Linux 2023 é resolvida dinamicamente por parâmetro público SSM; execução posterior pode selecionar imagem diferente | Média | Ressalva no EN |
+| DOC-152 | Lab 10 | User Data e parâmetros JSON SSM em UTF-8 sem BOM diferem do comportamento de scripts PowerShell 5.1; manter a distinção entre codificações | Média | Documentado no EN |
+| DOC-153 | Lab 10 | Registrar falha histórica de serialização do `commands` separadamente do diagnóstico de Nginx: erro de chamada remota, não incidente web comprovado | Média | Diferenciado no EN |
+| DOC-154 | Lab 10 | Entidades HTML para acentos corrigem compatibilidade de renderização; não alterar o procedimento histórico sem novo teste | Baixa | Preservado no EN |
+| DOC-155 | Lab 10 | `-ConfirmRemoval` e tags são salvaguardas insuficientes para provar exclusividade de recursos e ausência de dependências IAM/EBS | Alta | Alerta no EN; revisão técnica futura |
+| DOC-156 | Lab 10 | Cleanup de instância e IAM não substitui inspeção completa de snapshots, volumes e recursos fora dos filtros de descoberta | Média | Ressalva no EN |
+| DOC-157 | Lab 10 | Verificar exposição de Instance ID, IPv4 público, CIDR de origem, DNS, hostnames e identidade nas seis capturas | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-158 | Lab 10 | Status SSM Online e checks de `systemd` verificam estado na execução, não governança integral de sessões nem hardening do host | Média | Contextualizado no EN |
+| DOC-159 | Lab 10 | EC2, EBS, IPv4 público e transferência podem gerar custos apesar da curta duração e do cleanup; não presumir gratuidade | Alta | Explicado no EN |
+| DOC-160 | Lab 10 | Checklist preenchido reflete execução histórica, não conclusão automática para quem reproduzir o laboratório | Média | Explicitado no EN |
+| DOC-161 | Lab 10 | Separar claramente implantação mutável, testes de configuração com SSM Run Command e cleanup destrutivo; preservar rede do Lab 08 | Alta | Documentado no EN |
+| DOC-162 | Lab 10 | Conferir navegação e continuidade para o diretório real `11-aws-storage-recovery` | Baixa | Conferido no EN |
+
+**Resultado:** documentação inglesa publicada com as seis evidências, arquitetura EC2/Nginx/`systemd`/SSM, porta HTTP 80 limitada a `/32`, passos de implantação, validação, sessão administrativa, cleanup e correção histórica de codificação. Leitura estática dos três scripts e da política IAM concluída, sem execução. Inspeção visual aprofundada das seis capturas pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
