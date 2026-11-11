@@ -1,5 +1,7 @@
 # Lab 23 — Mudanças e drift
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Laboratório local de Terraform para comparar mudanças intencionais na configuração com alterações realizadas diretamente em um recurso gerenciado.
