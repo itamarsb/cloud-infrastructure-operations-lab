@@ -1,5 +1,7 @@
 # Lab 11 — Armazenamento e recuperação com EBS e Amazon S3
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implementar e validar um fluxo controlado de armazenamento e recuperação utilizando um volume Amazon EBS adicional e um bucket Amazon S3 privado.
