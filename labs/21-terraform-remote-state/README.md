@@ -1,5 +1,7 @@
 # Lab 21 — Estado remoto do Terraform
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Status
 
 Concluído e validado em 04/10/2026.
