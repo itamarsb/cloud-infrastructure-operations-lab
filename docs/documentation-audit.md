@@ -435,6 +435,39 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com parâmetros, comandos, diagnóstico nas seis dimensões, observações históricas (85% de pico, 24 arquivos, 1,50 GiB potenciais, 1% inodes, 0 arquivos removidos abertos e 57% após mitigação), 15 evidências e sequência de cleanup. Os seis scripts foram analisados estaticamente, sem execução. A inspeção visual integral das imagens permanece pendente.
 
+## Auditoria específica — Lab 15
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/15-aws-connectivity-troubleshooting/README.md`, seis scripts PowerShell (`deploy-aws-connectivity-troubleshooting.ps1`, `test-aws-connectivity-troubleshooting.ps1`, `invoke-aws-connectivity-failure.ps1`, `diagnose-aws-connectivity-failure.ps1`, `recover-aws-connectivity.ps1`, `remove-aws-connectivity-troubleshooting.ps1`), política `ec2-ssm-trust-policy.json` e inventário das dez imagens.  
+**Intervenção:** criada documentação inglesa `README.en.md` com seis imagens incorporadas e quatro capturas históricas vinculadas; navegação recíproca adicionada, sem alterar o texto português fora do seletor de idioma. Scripts, evidências e serviços AWS não foram modificados ou executados.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-245 | Lab 15 | README português publica número completo de conta AWS, IDs da VPC, subnet, route table, NACL, EC2, SG, IDs de regras e IPv4 público de origem; avaliar anonimização antes de distribuição | Alta | Identificado; omitido no EN; PT-BR pendente |
+| DOC-246 | Lab 15 | O primeiro check HTTP do deploy falhou, mas `curl.exe --noproxy "*"` confirmou HTTP 200 e conteúdo esperado sem segundo deploy; diferenciar erro do caminho cliente/proxy de falha da aplicação | Alta | Contextualizado no EN |
+| DOC-247 | Lab 15 | Consulta `checkip.amazonaws.com` fornece IPv4 visível ao serviço, que pode divergir do IP de saída das requisições via proxy ou VPN | Alta | Advertência no EN |
+| DOC-248 | Lab 15 | Falha controlada remove regra ingress TCP 80 do Security Group; não desliga instância, Nginx, rota, IGW ou NACL | Alta | Delimitado no EN |
+| DOC-249 | Lab 15 | Validador `Failed` com execução bem-sucedida comprova estado negativo esperado, não disponibilidade de serviço ou conclusão de recuperação | Alta | Esclarecido no EN |
+| DOC-250 | Lab 15 | Diagnóstico somente observacional usa `ssm:SendCommand`; execução remota não equivale a apenas consultas read-only AWS | Média | Distinção no EN |
+| DOC-251 | Lab 15 | Diagnóstico lista Network ACL mas não realiza comparação de baseline antes/depois; evitar afirmar que houve inspeção exaustiva ou prova de inalterabilidade | Alta | Limitação no EN |
+| DOC-252 | Lab 15 | Rota pública e IGW anexado isoladamente não provam tráfego ponta a ponta; considerar regras SG/NACL, origem e resposta real | Média | Documentado no EN |
+| DOC-253 | Lab 15 | SG é stateful e NACL é stateless; apresentar como camadas distintas na análise de conectividade | Média | Esclarecido no EN |
+| DOC-254 | Lab 15 | Falha registrada após mensagem de sucesso na injeção veio de `throw` do chamador ao avaliar `$LASTEXITCODE` depois de script PowerShell; não classificá-la erroneamente como falha da mutação AWS | Alta | Histórico preservado no EN |
+| DOC-255 | Lab 15 | Regra reautorizada tem novo ID AWS; protocolo, porta e CIDR caracterizam o acesso equivalente, sem exigir reutilização do ID removido | Média | Esclarecido no EN |
+| DOC-256 | Lab 15 | Diferenciar `-ConfirmConnectivityFailure`, `-ConfirmRecovery` e `-ConfirmRemoval` e conferir recursos antes de mudanças disruptivas/destrutivas | Alta | Procedimentos no EN |
+| DOC-257 | Lab 15 | A restauração da regra pode não devolver HTTP saudável para todos os clientes; confirmar origem de teste e propagação, não somente existência da regra | Média | Ressalva no EN |
+| DOC-258 | Lab 15 | HTTP em TCP 80 não oferece TLS; `/32` restringe rede mas não autentica usuário nem criptografa conteúdo | Alta | Advertência no EN |
+| DOC-259 | Lab 15 | AMI Amazon Linux 2023 via parâmetro SSM público é dinâmica; registrar AMI ID para reprodutibilidade de nova execução | Média | Contextualizado no EN |
+| DOC-260 | Lab 15 | Deploy pode terminar parcialmente após criar recursos; inventariar antes de repetir implantação ou iniciar cleanup | Alta | Ressalva no EN |
+| DOC-261 | Lab 15 | Tags, nomes e `-ConfirmRemoval` não garantem ausência de dependências externas; cleanup pode ser parcial e exige nova inspeção | Alta | Alertas no EN |
+| DOC-262 | Lab 15 | Custos de EC2, EBS e IPv4 público podem ser cobrados mesmo em execução curta seguida de exclusão | Média | Documentado no EN |
+| DOC-263 | Lab 15 | Dez capturas existem; seis possuem descrição de etapa e quatro são genéricas. Verificar todas visualmente, inclusive exposição de account ID, CIDR e IDs de recurso | Alta | Inventário conferido; inspeção visual pendente |
+| DOC-264 | Lab 15 | Estado histórico concluído em 25/09/2026 não representa disponibilidade/ausência atuais; não reusar IDs históricos em comandos atuais | Alta | Esclarecido no EN |
+| DOC-265 | Lab 15 | Scripts de validação aceitam `Healthy`, `Failed` e `Any`; `Any` não exige sucesso do HTTP externo, evitar confundir seu resultado com disponibilidade | Média | Semântica documentada no EN |
+| DOC-266 | Lab 15 | Navegação do próximo laboratório deve apontar para `16-aws-systems-manager-troubleshooting` efetivamente existente | Baixa | Confirmado no EN |
+
+**Resultado:** README inglês publicado com dez caminhos de evidência (seis imagens incorporadas e quatro links), procedimentos completos de deploy/Healthy, injeção/Failed, diagnóstico, recuperação/Healthy, cleanup e distinções entre falha de proxy, regra SG removida e resposta local saudável. Seis scripts e política IAM analisados estaticamente. Identificadores históricos no README português registrados para revisão de privacidade, sem alterá-los nesta etapa. Inspeção visual aprofundada das dez capturas pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
