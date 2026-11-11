@@ -533,6 +533,43 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com sete evidências, estados de release, comandos de deploy, candidata inválida, diagnóstico, rollback verificado, atualização v2, confirmação e cleanup. Sete scripts e política IAM examinados estaticamente. Exposição dos identificadores históricos no README português e account ID embutido em scripts registrada para revisão separada. Inspeção visual em resolução integral das sete capturas pendente. Nenhuma operação AWS realizada.
 
+## Auditoria específica — Lab 18
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/18-aws-application-backup-restore/README.md`, sete scripts PowerShell (`deploy-aws-application-backup-restore.ps1`, `test-aws-application-backup-restore.ps1`, `create-aws-application-backup.ps1`, `invoke-aws-application-data-loss.ps1`, `diagnose-aws-application-data-loss.ps1`, `restore-aws-application-backup.ps1`, `remove-aws-application-backup-restore.ps1`), políticas `ec2-ssm-trust-policy.json` e `s3-application-backup-policy-template.json` e inventário de 13 imagens.  
+**Intervenção:** README inglês publicado com nove evidências incorporadas e quatro imagens extras vinculadas; navegação bilíngue acrescentada ao português, sem modificar demais trechos. Nenhuma execução AWS, alteração de scripts, políticas ou imagens nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-310 | Lab 18 | Recuperação demonstrada é de **dois arquivos ativos** de aplicação; não representa restauração integral de instância, volume EBS, SO ou base de dados | Alta | Escopo explicitado no EN |
+| DOC-311 | Lab 18 | Durante `DataLoss`, `/health` seguiu respondendo HTTP 200 mesmo com `/` e `/version` em 404; health check isolado não garante funcionalidade crítica | Alta | Destacado no EN |
+| DOC-312 | Lab 18 | Backup depende de `VersionId` específico; evitar restaurar implicitamente versão mais recente ou objeto com mesmo nome sem conferir identidade | Alta | Documentado no EN |
+| DOC-313 | Lab 18 | Conferir SHA-256 de pacote, membro e manifesto é evidência forte de integridade frente à referência, mas não garante autenticidade de origem adulterável | Média | Ressalva no EN |
+| DOC-314 | Lab 18 | Archive `.tar.gz` exige exatamente cinco arquivos regulares sem diretórios e limites de tamanho; não generalizar verificador para arquivos tar arbitrários | Alta | Escopo esclarecido no EN |
+| DOC-315 | Lab 18 | Política S3 da instância permite `GetBucketVersioning`, `PutObject` e `GetObjectVersion` no escopo delimitado; não concede exclusões S3 | Alta | Política documentada no EN |
+| DOC-316 | Lab 18 | `aws:SecureTransport=false` aplica Deny ao acesso da identidade pelo bucket; avaliar demais principais e políticas de bucket separadamente | Média | Distinção no EN |
+| DOC-317 | Lab 18 | Block Public Access, SSE-S3, `BucketOwnerEnforced` e versionamento são controles distintos; versionamento não cria backup imutável | Alta | Explicado no EN |
+| DOC-318 | Lab 18 | Janela de 15 minutos após habilitação do versionamento é guarda programada no deploy; não afirmar que é requisito universal ou prova de propagação | Média | Limitação no EN |
+| DOC-319 | Lab 18 | `ObservedRecoverySeconds=356,294` mede da perda até HTTP local recuperado, incluindo diagnóstico/espera do operador; não confundir com tempo apenas de script | Alta | Interpretado no EN |
+| DOC-320 | Lab 18 | `RestoreOperationSeconds=0,663` mede trecho Python remoto, excluindo fluxo completo PowerShell/SSM; não anunciá-lo como RTO end-to-end | Alta | Diferenciado no EN |
+| DOC-321 | Lab 18 | `BackupAgeSecondsAtLoss=77.716,093` é idade da cópia, não RPO observado nem volume de dados perdidos | Alta | Diferenciado no EN |
+| DOC-322 | Lab 18 | SSM Run Command cria invocações mesmo durante diagnóstico não-remediador; timeouts podem exigir inspeção de `CommandId` e arquivos `pending` | Alta | Advertência no EN |
+| DOC-323 | Lab 18 | `flock` e registros pendentes ajudam a evitar repetição concorrente ou cega de backup/perda/restauração, mas falhas parciais podem requerer inspeção manual | Média | Documentado no EN |
+| DOC-324 | Lab 18 | Perda controlada apaga somente `index.html` e `version`; preservar `health`, configuração e bucket é essencial para a interpretação do experimento | Média | Delimitado no EN |
+| DOC-325 | Lab 18 | Falha inicial de deploy relacionada a argumentos EC2 foi corrigida e os recursos parciais removidos antes de reimplantar; registrar histórico sem ocultar falha | Média | Troubleshooting no EN |
+| DOC-326 | Lab 18 | Cleanup de bucket versionado exige exclusão permanente das versões e delete markers e inspeção de uploads multipart e concorrência | Alta | Alerta no EN |
+| DOC-327 | Lab 18 | `Quiet=true` gerou resposta vazia e incompatível com parser JSON; ajuste para `Quiet=false` permitiu validação e retomada do cleanup parcial | Média | Registro no EN |
+| DOC-328 | Lab 18 | Scripts têm AWS Account ID esperado hardcoded e Região limitada a `us-east-1`; não são portáveis apenas mudando perfil AWS CLI | Alta | Aviso no EN; parametrização futura |
+| DOC-329 | Lab 18 | README português publica conta, IP, bucket/key/VersionId, timestamps e hashes históricos; revisar exposição pública e imagens antes de afirmar anonimização | Alta | Omitidos no EN quando desnecessários; PT-BR pendente |
+| DOC-330 | Lab 18 | Existem 13 imagens, mas README português apresenta apenas nove; não atribuir conteúdo às quatro adicionais sem inspeção | Média | Nove incorporadas e quatro vinculadas no EN |
+| DOC-331 | Lab 18 | Inspeção visual integral das 13 imagens para legibilidade, conta, IP, bucket, VersionId, CommandId e dados sensíveis permanece necessária | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-332 | Lab 18 | Cleanup remove EC2, EBS e backup versionado; verificar retenção de evidências e possibilidade de recuperação antes de exclusão irreversível | Alta | Advertência no EN |
+| DOC-333 | Lab 18 | EC2, EBS, IPv4 público, S3 versões, requisições e transferência podem custar mesmo com cleanup posterior | Média | Registrado no EN |
+| DOC-334 | Lab 18 | Validações e métricas históricas não substituem testes de recuperação sob carga, falha completa de host, banco de dados ou definição formal de RTO/RPO | Média | Escopo no EN |
+| DOC-335 | Lab 18 | Próximo lab existente deve ser vinculado por `19-terraform-essential-workflow`; preservar VPC/subnet compartilhadas do Lab 08 | Baixa | Diretório conferido no EN |
+
+**Resultado:** versão inglesa publicada com fluxo `Baseline → BackedUp → DataLoss → Restored → cleanup`, comandos, integridade do pacote, VersionId, 404/200 da falha parcial, recuperação, intervalos distintos, cleanup S3 versionado e 13 caminhos de imagens. Sete scripts e duas políticas inspecionados estaticamente. Nenhuma operação AWS realizada. Inspeção visual integral das evidências e saneamento de identificadores históricos permanecem pendentes.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
