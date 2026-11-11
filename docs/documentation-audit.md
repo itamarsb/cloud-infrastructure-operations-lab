@@ -678,6 +678,37 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README em inglês publicado com arquitetura de backend independente, migração e preservação da identidade, demonstração de bloqueio concorrente, cleanup versionado de 14 itens e seis recursos bootstrap removidos. Onze arquivos de código/configuração inspecionados estaticamente, com 23 imagens inventariadas e referenciadas. Identificada a necessidade de alternar o backend para local em uma nova reprodução completa. Nenhuma operação Terraform ou AWS realizada; inspeção visual detalhada pendente.
 
+## Auditoria específica — Lab 22
+
+**Data:** 2026-11-11  
+**Arquivos examinados:** `labs/22-terraform-variables-outputs-modules/README.md`, cinco arquivos na raiz de `terraform/` (`versions.tf`, `variables.tf`, `main.tf`, `outputs.tf`, `terraform.tfvars.example`), quatro arquivos do módulo filho em `terraform/modules/lab-component/` e inventário de sete imagens.  
+**Intervenção:** publicada documentação inglesa `README.en.md` com todas as sete imagens referenciadas; navegação bilíngue incluída no README português, sem alterar demais conteúdos. Nenhuma execução Terraform ou AWS, nenhuma escrita em estado local e nenhuma edição dos arquivos HCL foi realizada.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-411 | Lab 22 | Exercício é exclusivamente local com provider integrado `terraform_data`, sem autenticação AWS, serviços em nuvem ou backend remoto do Lab 21 | Alta | Escopo documentado no EN |
+| DOC-412 | Lab 22 | Duas chamadas ao módulo filho criam exatamente dois recursos `terraform_data`, um por chamada; valores de `replica_count` não representam quantidade de recursos criados | Alta | Distinção explícita no EN |
+| DOC-413 | Lab 22 | `monitoring_enabled=true` é apenas metadado didático; não instala monitoramento, agentes ou observabilidade | Alta | Ressalva no EN |
+| DOC-414 | Lab 22 | Módulo `application` recebe `replica_count` da raiz; módulo `worker` fixa o valor em 1 e não acompanha alterações da variável da raiz | Média | Explicado no EN |
+| DOC-415 | Lab 22 | O `merge(var.tags, {...})` dá precedência aos campos do segundo mapa em conflitos de chave; distinguir mapa registrado de tags AWS reais | Média | Precedência esclarecida no EN |
+| DOC-416 | Lab 22 | Variáveis raiz/filho rejeitam `null`; validar nomes, enumeração de ambiente e integridade da faixa inteira 1–5 | Média | Regras documentadas no EN |
+| DOC-417 | Lab 22 | Somente um caso de entrada inválida (`replica_count=0`) foi testado; isso não comprova cobertura de limites, tipos, todos ambientes ou nomes | Média | Escopo delimitado no EN |
+| DOC-418 | Lab 22 | Rejeição da entrada retornou código 1; SHA-256 de `terraform.tfvars` permaneceu igual, demonstrando preservação do arquivo nesse ensaio | Média | Resultado histórico no EN |
+| DOC-419 | Lab 22 | `plan -detailed-exitcode`: 0 sem mudanças, 1 erro, 2 mudanças propostas; testar saída imediatamente via `$LASTEXITCODE` | Alta | Semântica documentada no EN |
+| DOC-420 | Lab 22 | Plano salvo de criação e destruição não exige nova aprovação interativa no `apply`; revisar ambos antes de executar | Alta | Alertas no EN |
+| DOC-421 | Lab 22 | `terraform fmt -check -diff -recursive` verifica raiz e filho sem modificar arquivos; diferença de formato exige avaliação antes de correção | Baixa | Etapa explicada no EN |
+| DOC-422 | Lab 22 | Outputs `component_ids` e `lab_summary` agregam dados dos módulos filhos; não representam endpoints HTTP ou infraestrutura provisionada | Média | Distinção no EN |
+| DOC-423 | Lab 22 | Identificadores UUID dos dois `terraform_data` são específicos da execução; não reutilizar como entradas fixas de novo ciclo | Baixa | IDs históricos omitidos no EN |
+| DOC-424 | Lab 22 | Segundo plano sem mudanças confirma convergência de estado local e configuração naquele momento; não detecta drift externo nem prova disponibilidade | Média | Limite no EN |
+| DOC-425 | Lab 22 | Plano destroy deve conter exclusivamente `module.application.terraform_data.component` e `module.worker.terraform_data.component` e exigir conferência do workspace | Alta | Procedimento no EN |
+| DOC-426 | Lab 22 | Depois do destroy, estado vazio não significa remoção dos nove arquivos de configuração; novo plano pode propor duas recriações | Média | Explicado no EN |
+| DOC-427 | Lab 22 | Não apagar estado ou executar `state rm` para fingir limpeza: o laboratório aplicou plano de destruição e verificou estado sem objetos | Alta | Advertência no EN |
+| DOC-428 | Lab 22 | `terraform.tfvars`, planos e estado devem permanecer fora do Git; `.gitignore` não garante sigilo nem controle de acesso | Alta | Salvaguardas no EN |
+| DOC-429 | Lab 22 | Sete imagens existem e foram referenciadas, mas inspeção visual integral para legibilidade, correspondência de etapa ou dados incidentais está pendente | Média | Inventário confirmado; exame visual pendente |
+| DOC-430 | Lab 22 | Continuidade deve apontar para diretório existente `23-terraform-changes-drift`, sem sugerir execução AWS no Lab 22 | Baixa | Navegação conferida no EN |
+
+**Resultado:** README inglês publicado com variáveis tipadas, validação, módulo reutilizável, outputs, dois recursos locais, planos salvos, no-change e destroy. Nove arquivos de configuração analisados estaticamente, sete capturas preservadas, scripts e serviços AWS intactos. Inspeção visual integral das evidências pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
