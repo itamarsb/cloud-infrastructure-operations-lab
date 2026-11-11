@@ -709,6 +709,38 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com variáveis tipadas, validação, módulo reutilizável, outputs, dois recursos locais, planos salvos, no-change e destroy. Nove arquivos de configuração analisados estaticamente, sete capturas preservadas, scripts e serviços AWS intactos. Inspeção visual integral das evidências pendente.
 
+## Auditoria específica — Lab 23
+
+**Data:** 2026-11-11  
+**Arquivos examinados:** `labs/23-terraform-changes-drift/README.md`, `.gitignore` do laboratório, seis arquivos em `terraform/` (`versions.tf`, `variables.tf`, `main.tf`, `outputs.tf`, `terraform.tfvars.example`, `.terraform.lock.hcl`) e inventário de 14 imagens.  
+**Intervenção:** publicado `README.en.md` em inglês, com 14 capturas incorporadas e distinções entre configuração, state e arquivo observado; adicionada navegação bilíngue no README português. Nenhuma execução Terraform, alteração HCL, manipulação de arquivo local ou operação AWS realizada.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-431 | Lab 23 | Exercício utiliza exclusivamente provider `hashicorp/local` e arquivo JSON de teste; não demonstrou drift em AWS, nem implantação/execução de aplicação | Alta | Escopo explicitado no EN |
+| DOC-432 | Lab 23 | Distinguir mudança declarada `application_version v1→v2` de drift externo `log_level info→debug`; só a segunda não altera a configuração desejada | Alta | Cenários separados no EN |
+| DOC-433 | Lab 23 | Terraform HCL, estado gravado e conteúdo real do arquivo são fontes diferentes; outputs anteriores ao refresh não comprovam leitura atual do recurso | Alta | Distinção detalhada no EN |
+| DOC-434 | Lab 23 | Mudança intencional gerou plano `1 add, 0 change, 1 destroy` para substituição de um recurso lógico `local_file`; não significa duas aplicações ativas | Alta | Interpretado no EN |
+| DOC-435 | Lab 23 | Drift externo gerou plano `1 add, 0 change, 0 destroy`; arquivo com `debug` ainda estava presente fisicamente após o plano | Alta | Plano diferenciado de observação física no EN |
+| DOC-436 | Lab 23 | Ação `create` após drift depende do comportamento do provider/estado observado; não generalizar a outros providers ou cenários de drift | Alta | Ressalva no EN |
+| DOC-437 | Lab 23 | A detecção exige confronto do arquivo real com baseline v2, configuração e state/outputs; planejamento isolado não executa reparo | Alta | Metodologia no EN |
+| DOC-438 | Lab 23 | Reconciliar requer aplicar plano revisado e confirmar conteúdo e SHA-256 do arquivo restaurado, não apenas confiar na saída do apply | Alta | Validação no EN |
+| DOC-439 | Lab 23 | Baseline v2 e recuperação compartilham SHA-256 registrado, enquanto drift apresenta valor diferente; preservar hashes como resultados históricos e verificar referência de confiança | Média | Quatro hashes preservados no EN |
+| DOC-440 | Lab 23 | `jsonencode` gera JSON compacto seguido de LF explícito; JSON ilustrativo formatado não equivale aos mesmos bytes usados nos hashes | Média | Diferença explicada no EN |
+| DOC-441 | Lab 23 | `expected_content_sha256` calcula hash do conteúdo declarado, não do arquivo lido continuamente; exigir hash independente do filesystem | Alta | Limitação dos outputs no EN |
+| DOC-442 | Lab 23 | Drift manual limitado a `local-artifacts/application-config.json` e não editou `terraform.tfstate`; preservar isolamento para reprodução | Alta | Restrição registrada no EN |
+| DOC-443 | Lab 23 | Provider `hashicorp/local` está fixado em 2.9.1 no HCL e lock; Terraform CLI permite `>=1.4,<2.0`; não confundir versões | Média | Dependências no EN |
+| DOC-444 | Lab 23 | Planos salvos de baseline, mudança, reconciliação e destruição precisam de inspeção prévia; aplicar plano salvo não requer aprovação interativa habitual | Alta | Salvaguarda no EN |
+| DOC-445 | Lab 23 | `plan -detailed-exitcode`: 0 sem mudanças, 1 erro, 2 mudanças propostas; verificar `$LASTEXITCODE` após cada comando externo | Média | Semântica documentada no EN |
+| DOC-446 | Lab 23 | `.gitignore` local protege `local-artifacts/` do versionamento usual e root ignora states/plans; nenhum deles representa confidencialidade ou criptografia | Alta | Advertência no EN |
+| DOC-447 | Lab 23 | Após destroy, confirmar simultaneamente estado vazio, arquivo gerenciado ausente e configuração/registros preservados; não apagar estado manualmente para simular limpeza | Alta | Critérios descritos no EN |
+| DOC-448 | Lab 23 | Arquivo `terraform.tfvars.example` mantém v1/info/dev, ao passo que variáveis locais pós-exercício estavam em v2/info/dev; leitor deve preparar valores corretos em cada fase | Média | Reprodutibilidade no EN |
+| DOC-449 | Lab 23 | Quatro registros locais `baseline-v1.json`, `baseline-v2.json`, `drift-observed.json` e `terraform-v1.tfvars` permaneceram fora do Git | Média | Inventário no EN |
+| DOC-450 | Lab 23 | As 14 evidências existem e estão incorporadas, porém não houve inspeção visual em resolução integral de legibilidade e dados incidentais | Média | Inventário verificado; inspeção visual pendente |
+| DOC-451 | Lab 23 | Próximo diretório existente é `24-terraform-automated-validation`; documentação deve apontar corretamente para ele | Baixa | Link conferido no EN |
+
+**Resultado:** README inglês com baseline v1, mudança intencional para v2, drift do arquivo, plano de recuperação, validação independente por conteúdo/hash e limpeza final. Sete arquivos técnicos (HCL/lock/exemplo e .gitignore) revisados estaticamente, 14 capturas preservadas e nenhuma operação Terraform/AWS executada. Inspeção visual integral pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
