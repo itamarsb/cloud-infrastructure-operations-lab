@@ -1,5 +1,7 @@
 # Lab 19 — Fluxo essencial do Terraform
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Este laboratório demonstra o fluxo de trabalho do Terraform por meio de um exercício local com o recurso integrado `terraform_data`.
