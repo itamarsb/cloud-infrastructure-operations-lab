@@ -1,5 +1,7 @@
 # Lab 13 — Troubleshooting de aplicação indisponível
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implantar uma aplicação web inicialmente saudável, introduzir uma falha controlada no Nginx, executar um diagnóstico estruturado e recuperar o serviço.
