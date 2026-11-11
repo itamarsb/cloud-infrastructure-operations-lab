@@ -500,6 +500,39 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês com sequência completa incluindo tentativa inconclusiva, reboot da instância exclusiva, `ConnectionLost` em 38/40, diagnóstico sem dependência de SSM, recuperação pela EC2 API, validação e cleanup. Seis evidências referenciadas e scripts/política lidos estaticamente. Identificadores históricos do README português registrados como prioridade de privacidade; inspeção visual das seis capturas pendente. Nenhuma operação AWS realizada.
 
+## Auditoria específica — Lab 17
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/17-aws-controlled-update/README.md`, sete scripts PowerShell (`deploy-aws-controlled-update.ps1`, `test-aws-controlled-update.ps1`, `apply-aws-controlled-update.ps1`, `diagnose-aws-controlled-update.ps1`, `rollback-aws-controlled-update.ps1`, `confirm-aws-controlled-update.ps1`, `remove-aws-controlled-update.ps1`), `policies/ec2-ssm-trust-policy.json` e inventário das sete imagens.  
+**Intervenção:** criada documentação inglesa `README.en.md` com sete imagens incorporadas; adicionada navegação bilíngue ao português sem outras alterações do texto original. Não houve execução de scripts, chamadas AWS, mudança de aplicação ou edição de evidências nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-288 | Lab 17 | Configuração inválida da candidata provoca falha em `nginx -t`, mas Nginx permanece ativo servindo v1; não descrever como indisponibilidade da aplicação | Alta | Precisão preservada no EN |
+| DOC-289 | Lab 17 | Diferenciar os cinco estados `Baseline`, `CandidateFailed`, `RolledBack`, `Updated` e `Confirmed`; validação de `CandidateFailed` não é sucesso da release v2 | Alta | Tabela de estados no EN |
+| DOC-290 | Lab 17 | Backup `backup-v1` e manifesto `SHA256SUMS` estão na mesma EC2: viabilizam rollback local, não recuperação após perda de instância/volume | Alta | Limitação explícita no EN |
+| DOC-291 | Lab 17 | Rollback restaura `index.html`, `health`, `version` e `lab17-release.conf`, confirma configuração e compara conteúdo com backup; não é transação atômica multi-arquivo | Alta | Etapas e escopo no EN |
+| DOC-292 | Lab 17 | SHA-256 e `cmp` demonstram equivalência de bytes aos dados de referência, mas não autenticidade/inviolabilidade do backup se ele puder ser alterado | Média | Esclarecido no EN |
+| DOC-293 | Lab 17 | Na candidata inválida, somente `lab17-release.conf` divergiu do backup; `/health`, `/version` e página permaneceram em v1 | Média | Resultado preservado no EN |
+| DOC-294 | Lab 17 | Marcador `updated` representa implantação v2 ainda não confirmada; `confirmed` exige comando separado e testes locais/externos | Alta | Fluxo diferenciado no EN |
+| DOC-295 | Lab 17 | Confirmação da v2 mantém backup v1; não presumir backup externo, resiliência ou rollback automático a partir do marcador | Média | Limitação no EN |
+| DOC-296 | Lab 17 | Diagnóstico sem remediação usa `ssm:SendCommand`; comando Linux observacional não é API AWS estritamente read-only | Média | Distinção no EN |
+| DOC-297 | Lab 17 | Run Command assíncrono pode concluir no host antes de uma falha/timeout do cliente; registrar `CommandId`, investigar invocation e marcador antes de repetição | Alta | Advertência no EN |
+| DOC-298 | Lab 17 | Falhas de encoding no Windows para `--parameters file://` e CRLF na linha `#!/bin/sh` exigiram normalização UTF-8/LF; parsing local isolado é insuficiente | Alta | Troubleshooting documentado no EN |
+| DOC-299 | Lab 17 | README português expõe AWS Account ID, VPC, subnet, EC2, SG, IPv4 da instância, origem `/32`, cinco CommandIds e hashes; avaliar divulgação/anonimização | Alta | Valores evitados no EN; PT-BR pendente |
+| DOC-300 | Lab 17 | Scripts também contêm identificador de conta esperado embutido; reprodução em outra conta depende de revisão explícita, não somente alterar `-ProfileName` | Alta | Identificado; revisão de parametrização futura |
+| DOC-301 | Lab 17 | HTTP TCP 80 sem TLS e origem restrita por IPv4 não implementam confidencialidade nem autenticação de usuário | Alta | Alerta no EN |
+| DOC-302 | Lab 17 | Teste v1/v2 é pontual numa instância única; não comprova rollout zero-downtime, disponibilidade contínua, ausência de erros sob carga ou SLA | Média | Escopo limitado no EN |
+| DOC-303 | Lab 17 | Verificação do endereço via `curl.exe --noproxy "*"` depende da origem efetiva do cliente; IP pode variar por VPN/NAT/proxy | Média | Advertência no EN |
+| DOC-304 | Lab 17 | Tags, nomes e confirmações de update/rollback/cleanup não substituem conferência de conta, ID da instância, dependências e retenção | Alta | Salvaguardas explicadas no EN |
+| DOC-305 | Lab 17 | Cleanup da EC2 remove potencialmente backup local, marcadores e rastros; preservar evidência requerida antes de operação irreversível | Alta | Advertência no EN |
+| DOC-306 | Lab 17 | AMI Amazon Linux 2023 resolvida dinamicamente; registrar AMI selecionada para reprodutibilidade de futuras execuções | Média | Ressalva no EN |
+| DOC-307 | Lab 17 | Custo de instância EC2, EBS e IPv4 público pode ocorrer antes de cleanup e não é anulado retroativamente | Média | Registrado no EN |
+| DOC-308 | Lab 17 | Sete imagens existem, mas a inspeção integral para legibilidade, hashes, CommandIds e identificadores pessoais/de conta não foi realizada | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-309 | Lab 17 | Próximo laboratório tem diretório real `18-aws-application-backup-restore`; vincular sem atribuir execução atual aos resultados históricos | Baixa | Link inserido no EN |
+
+**Resultado:** README inglês publicado com sete evidências, estados de release, comandos de deploy, candidata inválida, diagnóstico, rollback verificado, atualização v2, confirmação e cleanup. Sete scripts e política IAM examinados estaticamente. Exposição dos identificadores históricos no README português e account ID embutido em scripts registrada para revisão separada. Inspeção visual em resolução integral das sete capturas pendente. Nenhuma operação AWS realizada.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
