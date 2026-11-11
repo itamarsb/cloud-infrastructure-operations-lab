@@ -1,5 +1,7 @@
 # Lab 20 — Infraestrutura AWS como código
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Este laboratório aplica o fluxo de trabalho do Terraform ao provisionamento de uma aplicação Nginx na AWS.
