@@ -1,5 +1,7 @@
 # Lab 06 — Serviços e logs no Linux
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implantar e administrar um serviço Linux com `systemd`, verificar sua disponibilidade, diagnosticar uma falha de configuração pelos logs e restaurar a operação.
