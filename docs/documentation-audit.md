@@ -641,6 +641,43 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com 9 imagens, sete recursos gerenciados, quatro data sources, comandos de planos salvos, validações operacionais e destruição controlada. Dez arquivos Terraform e três scripts PowerShell inspecionados estaticamente. README português recebeu apenas navegação. Nenhum Terraform/AWS foi executado. Inspeção visual das imagens permanece pendente.
 
+## Auditoria específica — Lab 21
+
+**Data:** 2026-11-11  
+**Arquivos examinados:** `labs/21-terraform-remote-state/README.md`, seis arquivos de `bootstrap/` (incluindo `.terraform.lock.hcl`), três arquivos de `terraform/`, dois scripts PowerShell (`test-aws-terraform-remote-state-prerequisites.ps1`, `test-aws-terraform-state-bucket.ps1`) e inventário de 23 imagens.  
+**Intervenção:** criada tradução inglesa `README.en.md` com links para 13 evidências aceitas no documento original e dez imagens históricas adicionais; adicionada navegação bilíngue ao README português, sem alterar as demais seções. Não houve execução Terraform/AWS, migração real, modificação HCL ou exclusão de estado.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-385 | Lab 21 | Bootstrap e exercício têm estados separados: bootstrap local gerencia o bucket; exercício migra local → S3; evitar backend dependente do próprio estado que ele hospeda | Alta | Arquitetura explicitada no EN |
+| DOC-386 | Lab 21 | São seis recursos gerenciados pelo bootstrap e um `terraform_data.lab21` no exercício; este último não representa recurso AWS | Alta | Escopo no EN |
+| DOC-387 | Lab 21 | `terraform/versions.tf` atual declara `backend "s3" {}` e reflete fase pós-migração; reprodução do baseline exige preparar configuração local antes de criar o primeiro estado | Alta | Lacuna de reprodução detalhada no EN; melhoria de automação futura |
+| DOC-388 | Lab 21 | Após cleanup o bucket S3 não existe; execução direta de `terraform init` do exercício atual requer novo bootstrap e backend válido | Alta | Alerta no EN |
+| DOC-389 | Lab 21 | `init -migrate-state` transfere estado existente; `init -reconfigure` não substitui migração do estado | Alta | Diferença explicitada no EN |
+| DOC-390 | Lab 21 | Não reutilizar planos salvos antes de mudança de backend/estado; revisar novo plano no contexto S3 | Alta | Advertência no EN |
+| DOC-391 | Lab 21 | Migração preservou ID e outputs de `terraform_data.lab21`; comprova continuidade no cenário histórico, não recuperação universal contra corrupção | Média | Escopo no EN |
+| DOC-392 | Lab 21 | `use_lockfile=true` utiliza lock nativo do S3 por objeto `.tflock`; não envolve DynamoDB | Alta | Diferenciado no EN |
+| DOC-393 | Lab 21 | Lock do estado e `.terraform.lock.hcl` têm finalidades distintas: concorrência da escrita versus seleção de dependências | Média | Esclarecido no EN |
+| DOC-394 | Lab 21 | Tentativa inicial com `terraform console` não demonstrou lock; resultado aceito veio de `apply -replace` aguardando aprovação e segunda operação recusada | Alta | Histórico preservado no EN |
+| DOC-395 | Lab 21 | Erro `412 PreconditionFailed` foi observação desta tentativa de concorrência; não generalizar como único código possível de conflito de estado | Média | Limite no EN |
+| DOC-396 | Lab 21 | Aplicação em espera deve ser cancelada com `no`; aprovar substituição violaria a condição do ensaio de identidade preservada | Alta | Advertência no EN |
+| DOC-397 | Lab 21 | Não remover manualmente lock ativo, usar `-lock=false` ou `force-unlock` sem provar ausência do dono; risco de operações concorrentes | Alta | Procedimento seguro no EN |
+| DOC-398 | Lab 21 | Bucket com `force_destroy=false` não permite remoção automática de conteúdo; exige cleanup explícito e conferência de versões e delete markers | Alta | Explicado no EN |
+| DOC-399 | Lab 21 | Inventário observou duas versões do estado, seis versões históricas do lock e seis delete markers: 14 itens excluídos por chave e `VersionId` | Alta | Números preservados no EN |
+| DOC-400 | Lab 21 | Deleção de versão específica do S3 pode ser permanente; validar identidade, bucket, proprietário, chaves, versões e retenção antes de exclusão | Alta | Advertência no EN |
+| DOC-401 | Lab 21 | Ordem do cleanup deve destruir exercício via backend remoto, limpar versões/marcadores S3 e só então destruir seis recursos bootstrap | Alta | Sequência detalhada no EN |
+| DOC-402 | Lab 21 | Bootstrap exige `expected_account_id` sem default e workspace `default`; conferência da conta é proteção necessária em deploy e destroy | Alta | Pré-requisitos no EN |
+| DOC-403 | Lab 21 | Versionamento, Block Public Access, `BucketOwnerEnforced`, SSE-S3 e DenyInsecureTransport são controles distintos; não equivalem a Object Lock/imutabilidade | Média | Diferenciado no EN |
+| DOC-404 | Lab 21 | Política de bucket nega transporte inseguro, mas não demonstra least privilege global; revisar IAM de todos os operadores e outros principals | Alta | Ressalva no EN |
+| DOC-405 | Lab 21 | Estado remoto não significa execução remota: Terraform rodou na estação Windows e apenas persistiu estado/bloqueio no S3 | Média | Esclarecido no EN |
+| DOC-406 | Lab 21 | `local-artifacts/`, backend config, state e planos contêm dados operacionais; `.gitignore` não substitui segurança e sigilo dos arquivos locais | Alta | Avisos no EN |
+| DOC-407 | Lab 21 | Diretório `images/` contém 23 imagens, mas README original relaciona 13 aceitas; não atribuir conteúdos específicos às dez outras sem exame visual | Média | Todas 23 referenciadas, dez neutras no EN |
+| DOC-408 | Lab 21 | Inspeção visual integral das 23 capturas para IDs AWS, buckets, VersionIds, informação de estado, legibilidade e dados sensíveis permanece pendente | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-409 | Lab 21 | Custo AWS limita-se essencialmente a S3 e operações associadas; arquivo `terraform_data` não provisiona EC2 nem gera cobrança de compute | Média | Custos contextualizados no EN |
+| DOC-410 | Lab 21 | Navegação do próximo laboratório deve apontar para diretório existente `22-terraform-variables-outputs-modules` | Baixa | Link conferido no EN |
+
+**Resultado:** README em inglês publicado com arquitetura de backend independente, migração e preservação da identidade, demonstração de bloqueio concorrente, cleanup versionado de 14 itens e seis recursos bootstrap removidos. Onze arquivos de código/configuração inspecionados estaticamente, com 23 imagens inventariadas e referenciadas. Identificada a necessidade de alternar o backend para local em uma nova reprodução completa. Nenhuma operação Terraform ou AWS realizada; inspeção visual detalhada pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
