@@ -1,5 +1,7 @@
 # Lab 22 — Variáveis, outputs e módulos
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Laboratório local de Terraform com variáveis tipadas, validação de entradas, reutilização de um módulo filho e outputs do módulo raiz.
