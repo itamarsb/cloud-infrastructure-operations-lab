@@ -774,6 +774,48 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** publicada documentação inglesa com arquitetura de dois jobs, filtros de eventos, inicialização readonly, dependências Windows/Linux, dois ensaios negativos, correções e encerramento de PR sem merge. Workflow, lock e PR inspecionados; seis imagens preservadas. Nenhuma execução do CI/Terraform/AWS nem modificação de YAML/HCL. Inspeção visual das evidências pendente.
 
+## Auditoria específica — Lab 25
+
+**Data:** 2026-11-11  
+**Arquivos examinados:** `labs/25-cloudwatch-metrics/README.md`, oito scripts PowerShell (`lab25-common.ps1`, `deploy-aws-cloudwatch-metrics.ps1`, `test-aws-cloudwatch-metrics.ps1`, `invoke-aws-cloudwatch-cpu-load.ps1`, `new-aws-cloudwatch-dashboard.ps1`, `remove-aws-cloudwatch-dashboard.ps1`, `remove-aws-cloudwatch-metrics.ps1`, `test-aws-cloudwatch-cleanup.ps1`), dois JSONs (`lab25-settings.json` e `ec2-ssm-trust-policy.json`) e inventário de 17 imagens.  
+**Intervenção:** publicado `README.en.md` com todas as 17 evidências vinculadas (duas incorporadas); adicionada navegação bilíngue ao README português. Nenhum script, JSON, screenshot ou recurso AWS foi modificado nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-474 | Lab 25 | Lab 25 usa VPC, subnet, gateway e rotas **exclusivas**, diferentemente dos laboratórios que reutilizam a rede do Lab 08; cleanup remove a própria VPC | Alta | Arquitetura e escopo no EN |
+| DOC-475 | Lab 25 | Coleta inicial contempla quatro métricas; `CPUCreditBalance` é a quinta consulta complementar para análise de créditos e dashboard | Média | Distinguido no EN |
+| DOC-476 | Lab 25 | `CPUUtilization Average 50,173%` refere-se ao intervalo completo de cinco minutos, não a média de toda a execução de 600 s | Alta | Precisão nos dados do EN |
+| DOC-477 | Lab 25 | Carga de um processo em EC2 t3.micro de duas vCPUs produziu aproximadamente 50%; evitar interpretar como falha em atingir 100% ou uso de todas as vCPUs | Média | Contextualizado no EN |
+| DOC-478 | Lab 25 | Início e término da carga ocorreram no interior de períodos de 300 s, reduzindo médias das janelas parciais 20:40 e 20:50 | Média | Tabela e explicação no EN |
+| DOC-479 | Lab 25 | `CPUCreditBalance` é saldo agregado; variação líquida de cerca de 7,064 créditos não prova consumo bruto devido à acumulação simultânea | Alta | Limite explicitado no EN |
+| DOC-480 | Lab 25 | Métricas `NetworkIn`/`NetworkOut` com `Sum` registram bytes no período, não taxa de bytes/s; `Maximum` não equivale a pico contínuo instantâneo | Média | Semântica documentada no EN |
+| DOC-481 | Lab 25 | Publicação de dados CloudWatch pode atrasar; resposta sem pontos não pode ser transformada em valor zero nem indicar automaticamente ausência de uso | Alta | Advertência no EN |
+| DOC-482 | Lab 25 | Os 50 valores `StatusCheckFailed = 0` indicam ausência de falhas nas verificações EC2 consultadas, não disponibilidade de aplicação ou SLO | Alta | Limitação no EN |
+| DOC-483 | Lab 25 | Primeiro ponto de `NetworkIn` apresentou 88.826.944 bytes; não atribuir origem a processo específico ou adotar como baseline de tráfego estável | Média | Histórico preservado no EN |
+| DOC-484 | Lab 25 | Submissão SSM com `CommandId` não comprova término da carga; exigir `Success`, `ResponseCode=0` e `LOAD_FINISHED_OK` | Alta | Procedimento no EN |
+| DOC-485 | Lab 25 | Código 124 de `timeout` é esperado no shell após 600 s, mas a invocação SSM bem-sucedida retorna código 0 após tratamento pelo wrapper | Média | Distinção no EN |
+| DOC-486 | Lab 25 | Tentativa inicial falhou por CRLF em Bash remoto e não compõe medição concluída; normalização para LF permitiu a execução posterior | Média | Troubleshooting no EN |
+| DOC-487 | Lab 25 | Workload de CPU limitada ainda causa impacto e não deve ser aplicada em EC2 compartilhada/produção; lock reduz repetição concorrente | Alta | Advertência no EN |
+| DOC-488 | Lab 25 | Dashboard possui cinco widgets e JSON gerado dinamicamente; a comparação estrutural normalizada evita falsos erros por ordem de propriedades/whitespace | Média | Detalhado no EN |
+| DOC-489 | Lab 25 | Dashboard confirmado por API e console representa configuração e observação pontual, não garantia de coleta contínua ou monitoramento de SLO | Média | Escopo delimitado no EN |
+| DOC-490 | Lab 25 | Arquivo de settings e função common contêm AWS Account ID fixo, restringindo portabilidade para outra conta; revisar antes de qualquer reprodução | Alta | Identificado; valores omitidos no EN |
+| DOC-491 | Lab 25 | README original contém EC2 InstanceId, RunId e SSM CommandId históricos; considerar política de divulgação de identificadores nos textos e capturas | Alta | Valores omitidos no EN; PT preservado |
+| DOC-492 | Lab 25 | Recurso pré-existente/inventário local bloqueia novo deploy, protegendo contra duplicidade; falhas parciais exigem inspeção em vez de apagar inventário | Alta | Limite no EN |
+| DOC-493 | Lab 25 | Security Group não possui regras de entrada; administração SSM não depende de porta 22/SSH aberta, mas requer conectividade e permissões apropriadas | Média | Arquitetura no EN |
+| DOC-494 | Lab 25 | Dashboard deve ser removido e confirmado antes do cleanup da infraestrutura; scripts validam recibo, ARN, conteúdo, tags e relações de recursos | Alta | Sequência no EN |
+| DOC-495 | Lab 25 | Cleanup remove VPC exclusiva, EC2, EBS, IAM, SG, subnet e IGW; é operação destrutiva e incompatível com redes compartilhadas | Alta | Advertência no EN |
+| DOC-496 | Lab 25 | Correção histórica de objeto PowerShell com propriedade `V` deve ser registrada sem ocultar falha original de cleanup | Baixa | Histórico preservado no EN |
+| DOC-497 | Lab 25 | Onze verificações pós-cleanup cobrem recursos inventariados, IAM/dashboard e ENIs da VPC; não representam auditoria exaustiva da conta AWS | Alta | Escopo explicitado no EN |
+| DOC-498 | Lab 25 | Validador aceita instância `terminated` ainda retornada no DescribeInstances; resultado histórico específico já indicava instância ausente | Média | Diferença documentada no EN |
+| DOC-499 | Lab 25 | Registros sob `%LOCALAPPDATA%` incluem inventário, recibos e métricas; preservar e proteger dados operacionais e identificadores AWS | Média | Arquivos documentados no EN |
+| DOC-500 | Lab 25 | 17 imagens presentes e referenciadas; inspeção visual integral para legibilidade, IDs AWS e informação de conta permanece pendente | Alta | Inventário conferido; inspeção visual pendente |
+| DOC-501 | Lab 25 | EC2, EBS, IPv4, transferência e uso aplicável do CloudWatch podem cobrar mesmo com cleanup; não presumir Free Tier ou inferir faturamento zero | Média | Limitação no EN |
+| DOC-502 | Lab 25 | Métricas nativas não incluem necessariamente memória/uso de disco de convidado; CloudWatch Agent pertence ao Lab 26 e alarmes à etapa posterior | Média | Fronteira do escopo no EN |
+| DOC-503 | Lab 25 | AMI AL2023 selecionada por parâmetro SSM público pode variar entre execuções; registrar ID efetivo para reprodutibilidade | Baixa | Ressalva no EN |
+| DOC-504 | Lab 25 | Próximo laboratório existente é `26-cloudwatch-agent`; link deve ser conferido para continuidade bilíngue | Baixa | Link no EN |
+
+**Resultado:** README inglês publicado com VPC exclusiva, configurações SSM e métricas, cronologia UTC da carga, semântica de créditos de CPU, cinco widgets, procedimentos de validação e cleanup com onze verificações independentes. Oito scripts e dois JSONs examinados estaticamente. Todas as 17 imagens mantidas e referenciadas; inspeção visual das capturas pendente. Nenhum recurso AWS ou script modificado.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
