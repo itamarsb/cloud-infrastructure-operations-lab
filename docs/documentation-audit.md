@@ -603,6 +603,44 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README em inglês publicado com procedimentos `init`, `fmt`, `validate`, plano salvo, `apply`, inspeção de estado e outputs, plano sem mudanças, `destroy` e verificação de estado vazio. Três imagens preservadas. Arquivos HCL e `.gitignore` revisados estaticamente. Nenhum comando Terraform ou AWS foi executado. Inspeção visual integral das três imagens permanece pendente.
 
+## Auditoria específica — Lab 20
+
+**Data:** 2026-11-11  
+**Arquivos examinados:** `labs/20-terraform-aws-infrastructure/README.md`, dez arquivos no diretório `terraform/` (oito `.tf`, `user-data.sh.tftpl`, `.terraform.lock.hcl`), três scripts PowerShell (`test-aws-terraform-prerequisites.ps1`, `test-aws-terraform-infrastructure.ps1`, `test-aws-terraform-cleanup.ps1`) e inventário de nove imagens.  
+**Intervenção:** criado `README.en.md` em inglês, com nove evidências incorporadas; adicionado seletor de idiomas ao README em português sem alterar suas demais seções. Nenhuma execução Terraform/AWS ou edição dos arquivos HCL, scripts e imagens foi realizada.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-358 | Lab 20 | São sete recursos Terraform gerenciados; o root EBS está em `root_block_device` dentro de `aws_instance.application`, não como oitavo recurso independente | Alta | Explicitado no EN |
+| DOC-359 | Lab 20 | Quatro data sources consultam identidade AWS, VPC, subnet e AMI; VPC/subnet do Lab 08 não são gerenciadas nem importadas para o estado do Lab 20 | Alta | Diferenciação no EN |
+| DOC-360 | Lab 20 | `terraform apply` concluído não comprova cloud-init, SSM Online, Nginx saudável ou HTTP pronto; exigir validação operacional separada | Alta | Advertência no EN |
+| DOC-361 | Lab 20 | Planos salvos de criação e destruição são aplicados sem prompt interativo habitual; revisão anterior ao apply é o controle principal | Alta | Fluxo no EN |
+| DOC-362 | Lab 20 | `terraform plan -detailed-exitcode` retorna 0 sem alterações, 1 por erro, 2 com mudanças; exigir 2 no plano inicial e no destroy, 0 no segundo plano | Média | Documentado no EN |
+| DOC-363 | Lab 20 | State local não oferece backend remoto ou locking entre operadores; compartilhar arquivos locais sem governança cria risco de concorrência e perda | Alta | Limitação no EN |
+| DOC-364 | Lab 20 | Estado `terraform.tfstate` e planos `.tfplan` podem incluir user data, metadados e IDs; `.gitignore` não equivale a criptografia, sigilo ou controle de acesso | Alta | Advertência no EN |
+| DOC-365 | Lab 20 | `terraform state rm` ou apagar estado não exclui recursos AWS; cleanup deve usar Terraform com plano revisado e verificação AWS independente | Alta | Ressalva no EN |
+| DOC-366 | Lab 20 | A root EBS tem 8 GiB, `gp3`, criptografia e `delete_on_termination=true`; a exclusão AWS é verificada separadamente, sem contar o bloco como recurso gerenciado adicional | Média | Esclarecido no EN |
+| DOC-367 | Lab 20 | Uso de `most_recent=true` na AMI Amazon Linux 2023 significa que novo plano pode selecionar imagem diferente; registrar AMI resolvida para reprodutibilidade | Média | Contextualizado no EN |
+| DOC-368 | Lab 20 | Provider `hashicorp/aws` estava no lock em `6.67.0`, mas `~> 6.0` permite outras versões 6.x; usar `-lockfile=readonly` para seleção registrada | Média | Distinção no EN |
+| DOC-369 | Lab 20 | Hash SHA-256 de arquivo de lock pode mudar com CRLF/LF enquanto conteúdo semântico é igual; diferenciar hash do arquivo dos checksums de providers no lock | Média | Troubleshooting no EN |
+| DOC-370 | Lab 20 | `user-data.sh.tftpl` é carregado via `file()` e CRLF convertido a LF; trocar para `templatefile()` sem avaliar variáveis Bash pode quebrar o script | Média | Explicado no EN |
+| DOC-371 | Lab 20 | Marcador `bootstrap-complete` só é escrito após checagens locais; não confundir sua presença com garantia de disponibilidade externa contínua | Média | Contextualizado no EN |
+| DOC-372 | Lab 20 | Validador coleta hashes SHA-256 de arquivos Nginx, mas não os compara automaticamente a manifesto esperado; não anunciar autenticação ou verificação determinística de integridade | Alta | Limitação no EN |
+| DOC-373 | Lab 20 | Validador não remedia a aplicação, porém usa SSM Run Command, isto é, execução remota e não apenas APIs read-only AWS | Média | Distinção no EN |
+| DOC-374 | Lab 20 | SG aceita HTTP TCP 80 de /32 e HTTPS egress TCP 443 para `0.0.0.0/0`; sem TLS, autenticação HTTP ou egress mínimo em rede de produção | Alta | Advertência no EN |
+| DOC-375 | Lab 20 | `allowed_account_ids` é proteção útil, mas valor `expected_account_id` tem default histórico em HCL e scripts; revisar ao portar para outra conta | Alta | Registrado no EN; parametrização futura |
+| DOC-376 | Lab 20 | Validação de IPv4 obtido por checkip pode diferir do tráfego HTTP via proxy/VPN/NAT; revalidar origem antes do plano e dos testes | Média | Advertência no EN |
+| DOC-377 | Lab 20 | Pré-validação da VPC, subnet, IGW e NACL e conferência pós-cleanup inspecionam atributos selecionados, não um diff integral de rede compartilhada | Média | Escopo delimitado no EN |
+| DOC-378 | Lab 20 | Antes de destruir, registrar outputs/IDs para o validador pós-cleanup; depois do destroy outputs podem desaparecer | Alta | Procedimento explícito no EN |
+| DOC-379 | Lab 20 | Falha parcial de apply ou destroy exige inspeção de estado e inventário AWS antes de gerar novo plano; não presumir rollback automático | Alta | Advertência no EN |
+| DOC-380 | Lab 20 | Custos potenciais incluem EC2 `t3.micro`, EBS, IPv4 público e transferência; destroy posterior não elimina custos já incorridos | Média | Registrado no EN |
+| DOC-381 | Lab 20 | README português contém AMI, EC2, EBS, SG, SG rules, rede compartilhada e SSM CommandId históricos; revisar exposição e evitar reutilização | Alta | Omitidos no EN; PT-BR pendente |
+| DOC-382 | Lab 20 | Nove screenshots inventariados e incorporados, porém sem inspeção visual integral para legibilidade ou eventual exposição de conta/recursos | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-383 | Lab 20 | No-change plan documenta convergência na verificação pontual, não ausência perpétua de drift, SLA, testes de carga ou alta disponibilidade | Média | Ressalva no EN |
+| DOC-384 | Lab 20 | Documentar próximo diretório real `21-terraform-remote-state` e a distinção entre o state local atual e o backend remoto do Lab 21 | Baixa | Navegação conferida no EN |
+
+**Resultado:** README inglês publicado com 9 imagens, sete recursos gerenciados, quatro data sources, comandos de planos salvos, validações operacionais e destruição controlada. Dez arquivos Terraform e três scripts PowerShell inspecionados estaticamente. README português recebeu apenas navegação. Nenhum Terraform/AWS foi executado. Inspeção visual das imagens permanece pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
