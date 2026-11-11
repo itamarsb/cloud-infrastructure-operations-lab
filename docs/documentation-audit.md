@@ -178,6 +178,29 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** versão inglesa publicada com oito imagens e oito fases de execução; preservados comandos, configurações, tabela de propriedade antes/depois do SGID e registros históricos de 37 aprovações, 0 avisos e 0 falhas. Script Bash revisado estaticamente, sem execução. Inspeção visual detalhada das capturas permanece pendente.
 
+## Auditoria específica — Lab 06
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/06-linux-processes-services-logs/README.md`, `scripts/manage-lab06-service.sh` e inventário de duas imagens.  
+**Intervenção:** criado `README.en.md` com procedimentos de `systemd`, seis ações do script e duas evidências referenciadas; README português recebeu navegação de idioma. Nenhum serviço, conta, script ou configuração Linux foi executado/modificado durante a revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-087 | Lab 06 | Distinguir falha deliberada de `WorkingDirectory` e código `200/CHDIR` de incidente real em produção | Alta | Explicitado no EN |
+| DOC-088 | Lab 06 | O `python3 -m http.server` é adequado ao teste local, mas não é servidor de produção; descrever escopo restrito | Média | Esclarecido no EN |
+| DOC-089 | Lab 06 | `systemctl is-active` e `curl` confirmam estado/resposta pontuais, não disponibilidade contínua ou acesso externo | Média | Esclarecido no EN |
+| DOC-090 | Lab 06 | Script `setup` utiliza nomes fixos e regrava HTML/unit; verificações de identidade não excluem todas as colisões e dependências | Alta | Alerta no EN; revisão técnica futura |
+| DOC-091 | Lab 06 | `cleanup` remove conta, grupo, unit e arquivos; conferir propriedade exclusiva, symlinks, conteúdo inesperado e dependências antes da execução | Alta | Alerta no EN; inspeção técnica futura |
+| DOC-092 | Lab 06 | `simulate-failure` e `recover` usam override systemd; registrar que falha intencional provoca tentativas de reinício | Média | Explicado no EN |
+| DOC-093 | Lab 06 | Controles `NoNewPrivileges`, `PrivateTmp`, `ProtectSystem` e `ProtectHome` não constituem avaliação completa de hardening | Média | Escopo indicado no EN |
+| DOC-094 | Lab 06 | `validate` verifica substring HTTP e estado ativo; não comprova autoria do processo sem outras consultas | Média | Limitação no EN |
+| DOC-095 | Lab 06 | Ação `inspect` pode apresentar informações e registros de `journalctl` potencialmente identificadores; revisar material publicado | Média | Advertência no EN; inspeção visual pendente |
+| DOC-096 | Lab 06 | Conferir a legibilidade e ausência de dados sensíveis nas duas imagens originais | Alta | Arquivos inventariados; inspeção visual pendente |
+| DOC-097 | Lab 06 | README PT-BR é registro sucinto; considerar posteriormente ampliar requisitos e precauções de execução sem reescrever fatos históricos | Baixa | EN expandido; PT-BR pendente |
+| DOC-098 | Lab 06 | Diferenciar revisão estática do script e resultados históricos; não declarar nova validação operacional | Alta | Preservado no EN |
+
+**Resultado:** versão inglesa com seis ações do script e duas referências de imagens, mantendo as observações históricas de falha e recuperação. O script foi lido, não executado. Arquivos binários não foram inspecionados visualmente nesta fase. Navegação final conferida com o diretório real do Lab 07 (`07-aws-account-baseline`).
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
