@@ -255,6 +255,32 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** tradução inglesa publicada com as três imagens e arquitetura original (`10.20.0.0/16`, sub-redes `10.20.10.0/24` e `10.20.20.0/24`, zonas `us-east-1a`/`us-east-1b`, rota Internet Gateway e Security Group sem ingress), assim como o relato histórico de validação e cleanup. Os scripts foram examinados estaticamente, não executados. A inspeção visual das capturas continua pendente.
 
+## Auditoria específica — Lab 09
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/09-aws-ec2-systems-manager/README.md`, `scripts/deploy-aws-managed-instance.ps1`, `scripts/test-aws-managed-instance.ps1`, `scripts/remove-aws-managed-instance.ps1`, `policies/ec2-ssm-trust-policy.json` e inventário das quatro imagens.  
+**Intervenção:** publicação de `README.en.md`, com as quatro referências visuais e navegação recíproca. Documentação em português mantida, exceto link de idioma. Nenhuma operação AWS, sessão Session Manager ou execução PowerShell realizada nesta auditoria.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-131 | Lab 09 | A resolução da AMI por parâmetro público do Amazon Linux 2023 seleciona imagem atualizada; fixar/registrar AMI ID se reprodutibilidade exata for necessária | Média | Limitação no EN; melhorias futuras |
+| DOC-132 | Lab 09 | Session Manager sem SSH depende de permissões do operador, IAM Role, SSM Agent e saída de rede; não presumir que SG sem ingress garante todo o hardening | Alta | Esclarecido no EN |
+| DOC-133 | Lab 09 | `AmazonSSMManagedInstanceCore` autoriza operações do managed node, não substitui a política IAM do usuário que inicia a sessão | Alta | Esclarecido no EN |
+| DOC-134 | Lab 09 | `HttpTokens=required` exige IMDSv2, mas não representa proteção absoluta contra roubo de credenciais ou comprometimento da instância | Média | Ressalva no EN |
+| DOC-135 | Lab 09 | Status `Online` do Systems Manager e validação por consulta são verificações pontuais; não comprovam SLO, disponibilidade contínua ou auditoria de sessões | Média | Escopo delimitado no EN |
+| DOC-136 | Lab 09 | Atribuição de IPv4 público para saída aos endpoints pode gerar cobrança horária; não confundir ausência de SSH público com ausência de custo de IPv4 | Alta | Explicado no EN |
+| DOC-137 | Lab 09 | Script de implantação não faz rollback transacional; falhas depois da criação IAM/SG/EC2 podem deixar recursos parciais | Alta | Alerta no EN; melhoria de idempotência futura |
+| DOC-138 | Lab 09 | Cleanup requer `-ConfirmRemoval` e checa `Lab=09`/`Owner=itamarsb`, mas nomes/tags não provam propriedade exclusiva nem ausência de vínculos externos | Alta | Advertência no EN; revisão técnica futura |
+| DOC-139 | Lab 09 | A exclusão de IAM Role e Instance Profile precisa de verificação de dependências e contexto da conta; avaliar condições de autorização e colisão de nomes | Alta | Contextualizado no EN; script preservado |
+| DOC-140 | Lab 09 | `DeleteOnTermination=true` documenta comportamento esperado para o EBS raiz; reforçar inventário pós-cleanup para detectar outros volumes/snapshots | Média | Ressalva no EN; verificação adicional pendente |
+| DOC-141 | Lab 09 | As verificações de SG sem ingress não analisam necessariamente todas as permissões de saída ou demais controles de rede | Média | Escopo no EN |
+| DOC-142 | Lab 09 | Diferenciar os resultados históricos de implantação, validação, acesso `ssm-user` e remoção das verificações atuais da conta AWS | Alta | Explicitado no EN |
+| DOC-143 | Lab 09 | Capturas podem exibir IDs de instâncias, identidade, hostnames e informações de sessão; inspecionar visualmente as quatro evidências | Alta | Arquivos confirmados; inspeção visual pendente |
+| DOC-144 | Lab 09 | Preservar Lab 08 durante o cleanup; conferir também links de sequência de labs, incluindo `10-linux-web-service` | Média | Navegação conferida no EN |
+| DOC-145 | Lab 09 | O script retorna IDs em saídas de implantação/validação; não declarar anonimização absoluta sem examinar as capturas | Alta | Observação registrada; revisão visual pendente |
+
+**Resultado:** tradução inglesa publicada com quatro referências visuais, arquitetura, scripts, IAM trust policy e sequência de deploy/validate/session/cleanup preservadas. Os arquivos foram lidos estaticamente; a conta AWS não foi consultada. A inspeção visual das quatro imagens permanece pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
