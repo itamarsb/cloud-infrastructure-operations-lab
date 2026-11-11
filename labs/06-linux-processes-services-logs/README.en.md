@@ -266,7 +266,7 @@ These are historical results from the documented execution, not measurements mad
 
 ## Next lab
 
-[Lab 07](../07-linux-networking/) continues the Linux operations sequence. Refer to the repository's main lab index for the current title and instructions.
+[Lab 07 — AWS Account Baseline](../07-aws-account-baseline/) continues the Cloud Operations lab sequence.
 
 ---
 
