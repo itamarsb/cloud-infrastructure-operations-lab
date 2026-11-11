@@ -1,5 +1,7 @@
 # Lab 09 — Instância EC2 administrada pelo Systems Manager
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implantar uma instância Amazon EC2 administrável pelo AWS Systems Manager Session Manager, sem chave SSH, porta administrativa exposta ou regra de entrada no Security Group.
