@@ -309,6 +309,37 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** documentação inglesa publicada com as seis evidências, arquitetura EC2/Nginx/`systemd`/SSM, porta HTTP 80 limitada a `/32`, passos de implantação, validação, sessão administrativa, cleanup e correção histórica de codificação. Leitura estática dos três scripts e da política IAM concluída, sem execução. Inspeção visual aprofundada das seis capturas pendente.
 
+## Auditoria específica — Lab 11
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/11-aws-storage-recovery/README.md`, os quatro scripts `deploy-aws-storage-recovery.ps1`, `test-aws-storage-recovery.ps1`, `restore-aws-storage-data.ps1`, `remove-aws-storage-recovery.ps1`, as políticas `ec2-ssm-trust-policy.json` e `s3-storage-policy-template.json` e o inventário das oito imagens.  
+**Intervenção:** publicado `README.en.md` com oito evidências e navegação recíproca; README português preservado fora do link de idioma. Nenhuma consulta à AWS, execução dos scripts ou recuperação de dados foi realizada durante esta auditoria.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-163 | Lab 11 | Texto PT-BR mistura futuro (“será”, “utilizará”) com evidências e resultado de laboratório já executado; uniformizar tempos verbais sem apagar histórico | Média | Corrigido editorialmente no EN; PT-BR pendente |
+| DOC-164 | Lab 11 | Restaurar do S3 para outro diretório do mesmo volume EBS comprova recuperação de arquivo, não recuperação após perda total do volume ou instância | Alta | Escopo explicitado no EN |
+| DOC-165 | Lab 11 | Hashes SHA-256 iguais indicam equivalência de bytes frente à referência; não asseguram autenticidade de backup se fonte e checksum puderem ser adulterados | Média | Esclarecido no EN |
+| DOC-166 | Lab 11 | Validador `test-aws-storage-recovery.ps1` verifica infraestrutura, bucket e objeto; não calcula o SHA-256 restaurado, que depende de script e evidência separados | Alta | Distinção no EN |
+| DOC-167 | Lab 11 | `mkfs.ext4` é operação destrutiva; validar cuidadosamente dispositivo EBS anexado/NVMe antes de formatar, sobretudo fora do ambiente original | Alta | Advertência no EN; revisão prática pendente |
+| DOC-168 | Lab 11 | Registro `/etc/fstab` com UUID e `nofail` ajuda persistência de montagem sem garantir disponibilidade dos dados caso volume esteja ausente | Média | Limitação descrita no EN |
+| DOC-169 | Lab 11 | S3 versioning não torna backups imutáveis; exclusão permanente exige tratar todas as versões e delete markers | Alta | Esclarecido no EN |
+| DOC-170 | Lab 11 | Cleanup usa `list-object-versions` e limita a 20 versões; checar paginação/truncamento e concorrência antes de generalizar para buckets grandes | Alta | Registrado no EN; evolução do script pendente |
+| DOC-171 | Lab 11 | Cleanup de bucket e volume com `-ConfirmRemoval` é irreversível; tags/nome não substituem revisão de ID, titularidade e dependências | Alta | Advertência no EN |
+| DOC-172 | Lab 11 | Política de S3 permite apenas ações selecionadas e nega transporte inseguro para a identidade; avaliar controles de bucket e demais principais separadamente | Alta | Diferenciado no EN |
+| DOC-173 | Lab 11 | Bucket nomeado com Account ID e Região pode expor ID de conta nas saídas e capturas; não pressupor anonimização integral | Alta | Alerta no EN; inspeção visual pendente |
+| DOC-174 | Lab 11 | O teste local com mocks não equivale a integração S3 real; documentar cenários de resposta vazia, versão permitida e chave inesperada | Média | Distinção explícita no EN |
+| DOC-175 | Lab 11 | Parser PowerShell sem erros verifica sintaxe, não compatibilidade operacional ou êxito de chamada AWS | Média | Esclarecido no EN |
+| DOC-176 | Lab 11 | A recuperação executada pelo Systems Manager usa `ssm:SendCommand`, não sendo validação estritamente passiva; distinguir script de consulta e script mutável | Alta | Esclarecido no EN |
+| DOC-177 | Lab 11 | Script de implantação pode deixar recursos parciais após falha; verificar a conta antes de reexecução e cleanup | Alta | Advertência no EN; idempotência futura |
+| DOC-178 | Lab 11 | Versões antigas no S3, volumes, IPv4 público, instância EC2 e requisições geram custos potenciais mesmo em testes curtos | Alta | Limitações de custos no EN |
+| DOC-179 | Lab 11 | Inspecionar visualmente as oito capturas para verificar legibilidade, coerência e exposição de Account ID, Bucket, Volume ID, Instance ID, IP ou dados | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-180 | Lab 11 | Comparação 22 critérios de sucesso com evidências históricas exige distinguir montagem, objeto existente, recuperação verificada e cleanup | Média | Organizado no EN; revisão cruzada futura |
+| DOC-181 | Lab 11 | Verificar persistência de rede compartilhada do Lab 08 e navegação ao diretório real do próximo laboratório `12-aws-application-availability` | Baixa | Navegação conferida no EN |
+| DOC-182 | Lab 11 | Repetição de resumo, escopo, futuro e status no README PT-BR pode ser condensada para leitores terceiros sem perder evidências | Baixa | EN reorganizado; PT-BR pendente |
+
+**Resultado:** criada documentação inglesa com as oito referências de evidência, comandos dos quatro scripts, políticas IAM, requisitos e 22 critérios registrados; preservada a distinção entre implantação histórica, teste local simulado, validação de infraestrutura, restauração SHA-256 e cleanup. Scripts e políticas lidos estaticamente, sem execução. Inspeção visual aprofundada das oito imagens permanece pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
