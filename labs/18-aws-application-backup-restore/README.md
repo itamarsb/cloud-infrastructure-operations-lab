@@ -1,5 +1,7 @@
 # Lab 18 — Backup e restauração de aplicação na AWS
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Este laboratório demonstrou a recuperação de uma aplicação Nginx após a perda controlada de dois arquivos ativos. O backup foi armazenado em um bucket Amazon S3 privado e versionado, recuperado pelo `VersionId` registrado e validado por SHA-256 e manifesto antes da restauração.
