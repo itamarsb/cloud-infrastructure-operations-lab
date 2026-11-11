@@ -402,6 +402,39 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** publicação inglesa com roteiro completo de deploy, validação inicial, falha intencional, diagnóstico não remediador, recuperação autorizada, revalidação e cleanup. Os seis scripts e a política IAM foram revisados estaticamente. Inventário com três imagens confirmado, sendo duas vinculadas sem interpretação visual não verificada. IDs completos presentes no README português identificados como pendência prioritária. Nenhuma operação AWS realizada.
 
+## Auditoria específica — Lab 14
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/14-aws-disk-utilization/README.md`, seis scripts (`deploy-aws-disk-utilization.ps1`, `invoke-aws-disk-pressure.ps1`, `diagnose-aws-disk-utilization.ps1`, `mitigate-aws-disk-utilization.ps1`, `test-aws-disk-utilization.ps1`, `remove-aws-disk-utilization.ps1`), `policies/ec2-ssm-trust-policy.json` e inventário de 15 imagens.  
+**Intervenção:** publicada tradução inglesa `README.en.md`, preservadas referências das 15 imagens e adicionada navegação recíproca. README português preservado além do link de idioma. Nenhuma operação EC2/SSM/EBS, execução PowerShell/Bash ou alteração de infraestrutura foi realizada nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-223 | Lab 14 | Pressão em volume EBS dedicado de 2 GiB reduz risco ao sistema, mas não garante isolamento absoluto caso identificação do dispositivo ou mount esteja incorreta | Alta | Advertência no EN |
+| DOC-224 | Lab 14 | `mkfs.ext4 -F` é operação destrutiva; conferir volume anexado, caminhos NVMe, identidade e ausência de filesystem prévio | Alta | Documentado no EN; revisão de execução futura |
+| DOC-225 | Lab 14 | Script solicita alvo de 82% e execução registra 85%; preservar valores distintos e considerar alocação `ext4`, arredondamentos e contabilização do filesystem | Alta | Preservado e contextualizado no EN |
+| DOC-226 | Lab 14 | Gerador de pressão requer utilização final estritamente inferior a 88%; validador aceita valor menor **ou igual** a 88%; harmonizar comparadores | Alta | Divergência documentada no EN; correção de script pendente |
+| DOC-227 | Lab 14 | `88%` é limite de segurança arbitrado para este laboratório, não limite universal seguro de Linux, AWS ou EBS | Alta | Ressalva no EN |
+| DOC-228 | Lab 14 | Cálculo `USED_BYTES + AVAILABLE_BYTES` trata blocos reservados do ext4 de forma diferente da capacidade nominal de 2 GiB; manter distinção de unidades/capacidade útil | Média | Esclarecido no EN |
+| DOC-229 | Lab 14 | Diagnóstico que identifica `Elevated` e encerra com sucesso não equivale a mitigação nem ao retorno do estado saudável | Alta | Distinção no EN |
+| DOC-230 | Lab 14 | Diagnóstico e validador usam `ssm:SendCommand` para observações no host; não são exclusivamente APIs AWS read-only | Média | Contextualizado no EN |
+| DOC-231 | Lab 14 | Inode usage de 1% é evidência contra exaustão de inodes na amostra, não assegura ausência de outros gargalos em gravação | Média | Contextualizado no EN |
+| DOC-232 | Lab 14 | Zero arquivos apagados e ainda abertos é observação pontual; a inspeção por `/proc` pode depender de permissões e condições de corrida | Média | Ressalva no EN |
+| DOC-233 | Lab 14 | 24 arquivos e cerca de 1,50 GiB de recuperação potencial não equivalem a 1,50 GiB efetivamente recuperados, porque há compressão e retenção | Alta | Diferenciado no EN |
+| DOC-234 | Lab 14 | Mitigação com `gzip -t` e comparação por `cmp` valida conteúdo comprimido antes de remover original, mas não comprova backup durável ou imutável fora do host | Média | Explicado no EN |
+| DOC-235 | Lab 14 | Retenção limitada a cinco arquivos compactados implica descarte irreversível de outros arquivos; não aplicar sem avaliar requisitos forenses e legais de logs | Alta | Alerta no EN |
+| DOC-236 | Lab 14 | `-ConfirmDiskPressure`, `-ConfirmMitigation` e `-ConfirmRemoval` são autorizações de ações diferentes e não substituem conferência de recursos | Alta | Fluxo distinguido no EN |
+| DOC-237 | Lab 14 | Validação de estado `Healthy` usa percentual estritamente inferior a 60%, enquanto `Elevated` inicia em 80%; faixa intermediária merece semântica clara | Média | Estados contextualizados no EN |
+| DOC-238 | Lab 14 | Cleanup repetível no histórico não é prova de idempotência universal em falhas parciais/concorrrência; etiquetas e nomes não garantem propriedade exclusiva | Alta | Escopo explicado no EN |
+| DOC-239 | Lab 14 | Formatação, compressão, exclusão de logs, remoção EBS e encerramento EC2 são operações destrutivas; preservar evidências e requisitos de retenção antes de cleanup | Alta | Advertência no EN |
+| DOC-240 | Lab 14 | Evidências contêm 15 imagens com nomes `Clipboard_...` e possíveis IDs EC2/EBS, IPs ou dados da conta; inspecionar individualmente em resolução integral | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-241 | Lab 14 | Custo potencial de EC2 `t3.micro`, volume raiz, EBS de 2 GiB, IPv4 público e transferência não é eliminado retroativamente após cleanup | Média | Contextualizado no EN |
+| DOC-242 | Lab 14 | Configuração de AMI Amazon Linux 2023 por parâmetro SSM pode mudar; registrar imagem resolvida para reprodutibilidade | Média | Ressalva no EN |
+| DOC-243 | Lab 14 | Critérios de sucesso (28) e Git working tree limpa documentam execução histórica, não verificação atual de AWS ou garantia de segurança | Média | Diferenciação no EN |
+| DOC-244 | Lab 14 | Verificar navegação para o diretório existente `15-aws-connectivity-troubleshooting` e preservação da rede do Lab 08 | Baixa | Conferido no EN |
+
+**Resultado:** README inglês publicado com parâmetros, comandos, diagnóstico nas seis dimensões, observações históricas (85% de pico, 24 arquivos, 1,50 GiB potenciais, 1% inodes, 0 arquivos removidos abertos e 57% após mitigação), 15 evidências e sequência de cleanup. Os seis scripts foram analisados estaticamente, sem execução. A inspeção visual integral das imagens permanece pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
