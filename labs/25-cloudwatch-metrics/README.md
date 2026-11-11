@@ -1,5 +1,7 @@
 # LAB 25 — Métricas no CloudWatch
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Status
 
 Concluído.
