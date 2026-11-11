@@ -1,5 +1,7 @@
 # LAB 24 — Validação automatizada do Terraform
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Status
 
 Concluído.
