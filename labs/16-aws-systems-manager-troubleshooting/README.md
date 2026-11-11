@@ -1,5 +1,7 @@
 # Lab 16 — Troubleshooting do AWS Systems Manager
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Uma instância EC2 gerenciada pelo AWS Systems Manager perdeu a comunicação após a remoção controlada de sua única regra de saída HTTPS. O laboratório confirmou que a instância continuava `running`, enquanto o Systems Manager passou a `ConnectionLost`. O diagnóstico verificou rede, Security Group e IAM; a recuperação restaurou a regra pela API do EC2 e confirmou o retorno a `Online`.
