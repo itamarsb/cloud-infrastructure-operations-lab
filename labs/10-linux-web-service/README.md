@@ -1,5 +1,7 @@
 # Lab 10 — Serviço web Nginx em Linux
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implantar, operar, validar e remover um serviço web Nginx em uma instância Amazon Linux 2023, utilizando `systemd`, acesso HTTP controlado e administração segura pelo AWS Systems Manager.
