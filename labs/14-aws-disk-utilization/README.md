@@ -1,5 +1,7 @@
 # Lab 14 — Utilização de disco e crescimento de logs
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo
 
 Implantar uma instância Amazon EC2 com um volume EBS dedicado para logs, provocar crescimento controlado da utilização desse volume, executar um diagnóstico somente leitura, aplicar uma mitigação segura e remover os recursos exclusivos do laboratório.
