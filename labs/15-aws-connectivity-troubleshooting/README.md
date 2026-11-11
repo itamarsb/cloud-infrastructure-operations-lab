@@ -1,5 +1,7 @@
 # Lab 15 — Troubleshooting de conectividade na AWS
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Objetivo e resultado
 
 Investigar uma aplicação Nginx saudável em uma instância Amazon EC2, mas inacessível externamente após a remoção controlada de uma regra HTTP do Security Group. O diagnóstico separou o estado da aplicação, da instância e da rede. A recuperação restaurou somente a regra removida. Ao final, os recursos exclusivos foram removidos e a rede compartilhada do Lab 08 permaneceu disponível.
