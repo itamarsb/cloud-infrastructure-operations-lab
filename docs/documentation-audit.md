@@ -228,6 +228,33 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** tradução inglesa publicada com 17 aprovações, 8 avisos, 0 falhas, código de saída 0, tabelas de inventário, limiares e conclusões de escopo preservados. O script PowerShell foi lido estaticamente, sem autenticação ou consultas à conta. O próximo diretório `08-aws-application-network` foi conferido no repositório.
 
+## Auditoria específica — Lab 08
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/08-aws-application-network/README.md`, `scripts/deploy-aws-application-network.ps1`, `scripts/test-aws-application-network.ps1`, `scripts/remove-aws-application-network.ps1` e inventário de três imagens.  
+**Intervenção:** criada a versão inglesa `README.en.md`, preservadas as três evidências, os valores da arquitetura e o relato de implantação, validação e cleanup; README português recebeu navegação bilíngue. Nenhuma chamada AWS ou execução PowerShell foi realizada nesta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-115 | Lab 08 | CIDR não encontrado na consulta regional não garante ausência de conflitos com redes conectadas/on-premises; ampliar verificação antes de interconexões | Média | Distinção no EN; análise técnica futura |
+| DOC-116 | Lab 08 | Nome das zonas `us-east-1a` e `us-east-1b` tem mapeamento dependente de conta; preservar IDs físicos `use1-az1`/`use1-az2` apenas como registro original | Média | Esclarecido no EN |
+| DOC-117 | Lab 08 | Habilitar `map-public-ip-on-launch` não cria IP público de imediato, mas instâncias futuras com IPv4 público podem gerar cobrança horária | Alta | Esclarecido no EN; PT-BR pendente |
+| DOC-118 | Lab 08 | Rota `0.0.0.0/0` ao Internet Gateway caracteriza preparação de rede pública, não comprova acessibilidade real de instâncias ou aplicação | Alta | Diferenciado no EN |
+| DOC-119 | Lab 08 | Security Group sem ingress não equivale a ausência de egress; verificar regras de saída padrão e futuras alterações | Alta | Ressalva no EN; script pendente |
+| DOC-120 | Lab 08 | SSM como plano de administração sem SSH depende de agent, IAM e conectividade aos endpoints; não pressupor funcionalidade automática | Média | Contextualizado no EN |
+| DOC-121 | Lab 08 | Tags ajudam na identificação e guarda do cleanup, mas não provam propriedade exclusiva ou inexistência de dependências externas | Alta | Advertência no EN |
+| DOC-122 | Lab 08 | Script de implantação falha sem rollback automático; pode deixar recursos parcialmente criados e exigir inspeção antes de nova execução | Alta | Alerta no EN; melhoria de idempotência futura |
+| DOC-123 | Lab 08 | Cleanup com `-ConfirmRemoval` valida dependências selecionadas, mas não garante ausência de relações de terceiros; inspecionar alvos e estado de AWS antes de autorizar | Alta | Alerta no EN; auditoria de código posterior |
+| DOC-124 | Lab 08 | A verificação final pesquisa VPC por tag de nome, não constitui varredura integral de todas as contas/Regiões ou prova universal de ausência de recursos | Média | Escopo esclarecido no EN |
+| DOC-125 | Lab 08 | Custos esperados zero correspondem à execução original sem EC2/NAT/EIP/ALB e sem tráfego relevante; não generalizar gratuidade de IPv4 público ou transferências futuras | Alta | Contextualizado no EN |
+| DOC-126 | Lab 08 | Script de validação independente confirma configuração, não comprova teste de tráfego real a partir de instância ou endpoint de aplicação | Média | Explicitado no EN |
+| DOC-127 | Lab 08 | Inspecionar as três imagens em resolução adequada para dados sensíveis, IDs, IPs e consistência com os comandos descritos | Alta | Arquivos confirmados; inspeção visual pendente |
+| DOC-128 | Lab 08 | Checklist `[x]` representa atividade histórica; não sugerir que a execução do visitante já esteja validada | Média | Contextualizado no EN |
+| DOC-129 | Lab 08 | Diferenciar no registro editorial os três scripts: implantação mutável, validação somente leitura e remoção destrutiva autorizada | Alta | Documentado no EN |
+| DOC-130 | Lab 08 | Conservação de scripts e evidências sem reexecutar AWS: não declarar infraestrutura atualmente existente/ausente com base apenas em captura histórica | Alta | Aplicado no EN |
+
+**Resultado:** tradução inglesa publicada com as três imagens e arquitetura original (`10.20.0.0/16`, sub-redes `10.20.10.0/24` e `10.20.20.0/24`, zonas `us-east-1a`/`us-east-1b`, rota Internet Gateway e Security Group sem ingress), assim como o relato histórico de validação e cleanup. Os scripts foram examinados estaticamente, não executados. A inspeção visual das capturas continua pendente.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
