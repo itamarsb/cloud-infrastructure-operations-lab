@@ -468,6 +468,38 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com dez caminhos de evidência (seis imagens incorporadas e quatro links), procedimentos completos de deploy/Healthy, injeção/Failed, diagnóstico, recuperação/Healthy, cleanup e distinções entre falha de proxy, regra SG removida e resposta local saudável. Seis scripts e política IAM analisados estaticamente. Identificadores históricos no README português registrados para revisão de privacidade, sem alterá-los nesta etapa. Inspeção visual aprofundada das dez capturas pendente.
 
+## Auditoria específica — Lab 16
+
+**Data:** 2026-11-10  
+**Arquivos examinados:** `labs/16-aws-systems-manager-troubleshooting/README.md`, seis scripts PowerShell (`deploy-aws-systems-manager-troubleshooting.ps1`, `test-aws-systems-manager-troubleshooting.ps1`, `invoke-aws-systems-manager-failure.ps1`, `diagnose-aws-systems-manager-failure.ps1`, `recover-aws-systems-manager.ps1`, `remove-aws-systems-manager-troubleshooting.ps1`), política `ec2-ssm-trust-policy.json` e inventário das seis imagens.  
+**Intervenção:** criado `README.en.md` com seis imagens e navegação recíproca; texto em português preservado exceto pelo link de idioma. Nenhum script foi modificado, nenhuma chamada AWS foi executada e nenhuma instância foi reiniciada nesta auditoria.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-267 | Lab 16 | Primeira tentativa de revogar HTTPS foi **inconclusiva**: SSM permaneceu `Online` por 24 verificações e a regra foi restaurada; não apresentar como falha confirmada | Alta | Distinção preservada no EN |
+| DOC-268 | Lab 16 | Segunda tentativa revogou saída HTTPS e reiniciou exclusivamente a instância Lab 16; `ConnectionLost` observado somente em 38/40 verificações | Alta | Sequência e limites detalhados no EN |
+| DOC-269 | Lab 16 | Hipótese de conexões previamente estabelecidas/connection tracking é plausível, mas não foi comprovada diretamente com captura ou inspeção de conexões | Alta | Qualificada como hipótese no EN |
+| DOC-270 | Lab 16 | `EC2 running` não implica `SSM Online`, e `SSM Online` isolado não comprova sucesso de sessão interativa ou Run Command | Alta | Estados distinguidos no EN |
+| DOC-271 | Lab 16 | Diagnóstico e recuperação devem utilizar AWS control plane quando SSM está indisponível; não exigir Run Command para resolver falha da própria conectividade SSM | Alta | Método descrito no EN |
+| DOC-272 | Lab 16 | Falha controlada exige `-ConfirmFailure` e inclui reboot disruptivo; não aplicar a instâncias compartilhadas ou produtivas | Alta | Advertência no EN |
+| DOC-273 | Lab 16 | Script de injeção tenta restaurar saída em erro após mutação e antes da falha confirmada, mas recuperação automática pode falhar; verificar inventário após erro | Alta | Limite explicitado no EN |
+| DOC-274 | Lab 16 | Validação `Failed` exige `ConnectionLost` e ausência de regra egress; diagnóstico isolado pode terminar reportando cenário inconclusivo | Alta | Semântica distinguida no EN |
+| DOC-275 | Lab 16 | NACL foi inspecionada, porém não comparada a baseline; evitar afirmar exclusão definitiva de outras causas de conectividade | Média | Limitação no EN |
+| DOC-276 | Lab 16 | Regra TCP 443 para `0.0.0.0/0` foi apropriada ao escopo histórico, mas é mais ampla que alternativa com VPC endpoints e restrições específicas | Alta | Discussão no EN; arquitetura futura |
+| DOC-277 | Lab 16 | Recriar egress produz um novo Security Group Rule ID; conferir protocolo, portas, CIDR e SG em vez de comparar exclusivamente IDs antigos | Média | Registrado no EN |
+| DOC-278 | Lab 16 | Timeout de 24/40 verificações não determina prazo universal de perda ou recuperação SSM; comportamento pode variar por agente, rede e estado de conexões | Média | Limite no EN |
+| DOC-279 | Lab 16 | Primeira validação de IAM Instance Profile falhou pela comparação; ajuste usou ARN esperado completo e teste saudável passou sem reimplantar EC2 | Média | Troubleshooting preservado no EN |
+| DOC-280 | Lab 16 | Problema de codificação em Windows PowerShell 5.1 exigiu UTF-8 com BOM no script diagnóstico; parser sem erros não comprova integração AWS | Média | Registrado no EN |
+| DOC-281 | Lab 16 | README português inclui AWS Account ID e IDs completos de EC2, VPC, subnet, SG e regra; avaliar redução/anônimização antes de divulgação ampla | Alta | Identificado; omitido no EN; PT-BR pendente |
+| DOC-282 | Lab 16 | Seis imagens presentes, mas inspeção visual integral para IDs de conta/recurso e clareza de evidência não foi realizada | Alta | Inventário confirmado; revisão visual pendente |
+| DOC-283 | Lab 16 | IAM trust policy e `AmazonSSMManagedInstanceCore` não concedem, isoladamente, direitos de operador para iniciar sessões ou alterar EC2 | Alta | Distinção no EN |
+| DOC-284 | Lab 16 | Cleanup exige `-ConfirmRemoval` e conferências, mas tags e nomes não provam ausência de dependências externas; não remover instância de outro repositório | Alta | Limite e proteção no EN |
+| DOC-285 | Lab 16 | AMI Amazon Linux 2023 por parâmetro público pode variar e EC2/EBS/IPv4 público geram custos potenciais mesmo com cleanup posterior | Média | Registrado no EN |
+| DOC-286 | Lab 16 | Resultado e checklist refletem execução histórica; nenhum estado atual da conta AWS foi consultado nesta tradução | Média | Escopo delimitado no EN |
+| DOC-287 | Lab 16 | Próximo lab existente deve ser referenciado como `17-aws-controlled-update`; preservar navegação entre idiomas e rede do Lab 08 | Baixa | Diretório conferido e link inserido no EN |
+
+**Resultado:** README inglês com sequência completa incluindo tentativa inconclusiva, reboot da instância exclusiva, `ConnectionLost` em 38/40, diagnóstico sem dependência de SSM, recuperação pela EC2 API, validação e cleanup. Seis evidências referenciadas e scripts/política lidos estaticamente. Identificadores históricos do README português registrados como prioridade de privacidade; inspeção visual das seis capturas pendente. Nenhuma operação AWS realizada.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
