@@ -1,5 +1,7 @@
 # Lab 17 — Atualização controlada de aplicação na AWS
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 ## Resumo
 
 Este laboratório executou uma atualização controlada de uma aplicação Nginx em uma instância Amazon EC2. O fluxo incluiu implantação da versão inicial, introdução de uma configuração inválida, diagnóstico, rollback, aplicação da versão v2, confirmação e remoção dos recursos exclusivos.
