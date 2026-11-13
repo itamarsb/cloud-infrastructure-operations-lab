@@ -853,6 +853,45 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** versão inglesa publicada com configuração versionada do CloudWatch Agent, duas séries customizadas, IAM de publicação, instalação com hash e SSM, verificação independente das métricas, evento inicial e três logs sintéticos, cleanup de infraestrutura e grupo, e onze verificações finais. Sete scripts e quatro JSONs examinados estaticamente, 17 capturas referenciadas. Não houve execução AWS. Inspeção visual integral das imagens e revisão de portabilidade dos ARNs/account ID permanecem pendentes.
 
+## Auditoria específica — Lab 27
+
+**Data:** 2026-11-12  
+**Arquivos examinados:** `labs/27-cloudwatch-alarms-notifications/README.md`, `config/lab27-settings.json`, sete scripts PowerShell (`deploy-aws-cloudwatch-alarms.ps1`, `invoke-aws-alarm-metric-scenario.ps1`, `lab27-common.ps1`, `remove-aws-cloudwatch-alarms.ps1`, `subscribe-aws-alarm-email.ps1`, `test-aws-cloudwatch-alarms-cleanup.ps1`, `test-aws-cloudwatch-alarms.ps1`) e inventário de 25 imagens.  
+**Intervenção:** criado `README.en.md` em inglês, com 25 imagens referenciadas (cinco incorporadas); acrescentada navegação bilíngue ao README português, sem alterar suas demais seções. Nenhum script, JSON, imagem ou recurso AWS foi modificado ou executado durante esta revisão.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-531 | Lab 27 | A métrica `ApplicationErrorCount` é sintética e enviada por PowerShell; não representa erros efetivos de aplicação, disponibilidade, SLI/SLO ou log-to-metric filter | Alta | Escopo delimitado no EN |
+| DOC-532 | Lab 27 | Alarmes e SNS criados sem EC2, VPC, agente ou grupo de logs; recursos dos Labs 25 e 26 já estavam removidos | Média | Arquitetura esclarecida no EN |
+| DOC-533 | Lab 27 | Threshold `Sum >= 3` exige 2 de 3 períodos de 60 segundos; um único ponto com valor 5 não basta para afirmar estado ALARM | Alta | Regras de avaliação no EN |
+| DOC-534 | Lab 27 | `TreatMissingData=missing` não converte ausência em zero, breach ou recuperação; `INSUFFICIENT_DATA` é estado distinto de `OK` | Alta | Diferenciado no EN |
+| DOC-535 | Lab 27 | Alarmes podem reavaliar pontos históricos além dos três períodos nominais; não garantir retorno a INSUFFICIENT_DATA exatamente três minutos após publicação | Média | Limite temporal no EN |
+| DOC-536 | Lab 27 | Aceitação de `PutMetricData`, consulta de ponto, mudança de estado, ação SNS e recebimento de e-mail são evidências operacionalmente distintas | Alta | Fluxo de confirmação separado no EN |
+| DOC-537 | Lab 27 | Cinco pontos por fase representam quinze períodos com `SampleCount=1`; primeira consulta trouxe 14 e consulta seguinte os 15, não sendo perda comprovada | Média | Histórico preservado no EN |
+| DOC-538 | Lab 27 | Fases usam valores baseline 0, breach 5 e recovery 0; publisher verifica estado prévio OK para Breach e ALARM para Recovery | Alta | Condições no EN |
+| DOC-539 | Lab 27 | Três ações SNS bem-sucedidas foram registradas para primeira entrada OK, ALARM e recuperação OK; não há ação em INSUFFICIENT_DATA | Alta | Transições e ações no EN |
+| DOC-540 | Lab 27 | Captura 42 registra e-mail da recuperação `ALARM → OK`; não confundir ação SNS bem-sucedida com entrega confirmada ao destinatário | Alta | Evidências distintas no EN |
+| DOC-541 | Lab 27 | Assinatura de e-mail exige confirmação pelo destinatário, mesmo com solicitação/ARN retornado; `-CheckStatus` verifica ativação sem reenviar | Alta | Procedimento no EN |
+| DOC-542 | Lab 27 | E-mail não consta no JSON versionado, mas endereço aparece no recibo local e pode aparecer nas imagens; realizar revisão de privacidade antes de divulgar | Alta | Privacidade documentada; imagens pendentes |
+| DOC-543 | Lab 27 | Política SNS gerada aceita `sns:Publish` por `cloudwatch.amazonaws.com`, restringindo `aws:SourceAccount` e `aws:SourceArn` ao alarme pretendido | Alta | Controles IAM/SNS no EN |
+| DOC-544 | Lab 27 | `lab27-settings.json` e validações comuns contêm AWS Account ID histórico fixo; reutilização em outra conta exige revisão de identidade e ARNs | Alta | Valores omitidos no EN; parametrização futura |
+| DOC-545 | Lab 27 | Inventário e recibos existentes impedem duplicação cega de deploy, assinatura ou publicação por fase; não apagar arquivos para ocultar falha parcial | Alta | Salvaguardas no EN |
+| DOC-546 | Lab 27 | Falha histórica em `File.Replace` na persistência do inventário foi corrigida com caminho de backup explícito; tentativas antigas verificadas/arquivadas | Média | Troubleshooting no EN |
+| DOC-547 | Lab 27 | Baseline anterior em 13/10 foi distinta da sequência principal de 14/10; histórico antigo ficou fora de consulta posterior limitada a 30 minutos | Média | Cronologia separada no EN |
+| DOC-548 | Lab 27 | Intervalos e horários UTC/Brasília do ensaio são observados, não garantias de latência de avaliação do CloudWatch, SNS ou entrega de e-mail | Média | Ressalva no EN |
+| DOC-549 | Lab 27 | Consulta com `-WindowMinutes 120` amplia histórico consultado, mas não altera EvaluationPeriods/DatapointsToAlarm configurados | Média | Distinção no EN |
+| DOC-550 | Lab 27 | Orquestração das fases e exportação extra do histórico ocorreram em blocos PowerShell locais; não inventar arquivo separado no diretório versionado | Média | Inventário correto no EN |
+| DOC-551 | Lab 27 | `-ValidateOnly` evita a mutação AWS correspondente, mas o publisher chama validador que pode salvar relatório local; não prometer zero escrita local | Média | Semântica delimitada no EN |
+| DOC-552 | Lab 27 | Cleanup exige inspeção de ARNs, tags, RunId, referências de outros alarmes/compostos e assinaturas; excluir alarme antes do tópico | Alta | Ordem e salvaguardas no EN |
+| DOC-553 | Lab 27 | Não existe exclusão mútua entre publisher e cleanup; devem parar publicações e preservar recibos antes de remover alarme/tópico | Alta | Risco de concorrência no EN |
+| DOC-554 | Lab 27 | Validador de cleanup executa duas verificações independentes (alarme e tópico), não conferência individual adicional de assinaturas ou auditoria da conta | Média | Escopo corretamente declarado no EN |
+| DOC-555 | Lab 27 | Cleanup não exclui datapoints históricos da métrica; retenção depende do CloudWatch após remoção de alarme e tópico | Média | Retenção no EN |
+| DOC-556 | Lab 27 | Todas as 25 imagens existem e foram referenciadas, porém inspeção visual integral para endereço de e-mail, conta AWS, ARNs e legibilidade está pendente | Alta | Inventário confirmado; inspeção visual pendente |
+| DOC-557 | Lab 27 | Custos podem incluir métrica customizada, alarmes, consultas e notificações SNS; não presumir nível gratuito nem custo zero com cleanup | Média | Custos contextualizados no EN |
+| DOC-558 | Lab 27 | O próximo diretório existente é `28-cloudwatch-logs-insights` e deve ser vinculado sem atribuir ao Lab 27 consultas Logs Insights | Baixa | Navegação validada no EN |
+
+**Resultado:** README inglês publicado com configuração de alarmes, assinatura SNS confirmada, quinze amostras, transições de OK/ALARM/INSUFFICIENT_DATA, três ações SNS, evidência de três e-mails e cleanup de dois recursos. Sete scripts e um JSON examinados estaticamente; todas as 25 imagens referenciadas. Nenhuma operação AWS realizada. Inspeção visual completa e ajuste de portabilidade da conta permanecem pendentes.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
