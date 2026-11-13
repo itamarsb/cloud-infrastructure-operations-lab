@@ -1,5 +1,7 @@
 # Lab 28 — CloudWatch Logs Insights
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 Investigação de logs JSON sintéticos com Amazon CloudWatch Logs Insights, utilizando filtros, agregações, percentis, linha do tempo e identificação de uma requisição.
 
 **Status:** execução e cleanup concluídos. A validação independente confirmou a ausência do grupo de logs em 19 de outubro de 2026.
