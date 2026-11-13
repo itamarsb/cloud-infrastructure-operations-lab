@@ -931,6 +931,43 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com escopo didático, dataset de 60 eventos, sete consultas reais, percentis e taxas diferenciadas, verificação de read-back, diagnóstico de paginação/retenção, cleanup e inventário completo de 20 capturas. Oito scripts, sete consultas, JSON e .gitignore inspecionados estaticamente. Nenhuma operação AWS executada. Inspeção visual das evidências e parametrização do ID de conta ainda pendentes.
 
+## Auditoria específica — Lab 29
+
+**Data:** 2026-11-12  
+**Arquivos examinados:** `labs/29-zabbix-monitoring/README.md`, `compose.yaml`, `.gitignore`, `config/lab29-settings.json`, quatro arquivos em `config/target/` (`Dockerfile`, `nginx.conf`, `supervisord.conf`, `zabbix_agent2.conf`), `scripts/initialize-lab29-environment.ps1` e inventário de 14 imagens.  
+**Intervenção:** criado `README.en.md` com arquitetura, estado de implementação preparado e limitações, 14 imagens referenciadas sem resultados não comprovados; adicionada navegação bilíngue ao README português, mantendo as demais seções. Nenhum container, rede, volume, arquivo técnico ou recurso AWS foi modificado ou executado.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-587 | Lab 29 | README original informa **em desenvolvimento**, sem experimento de monitoramento concluído; não divulgar trigger, falha, recuperação ou cleanup como executados | Alta | Status fiel no EN |
+| DOC-588 | Lab 29 | Apesar do status inicial, já existem Compose, Dockerfile e configs de agente/Nginx/Supervisor; reconhecer implementação preparada sem atribuir validação de runtime | Alta | Inventário no EN |
+| DOC-589 | Lab 29 | Quatro serviços no Compose: PostgreSQL 16.15, Zabbix Server 7.0.30, frontend web 7.0.30 e target Linux customizado com Agent 2 | Média | Arquitetura documentada no EN |
+| DOC-590 | Lab 29 | Redes database/monitoring são internas; frontend publica somente endereço de loopback configurado, sujeito a confirmação de bind real após deploy | Alta | Controles declarados no EN |
+| DOC-591 | Lab 29 | Banco usa volume Compose exclusivo do projeto, diferente da base/backup do repositório Zabbix antigo; cleanup não pode alcançar volumes de terceiros | Alta | Fronteira de isolamento no EN |
+| DOC-592 | Lab 29 | Docker Compose define healthcheck apenas no PostgreSQL; `service_started` de Zabbix/web e `HEALTHCHECK NONE` no target não comprovam prontidão | Alta | Limitação explícita no EN |
+| DOC-593 | Lab 29 | Alvo Linux inclui Zabbix Agent 2 e Nginx supervisionados separadamente; `autorestart=false` para nginx e `autorestart=unexpected` para agente sustentam falha HTTP isolada | Alta | Semântica no EN |
+| DOC-594 | Lab 29 | Nginx define HTTP 8080 com root e /health 200, outros caminhos 404; resultados são comportamento esperado da configuração, não HTTP observado | Média | Limites no EN |
+| DOC-595 | Lab 29 | Portas 10050/8080 do target não são publicadas ao host Windows; validações HTTP/Agent devem usar comunicação interna apropriada | Média | Topologia no EN |
+| DOC-596 | Lab 29 | Agent usa `Server=zabbix-server` e `HostnameItem=system.hostname`; hostname em Compose deve coincidir com cadastro futuro no Zabbix | Média | Relacionamento no EN |
+| DOC-597 | Lab 29 | JSON prevê intervalo 10 s, 3 falhas e 3 sucessos consecutivos, baseline/falha 60 s e recuperação 120 s; esses valores não instalam itens ou triggers | Alta | Metadados de planejamento no EN |
+| DOC-598 | Lab 29 | Não existem scripts versionados para cadastrar host/grupo, itens, trigger, executar falha/restauro HTTP ou validar cleanup do laboratório | Alta | Lacunas implementacionais registradas |
+| DOC-599 | Lab 29 | Único script PowerShell `initialize-lab29-environment.ps1` prepara parâmetros/senha local; não implanta containers, configura Zabbix ou testa serviços | Alta | Escopo delimitado no EN |
+| DOC-600 | Lab 29 | Script gera senha PostgreSQL de 24 bytes criptograficamente aleatórios e a escreve em 48 dígitos hexadecimais, sem imprimir a senha | Média | Mecanismo documentado no EN |
+| DOC-601 | Lab 29 | Variáveis são salvas em UTF-8 sem BOM, arquivo `local-artifacts/lab29.env` ignorado; ignore não é controle de confidencialidade | Alta | Aviso de segurança no EN |
+| DOC-602 | Lab 29 | Senha fica em arquivo de texto local e pode aparecer em Compose config, variáveis de ambiente ou inspeções; aplicar proteção e evitar logs/screenshots públicos | Alta | Risco registrado no EN |
+| DOC-603 | Lab 29 | Se `lab29.env` já existe, inicializador retorna sem validar o conteúdo; futura validação do arquivo é prometida no texto do script mas não implementada ali | Alta | Pendência explicitada no EN |
+| DOC-604 | Lab 29 | Com volume Compose pré-existente e ausência do env file, inicializador interrompe para não gerar senha diferente da usada no banco | Alta | Salvaguarda no EN |
+| DOC-605 | Lab 29 | Compose não lê automaticamente `local-artifacts/lab29.env`; é preciso fornecer `--env-file` ou mecanismo equivalente na execução | Alta | Lacuna de reprodução descrita no EN |
+| DOC-606 | Lab 29 | `docker compose config` pode exibir senha expandida; não colar/commitar saída sem redigir dados; comando indicado como futuro, não executado | Alta | Advertência no EN |
+| DOC-607 | Lab 29 | Compose usa tags explícitas de imagens, mas não hashes imutáveis; build via apt pode resolver versões diferentes das dependências | Média | Reprodutibilidade no EN |
+| DOC-608 | Lab 29 | Critérios de detecção/recuperação exigem verificação independente de itens, status do agente, HTTP e histórico da trigger; não inferir de container running | Alta | Aceitação futura definida no EN |
+| DOC-609 | Lab 29 | Docker Compose volume persistente pode ser apagado por cleanup com volumes; confirmar nome do projeto, labels, backups e exclusividade | Alta | Limite destrutivo no EN |
+| DOC-610 | Lab 29 | Diretório contém 14 imagens de 20–23/10/2026, mas README PT não lhes atribui prova de execução; imagens vinculadas neutralmente e inspeção visual integral pendente | Alta | Inventário no EN, inspeção pendente |
+| DOC-611 | Lab 29 | Cenário planejado é local Docker Desktop e independente de AWS/ambiente Zabbix anterior; não afirmar custos AWS ou reuso do agente Windows | Média | Fronteira no EN |
+| DOC-612 | Lab 29 | Lab 30 é citado como futuro no README português, porém diretório Lab 30 ainda não existe; não publicar link quebrado ou afirmar etapa já criada | Baixa | Continuidade contextualizada no EN |
+
+**Resultado:** README inglês publicado como **laboratório ainda não executado**, apesar de arquivos preparatórios existentes. Revisados Compose, JSON, Dockerfile, configurações Nginx/Agent/Supervisor, .gitignore e script de inicialização. Quatorze capturas vinculadas sem alegar resultados de trigger, recuperação ou cleanup. Nenhuma execução de Docker/Zabbix/AWS e nenhuma alteração de fonte técnico-operacional. Pendentes: scripts de implantação/host/itens/trigger/experimento/cleanup, validação prática, análise visual das imagens e tratamento seguro das credenciais locais.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
