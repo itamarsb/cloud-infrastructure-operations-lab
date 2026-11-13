@@ -1,5 +1,7 @@
 # Lab 26 — CloudWatch Agent
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 Coleta de métricas de memória e disco e envio de logs de aplicação a partir de uma instância EC2 administrada pelo AWS Systems Manager.
 
 **Status:** concluído em 11 de outubro de 2026. Instalação, métricas, eventos sintéticos e cleanup validados.
