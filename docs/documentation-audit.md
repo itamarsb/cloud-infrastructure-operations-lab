@@ -892,6 +892,45 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com configuração de alarmes, assinatura SNS confirmada, quinze amostras, transições de OK/ALARM/INSUFFICIENT_DATA, três ações SNS, evidência de três e-mails e cleanup de dois recursos. Sete scripts e um JSON examinados estaticamente; todas as 25 imagens referenciadas. Nenhuma operação AWS realizada. Inspeção visual completa e ajuste de portabilidade da conta permanecem pendentes.
 
+## Auditoria específica — Lab 28
+
+**Data:** 2026-11-12  
+**Arquivos examinados:** `labs/28-cloudwatch-logs-insights/README.md`, `config/lab28-settings.json`, `.gitignore`, sete consultas em `queries/` e oito scripts PowerShell (`deploy-aws-logs-insights.ps1`, `invoke-aws-log-investigation-scenario.ps1`, `invoke-aws-logs-insights-query.ps1`, `lab28-common.ps1`, `remove-aws-logs-insights.ps1`, `test-aws-log-events.ps1`, `test-aws-logs-insights-cleanup.ps1`, `test-aws-logs-insights.ps1`), além de inventário de 20 capturas.  
+**Intervenção:** criado `README.en.md` em inglês, com sete consultas ligadas e as 20 evidências referenciadas (três incorporadas); acrescentada somente navegação bilíngue ao README português. Nenhum script, JSON, consulta, imagem ou recurso AWS alterado ou executado.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-559 | Lab 28 | Dataset possui **60 logs JSON sintéticos** distribuídos 20/20/20; não houve API, indisponibilidade real, falha de dependência nem restauração efetiva de aplicação | Alta | Escopo explícito no EN |
+| DOC-560 | Lab 28 | Doze eventos HTTP 503 são gerados deliberadamente no incidente; `dependency_timeout` é causa atribuída no campo, não diagnóstico validado de falha real | Alta | Limitação no EN |
+| DOC-561 | Lab 28 | Taxa de erro de 60% refere-se somente à fase incident (12/20); taxa global de 20% refere-se às três fases (12/60) | Alta | Denominadores diferenciados no EN |
+| DOC-562 | Lab 28 | Médias de 673,1 ms na fase incidente e 1037,5 ms nos erros de /orders têm populações diferentes (20 vs 12) | Média | Denominadores e resultados no EN |
+| DOC-563 | Lab 28 | P95/P99 resultam de somente vinte eventos sintéticos por fase; não caracterizam cauda de latência real, confiança estatística ou SLO | Alta | Ressalva no EN |
+| DOC-564 | Lab 28 | Minutos 23:02/23:03/23:04 de 16/10 são timestamps atribuídos ao dataset e não horários de ingestão ou execução da consulta | Média | Cronologia esclarecida no EN |
+| DOC-565 | Lab 28 | Identificação de req-021 localiza um evento por requestId; não implementa tracing distribuído nem correlação multi-serviço | Média | Distinção no EN |
+| DOC-566 | Lab 28 | `PutLogEvents` aceito sem rejeição não prova publicação consultável; script independente comparou mensagens e timestamps exatos dos 60 eventos | Alta | Verificação de ingestão no EN |
+| DOC-567 | Lab 28 | GetLogEvents foi percorrido até token estável, com limite de 20 páginas; três páginas observadas no êxito histórico | Média | Paginação descrita no EN |
+| DOC-568 | Lab 28 | Ausência de `nextForwardToken` não deve ser interpretada como conclusão da paginação; correção preserva diagnóstico e interrompe a validação | Alta | Tratamento documentado no EN |
+| DOC-569 | Lab 28 | Ramo de falta de token foi observado na falha anterior; revalidação posterior dos 60 eventos exercitou caminho normal, não repetiu o caso faltante | Média | Evidência delimitada no EN |
+| DOC-570 | Lab 28 | Grupo começou com retenção de 1 dia e foi alterado para 7 dias durante troubleshooting; não confundir capturas anteriores com configuração final | Alta | Histórico no EN |
+| DOC-571 | Lab 28 | Eventos antigos tornaram-se consultáveis após ajuste da retenção, **sem republicação**, mas aumento de retenção não recupera necessariamente logs já excluídos fisicamente | Alta | Generalização evitada no EN |
+| DOC-572 | Lab 28 | `MalformedQueryException` foi registrada ao consultar janela antiga e inclui contexto de criação/retention; não afirmar causa única comprovada ou garantia de comportamento AWS | Alta | Contextualizado no EN |
+| DOC-573 | Lab 28 | Sete arquivos `.query` usam filtro por RunId; runner substitui token do dataset para impedir mistura com outras execuções | Alta | Escopo das consultas no EN |
+| DOC-574 | Lab 28 | Consultas executadas em janela do dataset de até 10 minutos, timeout padrão 120 s e limite de 100 linhas; não caracterizar runner como exportador paginado genérico | Média | Limites no EN |
+| DOC-575 | Lab 28 | Todas as sete consultas examinaram 60 registros e 17.574 bytes, independentemente das linhas retornadas; custo pode depender de bytes examinados | Alta | Métrica e risco no EN |
+| DOC-576 | Lab 28 | Query runner aguarda estado `Complete`, preserva request/query IDs/estatísticas e tenta StopQuery em falha ou timeout quando apropriado | Média | Fluxo documentado no EN |
+| DOC-577 | Lab 28 | Grupo exclusivo `STANDARD` com stream `controlled-application`, tags e RunId; nenhum EC2, rede, Agent, alarme ou SNS provisionado | Média | Arquitetura no EN |
+| DOC-578 | Lab 28 | Settings e `lab28-common.ps1` incluem ID da conta AWS esperado fixo; mover de conta exige conferir código e JSON, além do perfil | Alta | Aviso no EN; parametrização futura |
+| DOC-579 | Lab 28 | Preflight sem inventário cria RunId **temporário**, diferente do RunId salvo pelo deployment; não reusar ID da pré-validação | Média | Distinção no EN |
+| DOC-580 | Lab 28 | Deployment pode recriar grupo ausente se inventário anterior permanece após cleanup; verificar ausência exclusivamente com script independente | Alta | Risco operacional no EN |
+| DOC-581 | Lab 28 | Publicador bloqueia `dataset.json` existente para evitar republicação acidental de lote parcial; preservar recibos em vez de contornar proteção | Alta | Salvaguarda no EN |
+| DOC-582 | Lab 28 | Exclusão do log group destrói streams e eventos remotos; `local-artifacts/` é preservado e ignorado pelo Git, mas .gitignore não fornece sigilo | Alta | Cleanup e privacidade no EN |
+| DOC-583 | Lab 28 | Cleanup confirma exato grupo ausente em conta/região, não inventário completo da conta ou recuperação de dados após delete | Média | Escopo no EN |
+| DOC-584 | Lab 28 | Imagens inventariadas são 20, numeradas 01–07 e 09–21; imagem 08 não existe; exame visual integral de dados e legibilidade segue pendente | Alta | 20 imagens referenciadas, nenhuma 08 inventada |
+| DOC-585 | Lab 28 | Custos possíveis envolvem ingestão, retenção e leitura Logs Insights; linhas retornadas não permitem inferir custo zero ou ausência de scan | Média | Riscos explicitados no EN |
+| DOC-586 | Lab 28 | Próximo diretório confirmado é `29-zabbix-monitoring`; link de continuidade deve apontar ao caminho real | Baixa | Link validado no EN |
+
+**Resultado:** README inglês publicado com escopo didático, dataset de 60 eventos, sete consultas reais, percentis e taxas diferenciadas, verificação de read-back, diagnóstico de paginação/retenção, cleanup e inventário completo de 20 capturas. Oito scripts, sete consultas, JSON e .gitignore inspecionados estaticamente. Nenhuma operação AWS executada. Inspeção visual das evidências e parametrização do ID de conta ainda pendentes.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
