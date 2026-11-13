@@ -1,5 +1,7 @@
 # Lab 29 — Monitoramento com Zabbix
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 Monitoramento de um ambiente Linux com agente Zabbix, coleta de itens e acompanhamento de uma falha controlada em um serviço HTTP.
 
 **Status:** em desenvolvimento — definição do cenário.
