@@ -1,5 +1,7 @@
 # Lab 27 — Alarmes e notificações
 
+**Português (Brasil)** · [**English**](README.en.md)
+
 Avaliação de uma métrica sintética de erros de aplicação pelo Amazon CloudWatch, com ações de alarme e recuperação pelo Amazon SNS.
 
 **Status:** execução e cleanup concluídos em 14 de outubro de 2026. Quinze períodos conferidos e duas verificações independentes de cleanup aprovadas.
