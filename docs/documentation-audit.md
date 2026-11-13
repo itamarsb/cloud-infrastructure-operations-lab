@@ -816,6 +816,43 @@ Este arquivo registra oportunidades de melhoria. Um item listado aqui **não rep
 
 **Resultado:** README inglês publicado com VPC exclusiva, configurações SSM e métricas, cronologia UTC da carga, semântica de créditos de CPU, cinco widgets, procedimentos de validação e cleanup com onze verificações independentes. Oito scripts e dois JSONs examinados estaticamente. Todas as 17 imagens mantidas e referenciadas; inspeção visual das capturas pendente. Nenhum recurso AWS ou script modificado.
 
+## Auditoria específica — Lab 26
+
+**Data:** 2026-11-12  
+**Arquivos examinados:** `labs/26-cloudwatch-agent/README.md`, sete scripts PowerShell (`deploy-aws-cloudwatch-agent.ps1`, `install-aws-cloudwatch-agent.ps1`, `invoke-aws-cloudwatch-log-events.ps1`, `lab26-common.ps1`, `remove-aws-cloudwatch-agent.ps1`, `test-aws-cloudwatch-agent-cleanup.ps1`, `test-aws-cloudwatch-agent.ps1`), quatro JSONs (`lab26-settings.json`, `ec2-ssm-trust-policy.json`, `cloudwatch-agent.json`, `cloudwatch-agent-publish-policy.json`) e inventário de 17 imagens.  
+**Intervenção:** publicado `README.en.md` em inglês com 17 evidências referenciadas (três incorporadas); navegação bilíngue adicionada ao README original sem modificar seus demais trechos. Nenhum script, JSON, imagem ou recurso AWS foi alterado ou executado.
+
+| ID | Escopo | Constatação ou recomendação | Prioridade | Situação |
+|---|---|---|---|---|
+| DOC-505 | Lab 26 | A VPC, subnet, rota, gateway e SG são exclusivos do Lab 26, e não reutilizados do Lab 08; cleanup inclui exclusão dessa VPC | Alta | Arquitetura e limites no EN |
+| DOC-506 | Lab 26 | CloudWatch Agent coleta `mem_used_percent` e `disk_used_percent` no namespace `Lab26/CWAgent`; métricas não são nativas do namespace `AWS/EC2` | Alta | Delimitado no EN |
+| DOC-507 | Lab 26 | Disco se restringe a `/` com `drop_device=true`, dimensões `InstanceId,path=/,fstype=xfs`; uso de filesystem não mede IOPS ou latência EBS | Alta | Explicado no EN |
+| DOC-508 | Lab 26 | Série de memória e disco têm dimensões distintas; consulta sem conjunto efetivo de dimensões pode retornar nenhum dado | Alta | Critério de descoberta no EN |
+| DOC-509 | Lab 26 | Agent `running` e hash de configuração correto não comprovam publicação; o Lab validou séries e eventos separadamente no CloudWatch | Alta | Validação em etapas no EN |
+| DOC-510 | Lab 26 | Janela de consulta exclui minuto ainda em andamento, mas 60 segundos de coleta não garantem exato ponto por minuto nem publicação instantânea | Média | Limite no EN |
+| DOC-511 | Lab 26 | Ausência de datapoints é tratada como pendência/sem dados, não zero ou prova imediata de falha do agente | Alta | Advertência no EN |
+| DOC-512 | Lab 26 | A role combina `AmazonSSMManagedInstanceCore` com política inline de métricas/logs; trust policy da EC2 não concede permissões operacionais ao usuário | Alta | IAM diferenciado no EN |
+| DOC-513 | Lab 26 | `cloudwatch:PutMetricData` usa Resource `*` com condição `cloudwatch:namespace`; ação `logs:DescribeLogGroups` também usa recurso `*` | Média | Escopos corretos no EN |
+| DOC-514 | Lab 26 | Publicação `logs:CreateLogStream`/`PutLogEvents` restringida aos streams do grupo específico; agente não recebe criação de grupo ou retenção | Alta | Política conferida no EN |
+| DOC-515 | Lab 26 | ARNs da política de logs e settings/common contêm account ID fixo; execução em outra conta exige alteração coordenada e nova revisão de permissões | Alta | Valores não repetidos no EN; correção futura |
+| DOC-516 | Lab 26 | JSON e shell normalizados em LF antes da instalação; SHA-256 calculado do JSON normalizado, não necessariamente dos bytes brutos originais no Windows | Média | Detalhado no EN |
+| DOC-517 | Lab 26 | `SendCommand` com CommandId é aceite de envio; conclusão depende de consulta SSM com status, resposta, hash, versão e marcador esperado | Alta | Fluxo no EN |
+| DOC-518 | Lab 26 | `-ValidateOnly` não cria/instala/remove; `-CheckStatus` consulta comando já enviado e não deve reenviar lote em situação pendente | Alta | Salvaguarda no EN |
+| DOC-519 | Lab 26 | Eventos INFO, WARN e ERROR são sintéticos; mensagem ERROR não corresponde a incidente real de aplicação | Alta | Esclarecido no EN |
+| DOC-520 | Lab 26 | Correspondência dos eventos requer linha completa local e evento na AWS no stream correto; marcador isolado não substitui validação integral | Média | Critério no EN |
+| DOC-521 | Lab 26 | Diferenças observadas de 11 s no evento inicial e 6/5/9 s no lote são `timestamp` vs `ingestionTime`, não garantia de latência/SLO | Alta | Limitação no EN |
+| DOC-522 | Lab 26 | Retenção de um dia só vale enquanto grupo existe; cleanup exclui o log group, impedindo consulta posterior, apesar de relatórios locais preservados | Alta | Aviso explícito no EN |
+| DOC-523 | Lab 26 | Cleanup deve aguardar término de comandos SSM e remover grupo de logs após EC2 para evitar nova publicação; preservar recibos antes da exclusão | Alta | Ordem documentada no EN |
+| DOC-524 | Lab 26 | 11 verificações independentes cobrem os recursos e nomes do inventário, não auditoria completa de todos os recursos AWS; EC2 `terminated` é aceito | Média | Escopo no EN |
+| DOC-525 | Lab 26 | Inventário com RunId e IDs evita deploy duplicado; falha parcial exige inspeção e não remoção manual do inventário | Alta | Salvaguarda no EN |
+| DOC-526 | Lab 26 | Métricas históricas de memória ~23,05–23,21% e disco ~23,576–23,578% não incluem ensaio de pressão, limiares ou alarmes | Média | Resultado contextualizado no EN |
+| DOC-527 | Lab 26 | Pacote instalado reportou versão 1.300071.0 em 11/10/2026, mas novas execuções podem selecionar versão diferente | Baixa | Resultado histórico no EN |
+| DOC-528 | Lab 26 | Capturas 01–17 existem e são referenciadas; inspeção visual integral para legibilidade, ARN, conta, IDs e dados de instância está pendente | Alta | Inventário conferido; inspeção visual pendente |
+| DOC-529 | Lab 26 | Custos podem incluir EC2, EBS, IPv4, métricas customizadas, CloudWatch Logs ingestão/armazenamento, dados e APIs; não presumir Free Tier | Média | Limites registrados no EN |
+| DOC-530 | Lab 26 | Próximo diretório existente `27-cloudwatch-alarms-notifications` deve ser usado na navegação, sem sugerir que alarmes foram implementados no Lab 26 | Baixa | Link inserido no EN |
+
+**Resultado:** versão inglesa publicada com configuração versionada do CloudWatch Agent, duas séries customizadas, IAM de publicação, instalação com hash e SSM, verificação independente das métricas, evento inicial e três logs sintéticos, cleanup de infraestrutura e grupo, e onze verificações finais. Sete scripts e quatro JSONs examinados estaticamente, 17 capturas referenciadas. Não houve execução AWS. Inspeção visual integral das imagens e revisão de portabilidade dos ARNs/account ID permanecem pendentes.
+
 ## Sequência de execução
 
 1. **Etapa 1 — README principal:** criar versão inglesa navegável e registrar observações editoriais iniciais.
